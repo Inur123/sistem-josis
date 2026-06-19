@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Kecamatan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Desa;
-use App\Models\Kecamatan;
 use App\Models\Pemilih;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,18 +14,17 @@ class PemilihController extends Controller
 {
     public function index(Request $request): Response
     {
-        $kecamatanId = $request->query('kecamatan_id');
-        $desaId      = $request->query('desa_id');
-        $search      = $request->query('search');
+        /** @var \App\Models\User $user */
+        $user        = $request->user();
+        $kecamatanId = $user->kecamatan_id;
+        $kecamatanNama = $user->kecamatan->nama;
 
-        // Harus pakai Eloquent agar cast AES-256-GCM (nik, nama, dll) terdekripsi
+        $desaId = $request->query('desa_id');
+        $search = $request->query('search');
+
         /** @var \Illuminate\Database\Eloquent\Builder<Pemilih> $query */
-        $query = Pemilih::query()->with(['kecamatan', 'desa'])
-            ->orderBy('created_at', 'desc');
-
-        if ($kecamatanId) {
-            $query->where('kecamatan_id', $kecamatanId);
-        }
+        $query = Pemilih::query()->with(['desa'])
+            ->where('kecamatan_id', $kecamatanId);
 
         if ($desaId) {
             $query->where('desa_id', $desaId);
@@ -38,7 +36,7 @@ class PemilihController extends Controller
 
         if ($search && !is_numeric($search)) {
             // Text search (name search): must load and filter in memory
-            $allPemilih = $query->get();
+            $allPemilih = $query->orderBy('created_at', 'desc')->get();
             $allPemilih = $allPemilih->filter(function ($p) use ($search) {
                 return str_contains(strtolower($p->nama), strtolower($search));
             });
@@ -60,7 +58,6 @@ class PemilihController extends Controller
                     'alamat'        => $p->alamat,
                     'rt'            => $p->rt,
                     'rw'            => $p->rw,
-                    'kecamatan'     => $p->kecamatan->nama,
                     'desa'          => $p->desa->nama,
                     'created_at'    => $p->created_at->format('d/m/Y'),
                 ])->values(),
@@ -70,12 +67,12 @@ class PemilihController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
         } else {
-            // No text search: Use super fast database pagination & counts
+            // No text search: Use database level pagination & counts
             $countTotal = $query->count();
             $countLakiLaki = (clone $query)->where('jenis_kelamin', 'L')->count();
             $countPerempuan = (clone $query)->where('jenis_kelamin', 'P')->count();
 
-            $paginated = $query->paginate(20)->through(fn ($p) => [
+            $paginated = $query->orderBy('created_at', 'desc')->paginate(20)->through(fn ($p) => [
                 'id'            => $p->id,
                 'nik'           => $p->nik,
                 'nama'          => $p->nama,
@@ -83,26 +80,21 @@ class PemilihController extends Controller
                 'alamat'        => $p->alamat,
                 'rt'            => $p->rt,
                 'rw'            => $p->rw,
-                'kecamatan'     => $p->kecamatan->nama,
                 'desa'          => $p->desa->nama,
                 'created_at'    => $p->created_at->format('d/m/Y'),
             ]);
         }
 
-        /** @var \Illuminate\Database\Eloquent\Builder<Kecamatan> $kecamatanQuery */
-        $kecamatanQuery = Kecamatan::query();
-
         /** @var \Illuminate\Database\Eloquent\Builder<Desa> $desaQuery */
         $desaQuery = Desa::query();
 
-        return Inertia::render('admin/Pemilih', [
+        return Inertia::render('kecamatan/Pemilih', [
             'pemilihs'   => $paginated,
-            'kecamatans' => $kecamatanQuery->orderBy('nama', 'asc')->get(['id', 'nama']),
-            'desas'      => $desaQuery->orderBy('nama', 'asc')->get(['id', 'nama', 'kecamatan_id']),
+            'desas'      => $desaQuery->where('kecamatan_id', $kecamatanId)->orderBy('nama', 'asc')->get(['id', 'nama']),
+            'kecamatan'  => $kecamatanNama,
             'filters'    => [
-                'kecamatan_id' => $kecamatanId,
-                'desa_id'      => $desaId,
-                'search'       => $search,
+                'desa_id' => $desaId,
+                'search'  => $search,
             ],
             'summary'    => [
                 'total' => $countTotal,

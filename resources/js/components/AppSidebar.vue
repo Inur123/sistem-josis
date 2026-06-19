@@ -13,6 +13,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
@@ -22,7 +23,13 @@ import type { NavItem } from '@/types';
 
 const page = usePage();
 const role = computed(() => (page.props.auth as any)?.user?.role ?? '');
+const { isMobile, setOpenMobile } = useSidebar();
 
+function handleLinkClick() {
+    if (isMobile.value) {
+        setOpenMobile(false);
+    }
+}
 // Nav items per role
 const adminNav: NavItem[] = [
     { title: 'Dashboard', href: admin.dashboard.url(), icon: LayoutDashboard },
@@ -96,7 +103,7 @@ const dashboardHref = computed(() => {
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboardHref">
+                        <Link :href="dashboardHref" @click="handleLinkClick">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

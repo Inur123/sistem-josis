@@ -62,18 +62,11 @@ watch(
 // Filter desas depending on selected kecamatan in the form
 const formDesas = computed(() => {
     if (!form.kecamatan_id) {
-return [];
-}
+        return [];
+    }
 
     return props.desas.filter((d) => d.kecamatan_id === form.kecamatan_id);
 });
-
-function openCreateModal() {
-    editingUser.value = null;
-    form.reset();
-    form.clearErrors();
-    showModal.value = true;
-}
 
 function openEditModal(user: User) {
     editingUser.value = user;
@@ -94,27 +87,31 @@ function closeModal() {
 }
 
 function submitForm() {
-    if (editingUser.value) {
-        form.put(adminRoutes.akun.update.url(editingUser.value.id), {
-            onSuccess: () => closeModal(),
-        });
-    } else {
-        form.post(adminRoutes.akun.store.url(), {
-            onSuccess: () => closeModal(),
-        });
-    }
+    form.put(adminRoutes.akun.update.url(editingUser.value!.id), {
+        onSuccess: () => closeModal(),
+    });
 }
 
 const confirmDeleteId = ref<string | null>(null);
 
-function handleDelete(id: string) {
-    if (confirmDeleteId.value !== id) {
-        confirmDeleteId.value = id;
+const selectedUser = computed(() => {
+    if (!confirmDeleteId.value) {
+return null;
+}
 
-        return;
-    }
+    return props.users.find((u) => u.id === confirmDeleteId.value) || null;
+});
 
-    router.delete(adminRoutes.akun.destroy.url(id), {
+function openDeleteModal(id: string) {
+    confirmDeleteId.value = id;
+}
+
+function submitDelete() {
+    if (!confirmDeleteId.value) {
+return;
+}
+
+    router.delete(adminRoutes.akun.destroy.url(confirmDeleteId.value), {
         onSuccess: () => {
             confirmDeleteId.value = null;
         },
@@ -139,32 +136,13 @@ defineOptions({
     <Head title="Kelola Akun (Admin)" />
     <div class="flex flex-col gap-5 p-6">
         <!-- Header -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-xl font-bold text-gray-900">
-                    Kelola Akun Pengguna
-                </h2>
-                <p class="mt-1 text-sm text-gray-500">
-                    Total {{ props.users.length }} akun terdaftar dalam
-                    platform.
-                </p>
-            </div>
-            <button
-                @click="openCreateModal"
-                class="flex cursor-pointer items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-            >
-                <svg
-                    class="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Tambah Akun
-            </button>
+        <div>
+            <h2 class="text-xl font-bold text-gray-900">
+                Kelola Akun Pengguna
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Total {{ props.users.length }} akun terdaftar dalam platform.
+            </p>
         </div>
 
         <!-- Users Table -->
@@ -233,26 +211,10 @@ defineOptions({
                                         Edit
                                     </button>
                                     <button
-                                        @click="handleDelete(user.id)"
-                                        :class="[
-                                            'cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
-                                            confirmDeleteId === user.id
-                                                ? 'bg-red-500 text-white'
-                                                : 'bg-red-50 text-red-600 hover:bg-red-100',
-                                        ]"
+                                        @click="openDeleteModal(user.id)"
+                                        class="cursor-pointer rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
                                     >
-                                        {{
-                                            confirmDeleteId === user.id
-                                                ? 'Yakin?'
-                                                : 'Hapus'
-                                        }}
-                                    </button>
-                                    <button
-                                        v-if="confirmDeleteId === user.id"
-                                        @click="cancelDelete"
-                                        class="cursor-pointer rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500"
-                                    >
-                                        Batal
+                                        Hapus
                                     </button>
                                 </div>
                             </td>
@@ -262,18 +224,14 @@ defineOptions({
             </div>
         </div>
 
-        <!-- Create/Edit Modal -->
+        <!-- Edit Modal -->
         <div
             v-if="showModal"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
         >
             <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
                 <h3 class="mb-4 text-lg font-bold text-gray-900">
-                    {{
-                        editingUser
-                            ? 'Edit Akun Pengguna'
-                            : 'Tambah Akun Pengguna Baru'
-                    }}
+                    Edit Akun Pengguna
                 </h3>
 
                 <form @submit.prevent="submitForm" class="flex flex-col gap-4">
@@ -317,16 +275,13 @@ defineOptions({
                     <div class="flex flex-col gap-1">
                         <label class="text-xs font-semibold text-gray-700">
                             Password
-                            <span
-                                v-if="editingUser"
-                                class="font-normal text-gray-400"
+                            <span class="font-normal text-gray-400"
                                 >(kosongkan jika tidak diubah)</span
                             >
                         </label>
                         <input
                             v-model="form.password"
                             type="password"
-                            :required="!editingUser"
                             class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                         />
                         <span
@@ -433,6 +388,38 @@ defineOptions({
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div
+            v-if="confirmDeleteId"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        >
+            <div class="w-full max-w-md overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">Konfirmasi Hapus</h3>
+                <p class="mt-2 text-sm text-gray-500">
+                    Apakah Anda yakin ingin menghapus data akun bernama <strong class="font-semibold text-gray-800">{{ selectedUser?.name }}</strong>? Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        @click="cancelDelete"
+                        class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        @click="submitDelete"
+                        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 cursor-pointer"
+                    >
+                        Ya, Hapus
+                    </button>
+                </div>
             </div>
         </div>
     </div>

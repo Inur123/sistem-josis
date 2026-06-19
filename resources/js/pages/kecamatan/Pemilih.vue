@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref, watch, computed } from 'vue';
-import desaRoutes from '@/routes/desa';
+import { ref, watch } from 'vue';
 
 interface Pemilih {
     id: string;
@@ -11,6 +10,7 @@ interface Pemilih {
     alamat: string;
     rt: string;
     rw: string;
+    desa: string;
     created_at: string;
 }
 
@@ -24,12 +24,18 @@ interface PaginatedPemilih {
     prev_page_url: string | null;
 }
 
+interface DropdownItem {
+    id: string;
+    nama: string;
+}
+
 const props = defineProps<{
     pemilihs: PaginatedPemilih;
-    desa: string;
+    desas: DropdownItem[];
+    kecamatan: string;
     filters: {
+        desa_id: string | null;
         search: string | null;
-        jenis_kelamin: string | null;
     };
     summary: {
         total: number;
@@ -38,19 +44,11 @@ const props = defineProps<{
     };
 }>();
 
-const confirmDelete = ref<string | null>(null);
 const searchVal = ref(props.filters.search ?? '');
-const selectedJk = ref(props.filters.jenis_kelamin ?? '');
+const selectedDesa = ref(props.filters.desa_id ?? '');
 
-const selectedVoter = computed(() => {
-    if (!confirmDelete.value) {
-return null;
-}
-
-    return props.pemilihs.data.find((p) => p.id === confirmDelete.value) || null;
-});
-
-watch(selectedJk, () => {
+// Trigger filters when desa changes
+watch(selectedDesa, () => {
     applyFilters();
 });
 
@@ -69,10 +67,10 @@ function handleSearch(e: Event) {
 
 function applyFilters() {
     router.get(
-        desaRoutes.pemilih.index.url(),
+        '/kecamatan/pemilih',
         {
             search: searchVal.value || undefined,
-            jenis_kelamin: selectedJk.value || undefined,
+            desa_id: selectedDesa.value || undefined,
         },
         {
             preserveState: true,
@@ -83,69 +81,35 @@ function applyFilters() {
 
 function clearFilters() {
     searchVal.value = '';
-    selectedJk.value = '';
-    router.get(desaRoutes.pemilih.index.url());
-}
-
-function openDeleteModal(id: string) {
-    confirmDelete.value = id;
-}
-
-function submitDelete() {
-    if (!confirmDelete.value) {
-return;
-}
-
-    router.delete(desaRoutes.pemilih.destroy.url(confirmDelete.value), {
-        onSuccess: () => {
-            confirmDelete.value = null;
-        },
-    });
-}
-
-function cancelDelete() {
-    confirmDelete.value = null;
+    selectedDesa.value = '';
+    router.get('/kecamatan/pemilih');
 }
 
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Dashboard', href: desaRoutes.dashboard.url() },
-            { title: 'Data Pemilih', href: desaRoutes.pemilih.index.url() },
+            { title: 'Dashboard', href: '/kecamatan/dashboard' },
+            { title: 'Data Pemilih', href: '/kecamatan/pemilih' },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Data Pemilih" />
+    <Head title="Data Pemilih (Kecamatan)" />
     <div class="flex flex-col gap-5 p-6">
         <!-- Header -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex items-start justify-between">
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
-                    Data Pemilih — {{ props.desa }}
+                    Data Pemilih (Kec. {{ props.kecamatan }})
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
-                    Daftar pemilih terdaftar di desa {{ props.desa }}
+                    Total
+                    {{ props.pemilihs.total.toLocaleString('id-ID') }} pemilih
+                    terdaftar di wilayah kecamatan ini.
                 </p>
             </div>
-            <Link
-                :href="desaRoutes.pemilih.create.url()"
-                class="flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black w-full sm:w-auto whitespace-nowrap"
-            >
-                <svg
-                    class="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Tambah Pemilih
-            </Link>
         </div>
 
         <!-- Summary Cards -->
@@ -202,6 +166,7 @@ defineOptions({
                 <div class="relative">
                     <input
                         v-model="searchVal"
+                        @input="searchVal = searchVal.replace(/[^a-zA-Z0-9\s\.\'-]/g, '')"
                         type="text"
                         placeholder="Cari Nama / NIK..."
                         class="w-full rounded-lg border border-gray-200 py-2 pr-4 pl-9 text-sm focus:border-blue-500 focus:outline-none"
@@ -220,19 +185,24 @@ defineOptions({
             </form>
 
             <div class="flex flex-col gap-3 w-full sm:flex-row md:w-auto md:items-center">
-                <!-- Gender Select -->
+                <!-- Desa Select -->
                 <select
-                    v-model="selectedJk"
+                    v-model="selectedDesa"
                     class="w-full sm:flex-1 md:w-56 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 >
-                    <option value="">Semua Jenis Kelamin</option>
-                    <option value="L">Laki-laki</option>
-                    <option value="P">Perempuan</option>
+                    <option value="">Semua Desa/Kelurahan</option>
+                    <option
+                        v-for="desa in props.desas"
+                        :key="desa.id"
+                        :value="desa.id"
+                    >
+                        {{ desa.nama }}
+                    </option>
                 </select>
 
                 <!-- Reset Filter Button -->
                 <button
-                    v-if="searchVal || selectedJk"
+                    v-if="searchVal || selectedDesa"
                     @click="clearFilters"
                     class="w-full sm:w-auto rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
                 >
@@ -255,10 +225,10 @@ defineOptions({
                             <th class="px-4 py-3">NIK</th>
                             <th class="px-4 py-3">Nama</th>
                             <th class="px-4 py-3">JK</th>
+                            <th class="px-4 py-3">Desa / Kel</th>
                             <th class="px-4 py-3">Alamat</th>
                             <th class="px-4 py-3 text-center">RT/RW</th>
                             <th class="px-4 py-3">Tanggal Input</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
@@ -294,6 +264,9 @@ defineOptions({
                                     >{{ p.jenis_kelamin }}</span
                                 >
                             </td>
+                            <td class="px-4 py-3 text-gray-600">
+                                {{ p.desa }}
+                            </td>
                             <td
                                 class="max-w-[180px] truncate px-4 py-3 text-gray-600"
                             >
@@ -305,32 +278,13 @@ defineOptions({
                             <td class="px-4 py-3 text-xs text-gray-400">
                                 {{ p.created_at }}
                             </td>
-                            <td class="px-4 py-3">
-                                <div
-                                    class="flex items-center justify-center gap-2"
-                                >
-                                    <Link
-                                        :href="
-                                            desaRoutes.pemilih.edit.url(p.id)
-                                        "
-                                        class="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200"
-                                        >Edit</Link
-                                    >
-                                    <button
-                                        @click="openDeleteModal(p.id)"
-                                        class="rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
-                                    >
-                                        Hapus
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                         <tr v-if="!props.pemilihs.data.length">
                             <td
                                 colspan="8"
                                 class="px-4 py-12 text-center text-sm text-gray-400"
                             >
-                                Belum ada data pemilih.
+                                Tidak ada data pemilih ditemukan.
                             </td>
                         </tr>
                     </tbody>
@@ -358,38 +312,6 @@ defineOptions({
                     class="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200"
                     >Selanjutnya →</Link
                 >
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div
-        v-if="confirmDelete"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-    >
-        <div class="w-full max-w-md overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200">
-            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900">Konfirmasi Hapus</h3>
-            <p class="mt-2 text-sm text-gray-500">
-                Apakah Anda yakin ingin menghapus data pemilih bernama <strong class="font-semibold text-gray-800">{{ selectedVoter?.nama }}</strong>? Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div class="mt-6 flex justify-end gap-3">
-                <button
-                    @click="cancelDelete"
-                    class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                    Batal
-                </button>
-                <button
-                    @click="submitDelete"
-                    class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-                >
-                    Ya, Hapus
-                </button>
             </div>
         </div>
     </div>

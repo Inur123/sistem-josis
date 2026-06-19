@@ -52,7 +52,7 @@ defineOptions({
 <template>
     <Head :title="isEdit ? 'Edit Pemilih' : 'Tambah Pemilih'" />
     <div class="p-6">
-        <div class="max-w-xl">
+        <div class="w-full">
             <div
                 class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
             >
@@ -72,28 +72,6 @@ defineOptions({
                             Desa {{ props.desa }}
                         </p>
                     </div>
-                    <span
-                        class="flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs text-green-700"
-                    >
-                        <svg
-                            class="h-3.5 w-3.5"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <rect
-                                x="3"
-                                y="11"
-                                width="18"
-                                height="11"
-                                rx="2"
-                                ry="2"
-                            />
-                            <path d="M7 11V7a5 5 0 0110 0v4" />
-                        </svg>
-                        AES-256-GCM
-                    </span>
                 </div>
 
                 <!-- Form -->
@@ -109,10 +87,13 @@ defineOptions({
                         <input
                             id="nik"
                             v-model="form.nik"
+                            @input="form.nik = form.nik.replace(/\D/g, '')"
                             type="text"
                             inputmode="numeric"
+                            pattern="[0-9]{16}"
                             maxlength="16"
                             placeholder="16 digit NIK"
+                            required
                             :class="[
                                 'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none focus:ring-2',
                                 form.errors.nik
@@ -136,8 +117,10 @@ defineOptions({
                         <input
                             id="nama"
                             v-model="form.nama"
+                            @input="form.nama = form.nama.replace(/[^a-zA-Z\s\.\'-]/g, '')"
                             type="text"
                             placeholder="Nama sesuai KTP"
+                            required
                             :class="[
                                 'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none focus:ring-2',
                                 form.errors.nama
@@ -202,8 +185,10 @@ defineOptions({
                         <textarea
                             id="alamat"
                             v-model="form.alamat"
+                            @input="form.alamat = form.alamat.replace(/[^a-zA-Z0-9\s\.,\/#-]/g, '')"
                             rows="3"
                             placeholder="Alamat lengkap"
+                            required
                             :class="[
                                 'w-full resize-y rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none focus:ring-2',
                                 form.errors.alamat
@@ -231,9 +216,13 @@ defineOptions({
                             <input
                                 id="rt"
                                 v-model="form.rt"
+                                @input="form.rt = form.rt.replace(/\D/g, '')"
                                 type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]+"
                                 placeholder="001"
                                 maxlength="5"
+                                required
                                 :class="[
                                     'w-full rounded-lg border px-3 py-2 text-sm transition outline-none focus:ring-2',
                                     form.errors.rt
@@ -258,9 +247,13 @@ defineOptions({
                             <input
                                 id="rw"
                                 v-model="form.rw"
+                                @input="form.rw = form.rw.replace(/\D/g, '')"
                                 type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]+"
                                 placeholder="001"
                                 maxlength="5"
+                                required
                                 :class="[
                                     'w-full rounded-lg border px-3 py-2 text-sm transition outline-none focus:ring-2',
                                     form.errors.rw
@@ -278,16 +271,16 @@ defineOptions({
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex items-center justify-end gap-2 pt-2">
+                    <div class="flex items-center gap-3 pt-2 w-full">
                         <a
                             :href="desaRoutes.pemilih.index.url()"
-                            class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-200"
+                            class="flex-1 text-center rounded-lg bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
                             >Batal</a
                         >
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+                            class="flex-1 flex items-center justify-center gap-2 rounded-lg bg-gray-900 py-2.5 text-sm font-semibold text-white transition hover:bg-black disabled:opacity-60"
                         >
                             <svg
                                 v-if="form.processing"

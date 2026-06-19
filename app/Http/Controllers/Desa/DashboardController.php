@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Desa;
 use App\Http\Controllers\Controller;
 use App\Models\Pemilih;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,23 +13,24 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        $user = $request->user();
-        $desa = $user->desa;
+        /** @var \App\Models\User $user */
+        $user   = $request->user();
+        $desaId = $user->desa_id;
 
-        // Hitung statistik — jenis kelamin masih terenkripsi di DB,
-        // query langsung tidak bisa, ambil dan decrypt di PHP
-        $pemilihs = Pemilih::where('desa_id', $desa->id)
-            ->select('jenis_kelamin')
-            ->get();
+        $desaNama      = DB::table('desas')->where('id', $desaId)->value('nama');
+        $kecamatanNama = DB::table('kecamatans')->where('id', $user->kecamatan_id)->value('nama');
 
-        $totalPemilih = $pemilihs->count();
-        $lakiLaki     = $pemilihs->filter(fn ($p) => strtoupper($p->jenis_kelamin) === 'L')->count();
-        $perempuan    = $pemilihs->filter(fn ($p) => strtoupper($p->jenis_kelamin) === 'P')->count();
+        /** @var \Illuminate\Database\Eloquent\Builder<\App\Models\Pemilih> $pemilihQuery */
+        $pemilihQuery = Pemilih::query()->where('desa_id', $desaId);
+
+        $totalPemilih = $pemilihQuery->count();
+        $lakiLaki     = (clone $pemilihQuery)->where('jenis_kelamin', 'L')->count();
+        $perempuan    = (clone $pemilihQuery)->where('jenis_kelamin', 'P')->count();
 
         return Inertia::render('desa/Dashboard', [
-            'desa'      => $desa->nama,
-            'kecamatan' => $user->kecamatan->nama,
-            'stats' => [
+            'desa'      => $desaNama,
+            'kecamatan' => $kecamatanNama,
+            'stats'     => [
                 'total_pemilih' => $totalPemilih,
                 'laki_laki'     => $lakiLaki,
                 'perempuan'     => $perempuan,

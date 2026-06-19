@@ -25,7 +25,7 @@ defineOptions({
     <Head title="Dashboard Desa" />
     <div class="flex flex-col gap-6 p-6">
         <!-- Header -->
-        <div class="flex items-start justify-between">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
                     {{ props.desa }}
@@ -36,7 +36,7 @@ defineOptions({
             </div>
             <Link
                 :href="desaRoutes.pemilih.create.url()"
-                class="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                class="flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black w-full sm:w-auto whitespace-nowrap"
             >
                 <svg
                     class="h-4 w-4"
@@ -53,7 +53,7 @@ defineOptions({
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div
                 class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
             >

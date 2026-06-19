@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PemilihController as AdminPemilihController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 use App\Http\Controllers\Kecamatan\DashboardController as KecamatanDashboardController;
+use App\Http\Controllers\Kecamatan\PemilihController as KecamatanPemilihController;
 use App\Http\Controllers\Desa\DashboardController as DesaDashboardController;
 use App\Http\Controllers\Desa\PemilihController as DesaPemilihController;
 use Illuminate\Support\Facades\Route;
@@ -23,16 +24,27 @@ Route::get('/', fn () => redirect()->route('login'))->name('home');
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->get('/dashboard', function (\Illuminate\Http\Request $request) {
-    $role = $request->user()->role;
+Route::get('/dashboard', function () {
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
 
-    return match ($role) {
-        'admin'     => redirect()->route('admin.dashboard'),
-        'kecamatan' => redirect()->route('kecamatan.dashboard'),
-        'desa'      => redirect()->route('desa.dashboard'),
-        default     => abort(403),
-    };
-})->name('dashboard');
+    // Reflash session agar flash message (seperti toast sukses login) bertahan melewati double redirect
+    session()->reflash();
+
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    if ($user->role === 'kecamatan') {
+        return redirect()->route('kecamatan.dashboard');
+    }
+
+    if ($user->role === 'desa') {
+        return redirect()->route('desa.dashboard');
+    }
+
+    abort(403, 'Role tidak valid.');
+})->middleware(['auth'])->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +59,6 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
         Route::get('/pemilih', [AdminPemilihController::class, 'index'])->name('pemilih.index');
         Route::get('/akun', [AdminAkunController::class, 'index'])->name('akun.index');
-        Route::post('/akun', [AdminAkunController::class, 'store'])->name('akun.store');
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
     });
@@ -63,7 +74,7 @@ Route::middleware(['auth', 'role:kecamatan'])
     ->name('kecamatan.')
     ->group(function () {
         Route::get('/dashboard', KecamatanDashboardController::class)->name('dashboard');
-        Route::get('/pemilih', fn () => Inertia::render('kecamatan/Pemilih'))->name('pemilih.index');
+        Route::get('/pemilih', [KecamatanPemilihController::class, 'index'])->name('pemilih.index');
     });
 
 /*

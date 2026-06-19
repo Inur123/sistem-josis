@@ -19,7 +19,14 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\Laravel\Fortify\Contracts\LogoutResponse::class, function ($app) {
+            return new class implements \Laravel\Fortify\Contracts\LogoutResponse {
+                public function toResponse($request) {
+                    session()->flash('success', 'Anda telah berhasil logout.');
+                    return redirect()->route('login');
+                }
+            };
+        });
     }
 
     /**
@@ -43,7 +50,7 @@ class FortifyServiceProvider extends ServiceProvider
             $emailHash = hash('sha256', strtolower(trim($request->email)));
 
             /** @var User|null $user */
-            $user = User::where('email_hash', $emailHash)->first();
+            $user = User::query()->where('email_hash', $emailHash)->first();
 
             // Verifikasi password Argon2id
             if ($user instanceof User && Hash::check($request->password, $user->password)) {

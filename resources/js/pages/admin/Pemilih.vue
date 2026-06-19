@@ -41,6 +41,11 @@ const props = defineProps<{
         desa_id: string | null;
         search: string | null;
     };
+    summary: {
+        total: number;
+        l: number;
+        p: number;
+    };
 }>();
 
 const searchVal = ref(props.filters.search ?? '');
@@ -50,8 +55,8 @@ const selectedDesa = ref(props.filters.desa_id ?? '');
 // Filter desas options based on selected kecamatan
 const filteredDesas = computed(() => {
     if (!selectedKecamatan.value) {
-return [];
-}
+        return [];
+    }
 
     return props.desas.filter(
         (desa) => desa.kecamatan_id === selectedKecamatan.value,
@@ -67,6 +72,14 @@ watch(selectedKecamatan, () => {
 // Trigger filters when desa or search changes
 watch(selectedDesa, () => {
     applyFilters();
+});
+
+let searchTimeout: ReturnType<typeof setTimeout>;
+watch(searchVal, () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        applyFilters();
+    }, 400);
 });
 
 function handleSearch(e: Event) {
@@ -113,7 +126,7 @@ defineOptions({
         <div class="flex items-start justify-between">
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
-                    Data Pemilih Nasional (Magetan)
+                    Data Pemilih (Magetan)
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
                     Total
@@ -123,14 +136,61 @@ defineOptions({
             </div>
         </div>
 
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <!-- Total Pemilih -->
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.summary.total.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500">Total Pemilih (Terfilter)</div>
+            </div>
+
+            <!-- Laki-laki -->
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50">
+                    <svg class="h-5 w-5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.summary.l.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500">Laki-laki</div>
+            </div>
+
+            <!-- Perempuan -->
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50">
+                    <svg class="h-5 w-5 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.summary.p.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500">Perempuan</div>
+            </div>
+        </div>
+
         <!-- Filter & Search Controls -->
         <div
             class="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm md:flex-row md:items-center"
         >
-            <form @submit="handleSearch" class="flex-1">
+            <form @submit="handleSearch" class="w-full md:flex-1">
                 <div class="relative">
                     <input
                         v-model="searchVal"
+                        @input="searchVal = searchVal.replace(/[^a-zA-Z0-9\s\.\'-]/g, '')"
                         type="text"
                         placeholder="Cari Nama / NIK..."
                         class="w-full rounded-lg border border-gray-200 py-2 pr-4 pl-9 text-sm focus:border-blue-500 focus:outline-none"
@@ -148,11 +208,11 @@ defineOptions({
                 </div>
             </form>
 
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-col gap-3 w-full sm:flex-row md:w-auto md:items-center">
                 <!-- Kecamatan Select -->
                 <select
                     v-model="selectedKecamatan"
-                    class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                    class="w-full sm:flex-1 md:w-48 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 >
                     <option value="">Semua Kecamatan</option>
                     <option
@@ -168,7 +228,7 @@ defineOptions({
                 <select
                     v-model="selectedDesa"
                     :disabled="!selectedKecamatan"
-                    class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"
+                    class="w-full sm:flex-1 md:w-48 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"
                 >
                     <option value="">Semua Desa/Kelurahan</option>
                     <option
@@ -184,7 +244,7 @@ defineOptions({
                 <button
                     v-if="searchVal || selectedKecamatan || selectedDesa"
                     @click="clearFilters"
-                    class="rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
+                    class="w-full sm:w-auto rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
                 >
                     Reset
                 </button>

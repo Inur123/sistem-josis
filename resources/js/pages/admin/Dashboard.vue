@@ -11,6 +11,12 @@ interface Props {
     per_kecamatan: Array<{
         nama: string;
         total: number;
+        l: number;
+        p: number;
+    }>;
+    desa_per_kecamatan: Array<{
+        kecamatan_nama: string;
+        total: number;
     }>;
 }
 
@@ -65,28 +71,38 @@ defineOptions({
 
             <!-- Total Desa -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm flex items-center justify-between gap-4"
             >
-                <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50"
-                >
-                    <svg
-                        class="h-5 w-5 text-green-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
+                <div>
+                    <div
+                        class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50"
                     >
-                        <path
-                            d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-                        />
-                        <polyline points="9 22 9 12 15 12 15 22" />
-                    </svg>
+                        <svg
+                            class="h-5 w-5 text-green-600"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                            />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900">
+                        {{ props.stats.total_desa }}
+                    </div>
+                    <div class="mt-0.5 text-xs text-gray-500">Desa / Kelurahan</div>
                 </div>
-                <div class="text-2xl font-bold text-gray-900">
-                    {{ props.stats.total_desa }}
+
+                <!-- Details side-by-side -->
+                <div class="pl-3 border-l border-gray-100 flex flex-col gap-0.5 text-[9px] text-gray-500 min-w-[105px]">
+                    <div v-for="item in props.desa_per_kecamatan" :key="item.kecamatan_nama" class="flex justify-between gap-1">
+                        <span class="truncate">Kec. {{ item.kecamatan_nama }}:</span>
+                        <span class="font-semibold text-gray-700">{{ item.total }}</span>
+                    </div>
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">Desa / Kelurahan</div>
             </div>
 
             <!-- Total Kecamatan -->
@@ -159,7 +175,8 @@ defineOptions({
                             <th class="px-5 py-3">No</th>
                             <th class="px-5 py-3">Kecamatan</th>
                             <th class="px-5 py-3 text-right">Jumlah Pemilih</th>
-                            <th class="px-5 py-3">Progres</th>
+                            <th class="px-5 py-3 text-right">Laki-laki</th>
+                            <th class="px-5 py-3 text-right">Perempuan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -177,28 +194,16 @@ defineOptions({
                             >
                                 {{ item.total.toLocaleString('id-ID') }}
                             </td>
-                            <td class="px-5 py-3">
-                                <div
-                                    class="h-1.5 w-32 overflow-hidden rounded-full bg-gray-100"
-                                >
-                                    <div
-                                        class="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all"
-                                        :style="{
-                                            width: props.stats.total_pemilih
-                                                ? (item.total /
-                                                      props.stats
-                                                          .total_pemilih) *
-                                                      100 +
-                                                  '%'
-                                                : '0%',
-                                        }"
-                                    />
-                                </div>
+                            <td class="px-5 py-3 text-right text-gray-900">
+                                {{ item.l.toLocaleString('id-ID') }}
+                            </td>
+                            <td class="px-5 py-3 text-right text-gray-900">
+                                {{ item.p.toLocaleString('id-ID') }}
                             </td>
                         </tr>
                         <tr v-if="!props.per_kecamatan.length">
                             <td
-                                colspan="4"
+                                colspan="5"
                                 class="px-5 py-10 text-center text-gray-400"
                             >
                                 Belum ada data pemilih

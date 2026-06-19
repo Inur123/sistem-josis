@@ -10,6 +10,8 @@ interface Props {
     per_desa: Array<{
         nama: string;
         total: number;
+        l: number;
+        p: number;
     }>;
 }
 
@@ -105,7 +107,8 @@ defineOptions({
                             <th class="px-5 py-3">No</th>
                             <th class="px-5 py-3">Desa / Kelurahan</th>
                             <th class="px-5 py-3 text-right">Jumlah Pemilih</th>
-                            <th class="px-5 py-3">Progres</th>
+                            <th class="px-5 py-3 text-right">Laki-laki</th>
+                            <th class="px-5 py-3 text-right">Perempuan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,28 +126,16 @@ defineOptions({
                             >
                                 {{ item.total.toLocaleString('id-ID') }}
                             </td>
-                            <td class="px-5 py-3">
-                                <div
-                                    class="h-1.5 w-32 overflow-hidden rounded-full bg-gray-100"
-                                >
-                                    <div
-                                        class="h-full rounded-full bg-gradient-to-r from-green-500 to-green-400 transition-all"
-                                        :style="{
-                                            width: props.stats.total_pemilih
-                                                ? (item.total /
-                                                      props.stats
-                                                          .total_pemilih) *
-                                                      100 +
-                                                  '%'
-                                                : '0%',
-                                        }"
-                                    />
-                                </div>
+                            <td class="px-5 py-3 text-right text-gray-900">
+                                {{ item.l.toLocaleString('id-ID') }}
+                            </td>
+                            <td class="px-5 py-3 text-right text-gray-900">
+                                {{ item.p.toLocaleString('id-ID') }}
                             </td>
                         </tr>
                         <tr v-if="!props.per_desa.length">
                             <td
-                                colspan="4"
+                                colspan="5"
                                 class="px-5 py-10 text-center text-gray-400"
                             >
                                 Belum ada data pemilih

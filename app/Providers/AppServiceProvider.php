@@ -24,6 +24,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Flash message sukses saat login & logout
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            function (\Illuminate\Auth\Events\Login $event) {
+                session()->flash('success', 'Selamat datang kembali! Anda berhasil login.');
+            }
+        );
     }
 
     /**
