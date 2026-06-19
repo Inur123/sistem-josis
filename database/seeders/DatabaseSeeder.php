@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         // Step 2: Data wilayah (kecamatan + desa dari API wilayah.id)
         $this->call(WilayahSeeder::class);
 
-        // Step 3: Akun user (admin, kecamatan, desa) — akan ditambahkan
-        // $this->call(UserSeeder::class);
+        // Step 3: Akun user (admin, kecamatan, desa)
+        $this->call(UserSeeder::class);
     }
 }

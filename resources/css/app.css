@@ -126,8 +126,6 @@
     --sidebar: hsl(0 0% 98%);
 }
 
-
-
 @layer base {
     * {
         @apply border-border outline-ring/50;

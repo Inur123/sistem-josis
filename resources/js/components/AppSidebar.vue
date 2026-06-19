@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { LayoutDashboard, Users, ClipboardList, UserCog } from '@lucide/vue';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -15,28 +15,79 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import admin from '@/routes/admin';
+import desa from '@/routes/desa';
+import kecamatan from '@/routes/kecamatan';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+const role = computed(() => (page.props.auth as any)?.user?.role ?? '');
+
+// Nav items per role
+const adminNav: NavItem[] = [
+    { title: 'Dashboard', href: admin.dashboard.url(), icon: LayoutDashboard },
+    {
+        title: 'Data Pemilih',
+        href: admin.pemilih.index.url(),
+        icon: ClipboardList,
+    },
+    { title: 'Kelola Akun', href: admin.akun.index.url(), icon: UserCog },
+];
+
+const kecamatanNav: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        href: kecamatan.dashboard.url(),
+        icon: LayoutDashboard,
+    },
+    {
+        title: 'Data Pemilih',
+        href: kecamatan.pemilih.index.url(),
+        icon: ClipboardList,
     },
 ];
 
-const footerNavItems: NavItem[] = [
+const desaNav: NavItem[] = [
+    { title: 'Dashboard', href: desa.dashboard.url(), icon: LayoutDashboard },
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
+        title: 'Data Pemilih',
+        href: desa.pemilih.index.url(),
+        icon: ClipboardList,
     },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    { title: 'Tambah Data', href: desa.pemilih.create.url(), icon: Users },
 ];
+
+const mainNavItems = computed<NavItem[]>(() => {
+    if (role.value === 'admin') {
+        return adminNav;
+    }
+
+    if (role.value === 'kecamatan') {
+        return kecamatanNav;
+    }
+
+    if (role.value === 'desa') {
+        return desaNav;
+    }
+
+    return [];
+});
+
+const dashboardHref = computed(() => {
+    if (role.value === 'admin') {
+        return admin.dashboard.url();
+    }
+
+    if (role.value === 'kecamatan') {
+        return kecamatan.dashboard.url();
+    }
+
+    if (role.value === 'desa') {
+        return desa.dashboard.url();
+    }
+
+    return dashboard.url();
+});
 </script>
 
 <template>
@@ -45,7 +96,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link :href="dashboardHref">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>
@@ -58,7 +109,6 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

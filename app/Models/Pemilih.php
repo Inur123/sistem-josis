@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Models;
+
+use App\Casts\EncryptedAesGcm;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @property string $id
+ * @property string $nik           🔐 AES-256-GCM
+ * @property string $nik_hash      SHA-256 (untuk cek duplikat)
+ * @property string $nama          🔐 AES-256-GCM
+ * @property string $jenis_kelamin 🔐 AES-256-GCM  (L | P)
+ * @property string $alamat        🔐 AES-256-GCM
+ * @property string $rt            🔐 AES-256-GCM
+ * @property string $rw            🔐 AES-256-GCM
+ * @property string $desa_id
+ * @property string $kecamatan_id
+ * @property string $user_id
+ * @mixin \Eloquent
+ */
+class Pemilih extends Model
+{
+    use HasFactory, HasUlids;
+
+    protected $fillable = [
+        'nik',
+        'nik_hash',
+        'nama',
+        'jenis_kelamin',
+        'alamat',
+        'rt',
+        'rw',
+        'desa_id',
+        'kecamatan_id',
+        'user_id',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'nik'           => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+            'nama'          => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+            'jenis_kelamin' => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+            'alamat'        => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+            'rt'            => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+            'rw'            => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+        ];
+    }
+
+    // ─── Helper untuk set NIK (otomatis buat hash) ────────────────
+
+    /**
+     * Set NIK dan otomatis hitung nik_hash untuk validasi duplikat.
+     */
+    public function setNikAttribute(string $nik): void
+    {
+        $this->attributes['nik']      = app(EncryptedAesGcm::class)->set($this, 'nik', $nik, []);
+        $this->attributes['nik_hash'] = hash('sha256', $nik);
+    }
+
+    // ─── Relasi ───────────────────────────────────────────────────
+
+    public function desa(): BelongsTo
+    {
+        return $this->belongsTo(Desa::class);
+    }
+
+    public function kecamatan(): BelongsTo
+    {
+        return $this->belongsTo(Kecamatan::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

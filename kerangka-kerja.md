@@ -329,10 +329,21 @@ protected $casts = [
 ## 📅 Urutan Pengerjaan
 
 ```
-[ ] Step 1  — Migration: buat tabel kecamatans, desas, update users, buat pemilihs
-[ ] Step 2  — Seeder: ambil data wilayah dari API wilayah.id, seed 4 kecamatan + desa-desanya
-[ ] Step 3  — Seeder: buat akun Admin, 4 akun Kecamatan, akun per Desa
-[ ] Step 4  — Setup enkripsi: custom AES-256-GCM cast + config Argon2id untuk password
+[x] Step 1  — Migration: tabel kecamatans, desas, users (ULID, role, email_hash), pemilihs
+              → 4 migration file, semua pakai ULID primary key
+              → users: role (admin|kecamatan|desa), kecamatan_id, desa_id, email_hash
+
+[x] Step 2  — Seeder wilayah dari API wilayah.id (35.20 = Magetan)
+              → 4 kecamatan: Barat, Karangrejo, Karas, Kartoharjo
+              → 50 desa/kelurahan (14 + 13 + 11 + 12)
+
+[x] Step 3  — Seeder akun user (Argon2id password, email_hash SHA-256)
+              → 1 Admin    : admin@josis.magetan.id
+              → 4 Kecamatan: kec.{nama}@josis.magetan.id
+              → 50 Desa    : desa.{nama}.{kecamatan}@josis.magetan.id
+              → Total: 55 akun
+
+[ ] Step 4  — Setup enkripsi: custom AES-256-GCM cast + re-seed dengan data terenkripsi
 [ ] Step 5  — Role system: middleware & policy per role
 [ ] Step 6  — Auth redirect: setelah login arahkan ke dashboard sesuai role
 [ ] Step 7  — Dashboard Admin (statistik semua wilayah)
@@ -368,3 +379,100 @@ protected $casts = [
 ---
 
 > ✅ **Setelah kerangka ini disetujui, langsung mulai dari Step 1: Migration Database.**
+
+---
+
+## 📝 Daftar Akun (Hasil Seeder)
+
+> ⚠️ **Password default wajib diganti setelah pertama kali login!**
+
+### 👑 Admin
+
+| Email | Password |
+|-------|----------|
+| `admin@josis.magetan.id` | `Admin@Josis2026!` |
+
+---
+
+### 📍 Kecamatan (Password semua: `Kecamatan@2026!`)
+
+| Kecamatan | Email |
+|-----------|-------|
+| Barat | `kec.barat@josis.magetan.id` |
+| Karangrejo | `kec.karangrejo@josis.magetan.id` |
+| Karas | `kec.karas@josis.magetan.id` |
+| Kartoharjo | `kec.kartoharjo@josis.magetan.id` |
+
+---
+
+### 🏘️ Desa/Kelurahan (Password semua: `Desa@2026!`)
+
+**Kecamatan Barat** (14 desa)
+
+| Desa | Email |
+|------|-------|
+| Mangge | `desa.mangge.barat@josis.magetan.id` |
+| Tebon | `desa.tebon.barat@josis.magetan.id` |
+| Bogorejo | `desa.bogorejo.barat@josis.magetan.id` |
+| Banjarejo | `desa.banjarejo.barat@josis.magetan.id` |
+| Karangsono | `desa.karangsono.barat@josis.magetan.id` |
+| Purwodadi | `desa.purwodadi.barat@josis.magetan.id` |
+| Manjung | `desa.manjung.barat@josis.magetan.id` |
+| Ngumpul | `desa.ngumpul.barat@josis.magetan.id` |
+| Panggung | `desa.panggung.barat@josis.magetan.id` |
+| Blaran | `desa.blaran.barat@josis.magetan.id` |
+| Jonggrang | `desa.jonggrang.barat@josis.magetan.id` |
+| Rejomulyo | `desa.rejomulyo.barat@josis.magetan.id` |
+| Bangunasri | `desa.bangunasri.barat@josis.magetan.id` |
+| Klagen | `desa.klagen.barat@josis.magetan.id` |
+
+**Kecamatan Karangrejo** (13 desa)
+
+| Desa | Email |
+|------|-------|
+| Karangrejo | `desa.karangrejo.karangrejo@josis.magetan.id` |
+| Manisrejo | `desa.manisrejo.karangrejo@josis.magetan.id` |
+| Mantren | `desa.mantren.karangrejo@josis.magetan.id` |
+| Gondang | `desa.gondang.karangrejo@josis.magetan.id` |
+| Sambirembe | `desa.sambirembe.karangrejo@josis.magetan.id` |
+| Patihan | `desa.patihan.karangrejo@josis.magetan.id` |
+| Pelem | `desa.pelem.karangrejo@josis.magetan.id` |
+| Baluk | `desa.baluk.karangrejo@josis.magetan.id` |
+| Gebyog | `desa.gebyog.karangrejo@josis.magetan.id` |
+| Maron | `desa.maron.karangrejo@josis.magetan.id` |
+| Prampelan | `desa.prampelan.karangrejo@josis.magetan.id` |
+| Grabahan | `desa.grabahan.karangrejo@josis.magetan.id` |
+| Kauman | `desa.kauman.karangrejo@josis.magetan.id` |
+
+**Kecamatan Karas** (11 desa)
+
+| Desa | Email |
+|------|-------|
+| Karas | `desa.karas.karas@josis.magetan.id` |
+| Sobontoro | `desa.sobontoro.karas@josis.magetan.id` |
+| Sumursongo | `desa.sumursongo.karas@josis.magetan.id` |
+| Taji | `desa.taji.karas@josis.magetan.id` |
+| Kuwon | `desa.kuwon.karas@josis.magetan.id` |
+| Jungke | `desa.jungke.karas@josis.magetan.id` |
+| Temboro | `desa.temboro.karas@josis.magetan.id` |
+| Temenggungan | `desa.temenggungan.karas@josis.magetan.id` |
+| Geplak | `desa.geplak.karas@josis.magetan.id` |
+| Botok | `desa.botok.karas@josis.magetan.id` |
+| Ginuk | `desa.ginuk.karas@josis.magetan.id` |
+
+**Kecamatan Kartoharjo** (12 desa)
+
+| Desa | Email |
+|------|-------|
+| Kartoharjo | `desa.kartoharjo.kartoharjo@josis.magetan.id` |
+| Mrahu | `desa.mrahu.kartoharjo@josis.magetan.id` |
+| Klurahan | `desa.klurahan.kartoharjo@josis.magetan.id` |
+| Pencol | `desa.pencol.kartoharjo@josis.magetan.id` |
+| Sukowidi | `desa.sukowidi.kartoharjo@josis.magetan.id` |
+| Ngelang | `desa.ngelang.kartoharjo@josis.magetan.id` |
+| Jajar | `desa.jajar.kartoharjo@josis.magetan.id` |
+| Gunungan | `desa.gunungan.kartoharjo@josis.magetan.id` |
+| Jeruk | `desa.jeruk.kartoharjo@josis.magetan.id` |
+| Bayem Wetan | `desa.bayemwetan.kartoharjo@josis.magetan.id` |
+| Bayem Taman | `desa.bayemtaman.kartoharjo@josis.magetan.id` |
+| Karangmojo | `desa.karangmojo.kartoharjo@josis.magetan.id` |
