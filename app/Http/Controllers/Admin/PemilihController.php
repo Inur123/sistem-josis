@@ -5,89 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Desa;
 use App\Models\Kecamatan;
-use App\Models\Pemilih;
+use App\Services\PemilihService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PemilihController extends Controller
 {
+    public function __construct(private PemilihService $pemilihService) {}
+
     public function index(Request $request): Response
     {
-        $kecamatanId = $request->query('kecamatan_id');
-        $desaId      = $request->query('desa_id');
-        $search      = $request->query('search');
-
-        // Harus pakai Eloquent agar cast AES-256-GCM (nik, nama, dll) terdekripsi
-        /** @var \Illuminate\Database\Eloquent\Builder<Pemilih> $query */
-        $query = Pemilih::query()->with(['kecamatan', 'desa'])
-            ->orderBy('created_at', 'desc');
-
-        if ($kecamatanId) {
-            $query->where('kecamatan_id', $kecamatanId);
-        }
-
-        if ($desaId) {
-            $query->where('desa_id', $desaId);
-        }
-
-        if ($search && is_numeric($search)) {
-            $query->where('nik_hash', hash('sha256', $search));
-        }
-
-        if ($search && !is_numeric($search)) {
-            // Text search (name search): must load and filter in memory
-            $allPemilih = $query->get();
-            $allPemilih = $allPemilih->filter(function ($p) use ($search) {
-                return str_contains(strtolower($p->nama), strtolower($search));
-            });
-
-            $countTotal = $allPemilih->count();
-            $countLakiLaki = $allPemilih->where('jenis_kelamin', 'L')->count();
-            $countPerempuan = $allPemilih->where('jenis_kelamin', 'P')->count();
-
-            $perPage     = 20;
-            $currentPage = (int) $request->query('page', 1);
-            $sliced      = $allPemilih->slice(($currentPage - 1) * $perPage, $perPage);
-
-            $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
-                $sliced->map(fn ($p) => [
-                    'id'            => $p->id,
-                    'nik'           => $p->nik,
-                    'nama'          => $p->nama,
-                    'jenis_kelamin' => $p->jenis_kelamin,
-                    'alamat'        => $p->alamat,
-                    'rt'            => $p->rt,
-                    'rw'            => $p->rw,
-                    'kecamatan'     => $p->kecamatan->nama,
-                    'desa'          => $p->desa->nama,
-                    'created_at'    => $p->created_at->format('d/m/Y'),
-                ])->values(),
-                $countTotal,
-                $perPage,
-                $currentPage,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
-        } else {
-            // No text search: Use super fast database pagination & counts
-            $countTotal = $query->count();
-            $countLakiLaki = (clone $query)->where('jenis_kelamin', 'L')->count();
-            $countPerempuan = (clone $query)->where('jenis_kelamin', 'P')->count();
-
-            $paginated = $query->paginate(20)->through(fn ($p) => [
-                'id'            => $p->id,
-                'nik'           => $p->nik,
-                'nama'          => $p->nama,
-                'jenis_kelamin' => $p->jenis_kelamin,
-                'alamat'        => $p->alamat,
-                'rt'            => $p->rt,
-                'rw'            => $p->rw,
-                'kecamatan'     => $p->kecamatan->nama,
-                'desa'          => $p->desa->nama,
-                'created_at'    => $p->created_at->format('d/m/Y'),
-            ]);
-        }
+        $result = $this->pemilihService->paginate(
+            $request,
+            scope: [],
+            extraColumns: ['kecamatan', 'desa']
+        );
 
         /** @var \Illuminate\Database\Eloquent\Builder<Kecamatan> $kecamatanQuery */
         $kecamatanQuery = Kecamatan::query();
@@ -96,19 +29,15 @@ class PemilihController extends Controller
         $desaQuery = Desa::query();
 
         return Inertia::render('admin/Pemilih', [
-            'pemilihs'   => $paginated,
+            'pemilihs'   => $result['paginated'],
             'kecamatans' => $kecamatanQuery->orderBy('nama', 'asc')->get(['id', 'nama']),
             'desas'      => $desaQuery->orderBy('nama', 'asc')->get(['id', 'nama', 'kecamatan_id']),
             'filters'    => [
-                'kecamatan_id' => $kecamatanId,
-                'desa_id'      => $desaId,
-                'search'       => $search,
+                'kecamatan_id' => $request->query('kecamatan_id'),
+                'desa_id'      => $request->query('desa_id'),
+                'search'       => $request->query('search'),
             ],
-            'summary'    => [
-                'total' => $countTotal,
-                'l'     => $countLakiLaki,
-                'p'     => $countPerempuan,
-            ],
+            'summary'    => $result['summary'],
         ]);
     }
 }

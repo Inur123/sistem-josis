@@ -6,32 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Desa;
 use App\Models\Kecamatan;
 use App\Models\User;
+use App\Services\AkunService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AkunController extends Controller
 {
+    public function __construct(private AkunService $akunService) {}
+
     public function index(Request $request): Response
     {
-        // Harus pakai Eloquent agar cast AES-256-GCM (name, email) terdekripsi
-        /** @var \Illuminate\Database\Eloquent\Builder<User> $userQuery */
-        $userQuery = User::query();
-        $users = $userQuery->with(['kecamatan', 'desa'])->get()->map(fn ($u) => [
-            'id'           => $u->id,
-            'name'         => $u->name,
-            'email'        => $u->email,
-            'role'         => $u->role,
-            'kecamatan_id' => $u->kecamatan_id,
-            'kecamatan'    => $u->kecamatan?->nama,
-            'desa_id'      => $u->desa_id,
-            'desa'         => $u->desa?->nama,
-        ]);
-
         /** @var \Illuminate\Database\Eloquent\Builder<Kecamatan> $kecamatanQuery */
         $kecamatanQuery = Kecamatan::query();
 
@@ -39,7 +25,7 @@ class AkunController extends Controller
         $desaQuery = Desa::query();
 
         return Inertia::render('admin/Akun', [
-            'users'      => $users,
+            'users'      => $this->akunService->getAllFormatted(),
             'kecamatans' => $kecamatanQuery->orderBy('nama', 'asc')->get(['id', 'nama']),
             'desas'      => $desaQuery->orderBy('nama', 'asc')->get(['id', 'nama', 'kecamatan_id']),
         ]);
@@ -56,35 +42,22 @@ class AkunController extends Controller
             'desa_id'      => ['required_if:role,desa', 'nullable', 'exists:desas,id'],
         ]);
 
-        $emailHash = hash('sha256', strtolower(trim($data['email'])));
+        $error = $this->akunService->update($user, $data);
 
-        if (DB::table('users')->where('email_hash', $emailHash)->where('id', '!=', $user->id)->exists()) {
-            return back()->withErrors(['email' => 'Email sudah terdaftar untuk pengguna lain.']);
+        if ($error) {
+            return back()->withErrors($error);
         }
-
-        $user->name         = $data['name'];
-        $user->email        = $data['email'];
-        $user->email_hash   = $emailHash;
-        $user->role         = $data['role'];
-        $user->kecamatan_id = $data['role'] === 'admin' ? null : $data['kecamatan_id'];
-        $user->desa_id      = $data['role'] === 'desa' ? $data['desa_id'] : null;
-
-        if (!empty($data['password'])) {
-            $user->password = Hash::make($data['password']);
-        }
-
-        $user->save();
 
         return back()->with('success', 'Akun berhasil diperbarui.');
     }
 
     public function destroy(User $user)
     {
-        if ($user->id === Auth::id()) {
-            return back()->withErrors(['error' => 'Anda tidak dapat menghapus akun Anda sendiri.']);
-        }
+        $error = $this->akunService->destroy($user);
 
-        DB::table('users')->where('id', $user->id)->delete();
+        if ($error) {
+            return back()->withErrors($error);
+        }
 
         return back()->with('success', 'Akun berhasil dihapus.');
     }
