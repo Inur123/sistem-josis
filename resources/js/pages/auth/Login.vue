@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { X } from '@lucide/vue';
+import { X, Lock, Mail } from '@lucide/vue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -12,8 +11,8 @@ import { store } from '@/routes/login';
 
 defineOptions({
     layout: {
-        title: 'Masuk ke akun Anda',
-        description: 'Masukkan email dan password untuk login',
+        title: 'Selamat Datang',
+        description: 'Silakan masuk menggunakan akun Josis Anda untuk melanjutkan.',
     },
 });
 
@@ -64,7 +63,7 @@ function dismissBanner() {
 </script>
 
 <template>
-    <!-- PWA Install Banner (Top-Down Pop-up) -->
+    <!-- PWA Install Banner (Premium Floating Banner) -->
     <Transition
         enter-active-class="transform ease-out duration-300 transition"
         enter-from-class="-translate-y-full opacity-0"
@@ -75,15 +74,15 @@ function dismissBanner() {
     >
         <div
             v-if="showBanner"
-            class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl p-4 flex items-center justify-between gap-4"
+            class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md bg-white/95 border border-amber-100 backdrop-blur-md rounded-2xl shadow-xl p-4 flex items-center justify-between gap-4"
         >
             <div class="flex items-center gap-3">
-                <div class="h-10 w-10 flex-shrink-0 rounded-xl bg-gray-50 flex items-center justify-center p-1 border border-gray-100">
-                    <img src="/pwa-192x192.png" alt="Logo" class="h-full w-full object-contain rounded-lg" />
+                <div class="h-10 w-10 shrink-0 rounded-xl bg-linear-to-tr from-amber-500 to-yellow-400 flex items-center justify-center p-1 border border-yellow-200/50 shadow-inner">
+                    <img src="/images/pwa-192x192.png" alt="Logo" class="h-full w-full object-contain rounded-lg" />
                 </div>
                 <div class="text-left">
                     <h4 class="text-sm font-semibold text-gray-900">Pasang Aplikasi Josis</h4>
-                    <p class="text-xs text-gray-500">Instal di HP untuk akses lebih cepat</p>
+                    <p class="text-xs text-gray-500">Akses cepat & stabil langsung dari Home Screen</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -99,7 +98,7 @@ function dismissBanner() {
                     @click="dismissBanner"
                     class="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-50 rounded-lg transition-all"
                 >
-                    <X class="h-4.5 w-4.5" />
+                    <X class="h-4 w-4" />
                 </button>
             </div>
         </div>
@@ -109,7 +108,7 @@ function dismissBanner() {
 
     <div
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 text-center text-sm font-semibold text-green-600 bg-green-50 border border-green-100 rounded-xl p-3"
     >
         {{ status }}
     </div>
@@ -120,45 +119,76 @@ function dismissBanner() {
         v-slot="{ errors, processing }"
         class="flex flex-col gap-6"
     >
-        <div class="grid gap-6">
+        <div class="grid gap-5">
+            <!-- Email Field -->
             <div class="grid gap-2">
-                <Label for="email">Email</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    required
-                    autofocus
-                    :tabindex="1"
-                    autocomplete="email"
-                    placeholder="email@example.com"
-                />
+                <Label for="email" class="text-xs font-bold text-gray-700 tracking-wide uppercase">Alamat Email</Label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                        <Mail class="h-4.5 w-4.5" />
+                    </div>
+                    <Input
+                        id="email"
+                        type="email"
+                        name="email"
+                        required
+                        autofocus
+                        :tabindex="1"
+                        autocomplete="email"
+                        placeholder="Masukkan email terdaftar"
+                        class="w-full pl-10.5 h-12! rounded-xl border border-gray-200 focus-visible:border-blue-500! focus-visible:ring-0! focus-visible:ring-offset-0! focus-visible:outline-none! transition-all duration-200 bg-gray-50/20 shadow-none"
+                    />
+                </div>
                 <InputError :message="errors.email" />
             </div>
 
+            <!-- Password Field -->
             <div class="grid gap-2">
-                <Label for="password">Password</Label>
-                <PasswordInput
-                    id="password"
-                    name="password"
-                    required
-                    :tabindex="2"
-                    autocomplete="current-password"
-                    placeholder="Password"
-                />
+                <div class="flex items-center justify-between">
+                    <Label for="password" class="text-xs font-bold text-gray-700 tracking-wide uppercase">Kata Sandi</Label>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 z-10">
+                        <Lock class="h-4.5 w-4.5" />
+                    </div>
+                    <PasswordInput
+                        id="password"
+                        name="password"
+                        required
+                        :tabindex="2"
+                        autocomplete="current-password"
+                        placeholder="Masukkan password Anda"
+                        class="w-full pl-10.5 h-12! rounded-xl border border-gray-250 focus-visible:border-blue-500! focus-visible:ring-0! focus-visible:ring-offset-0! focus-visible:outline-none! transition-all duration-200 bg-gray-50/20 shadow-none"
+                    />
+                </div>
                 <InputError :message="errors.password" />
             </div>
 
-            <Button
+            <!-- Submit Button -->
+            <button
                 type="submit"
-                class="mt-4 w-full"
+                class="mt-4 w-full bg-[#FCD116] hover:bg-[#E0B810] text-gray-950 font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-yellow-500/10 hover:shadow-yellow-500/25 active:translate-y-0 flex items-center justify-center gap-2 border border-[#E0B810]/30 cursor-pointer"
                 :tabindex="3"
                 :disabled="processing"
-                data-test="login-button"
             >
-                <Spinner v-if="processing" />
-                Login
-            </Button>
+                <Spinner v-if="processing" class="text-gray-950 h-5 w-5" />
+                <span>Masuk ke Akun</span>
+            </button>
         </div>
     </Form>
 </template>
+
+<style scoped>
+/* Custom style to override browser autofill background and text color to match Golkar theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #fffdf0 inset !important; /* soft yellow background */
+    -webkit-text-fill-color: #111827 !important;
+    border-color: #FCD116 !important; /* Golkar Yellow */
+    transition: background-color 5000s ease-in-out 0s;
+}
+</style>
+
+

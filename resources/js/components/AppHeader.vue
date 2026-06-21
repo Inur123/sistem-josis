@@ -33,7 +33,6 @@ import {
 } from '@/components/ui/tooltip';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
@@ -254,9 +253,9 @@ const rightNavItems: NavItem[] = [
                                         :alt="auth.user.name"
                                     />
                                     <AvatarFallback
-                                        class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
+                                        class="rounded-lg bg-amber-500/5 flex items-center justify-center p-0.5"
                                     >
-                                        {{ getInitials(auth.user?.name) }}
+                                        <img src="/images/logo_golkar.svg" alt="Golkar" class="h-6 w-6 object-contain" />
                                     </AvatarFallback>
                                 </Avatar>
                             </Button>

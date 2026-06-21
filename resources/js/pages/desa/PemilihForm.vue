@@ -111,10 +111,10 @@ defineOptions({
                             placeholder="16 digit NIK"
                             required
                             :class="[
-                                'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none focus:ring-2',
+                                'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none',
                                 form.errors.nik
-                                    ? 'border-red-400 focus:ring-red-100'
-                                    : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                                    ? 'border-red-400 focus:border-red-500'
+                                    : 'border-gray-200 focus:border-blue-500',
                             ]"
                         />
                         <p v-if="form.errors.nik" class="text-xs text-red-500">
@@ -138,10 +138,10 @@ defineOptions({
                             placeholder="Nama sesuai KTP"
                             required
                             :class="[
-                                'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none focus:ring-2',
+                                'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none',
                                 form.errors.nama
-                                    ? 'border-red-400 focus:ring-red-100'
-                                    : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                                    ? 'border-red-400 focus:border-red-500'
+                                    : 'border-gray-200 focus:border-blue-500',
                             ]"
                         />
                         <p v-if="form.errors.nama" class="text-xs text-red-500">
@@ -206,10 +206,10 @@ defineOptions({
                             placeholder="Alamat lengkap"
                             required
                             :class="[
-                                'w-full resize-y rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none focus:ring-2',
+                                'w-full resize-y rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none',
                                 form.errors.alamat
-                                    ? 'border-red-400 focus:ring-red-100'
-                                    : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                                    ? 'border-red-400 focus:border-red-500'
+                                    : 'border-gray-200 focus:border-blue-500',
                             ]"
                         />
                         <p
@@ -233,10 +233,10 @@ defineOptions({
                             v-model="form.relawan_id"
                             required
                             :class="[
-                                'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none focus:ring-2',
+                                'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none',
                                 form.errors.relawan_id
-                                    ? 'border-red-400 focus:ring-red-100'
-                                    : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                                    ? 'border-red-400 focus:border-red-500'
+                                    : 'border-gray-200 focus:border-blue-500',
                             ]"
                         >
                             <option value="" disabled>Pilih Relawan</option>
@@ -266,10 +266,10 @@ defineOptions({
                                 v-model="form.rt"
                                 required
                                 :class="[
-                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none focus:ring-2',
+                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none',
                                     form.errors.rt
-                                        ? 'border-red-400 focus:ring-red-100'
-                                        : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                                        ? 'border-red-400 focus:border-red-500'
+                                        : 'border-gray-200 focus:border-blue-500',
                                 ]"
                             >
                                 <option value="" disabled>Pilih RT</option>
@@ -296,10 +296,10 @@ defineOptions({
                                 v-model="form.rw"
                                 required
                                 :class="[
-                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none focus:ring-2',
+                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none',
                                     form.errors.rw
-                                        ? 'border-red-400 focus:ring-red-100'
-                                        : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                                        ? 'border-red-400 focus:border-red-500'
+                                        : 'border-gray-200 focus:border-blue-500',
                                 ]"
                             >
                                 <option value="" disabled>Pilih RW</option>

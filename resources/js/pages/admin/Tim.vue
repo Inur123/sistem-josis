@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { Plus, Search, Trash2, Edit, X } from '@lucide/vue';
+import { Plus, Search, Trash2, Edit, X, Phone, MapPin } from '@lucide/vue';
 import { ref, computed } from 'vue';
 import adminRoutes from '@/routes/admin';
 
@@ -228,6 +228,15 @@ const submitDelete = () => {
         });
     }
 };
+
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Dashboard', href: adminRoutes.dashboard.url() },
+            { title: 'Kelola Tim', href: adminRoutes.tim.index.url() },
+        ],
+    },
+});
 </script>
 
 <template>
@@ -290,7 +299,7 @@ const submitDelete = () => {
                     v-model="searchQuery"
                     type="text"
                     placeholder="Cari wilayah atau nama anggota..."
-                    class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 pr-4 pl-10 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                    class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 pr-4 pl-10 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                 />
             </div>
         </div>
@@ -326,8 +335,8 @@ const submitDelete = () => {
                                                 <span v-if="member.nik" class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">NIK: {{ member.nik }}</span>
                                             </div>
                                             <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                                                <span v-if="member.no_hp" class="flex items-center gap-1">📞 {{ member.no_hp }}</span>
-                                                <span v-if="member.alamat" class="flex items-center gap-1">📍 {{ member.alamat }}</span>
+                                                <span v-if="member.no_hp" class="flex items-center gap-1"><Phone class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.no_hp }}</span>
+                                                <span v-if="member.alamat" class="flex items-center gap-1"><MapPin class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.alamat }}</span>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2.5">
@@ -389,8 +398,8 @@ const submitDelete = () => {
                                                 <span v-if="member.nik" class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">NIK: {{ member.nik }}</span>
                                             </div>
                                             <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                                                <span v-if="member.no_hp" class="flex items-center gap-1">📞 {{ member.no_hp }}</span>
-                                                <span v-if="member.alamat" class="flex items-center gap-1">📍 {{ member.alamat }}</span>
+                                                <span v-if="member.no_hp" class="flex items-center gap-1"><Phone class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.no_hp }}</span>
+                                                <span v-if="member.alamat" class="flex items-center gap-1"><MapPin class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.alamat }}</span>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2.5">
@@ -452,8 +461,8 @@ const submitDelete = () => {
                                                 <span v-if="member.nik" class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">NIK: {{ member.nik }}</span>
                                             </div>
                                             <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                                                <span v-if="member.no_hp" class="flex items-center gap-1">📞 {{ member.no_hp }}</span>
-                                                <span v-if="member.alamat" class="flex items-center gap-1">📍 {{ member.alamat }}</span>
+                                                <span v-if="member.no_hp" class="flex items-center gap-1"><Phone class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.no_hp }}</span>
+                                                <span v-if="member.alamat" class="flex items-center gap-1"><MapPin class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.alamat }}</span>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2.5">
@@ -511,7 +520,7 @@ const submitDelete = () => {
                     <select
                         v-model="form.role"
                         @change="handleRoleChange"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                     >
                         <option value="korcam">Koordinator Kecamatan (Korcam)</option>
@@ -525,7 +534,7 @@ const submitDelete = () => {
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kecamatan</label>
                     <select
                         v-model="form.kecamatan_id"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                     >
                         <option :value="null" disabled>Pilih Kecamatan</option>
@@ -540,7 +549,7 @@ const submitDelete = () => {
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Desa / Kelurahan</label>
                     <select
                         v-model="form.desa_id"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                         :disabled="!form.kecamatan_id"
                     >
@@ -560,7 +569,7 @@ const submitDelete = () => {
                         v-model="form.nama"
                         type="text"
                         placeholder="Masukkan nama lengkap"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                     />
                 </div>
@@ -573,7 +582,7 @@ const submitDelete = () => {
                         type="text"
                         placeholder="Masukkan 16 digit NIK"
                         maxlength="16"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                     />
                 </div>
 
@@ -584,7 +593,7 @@ const submitDelete = () => {
                         v-model="form.no_hp"
                         type="text"
                         placeholder="Contoh: 08123456789"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                     />
                 </div>
 
@@ -595,7 +604,7 @@ const submitDelete = () => {
                         v-model="form.alamat"
                         rows="2"
                         placeholder="Alamat domisili"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-gray-900 focus:bg-white resize-none"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white resize-none"
                     ></textarea>
                 </div>
 

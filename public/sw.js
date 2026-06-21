@@ -2,8 +2,8 @@ const CACHE_NAME = 'josis-cache-v1';
 const ASSETS = [
   '/login',
   '/manifest.json',
-  '/pwa-192x192.png',
-  '/pwa-512x512.png'
+  '/images/pwa-192x192.png',
+  '/images/pwa-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -59,6 +59,18 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    --color-blue-50: hsl(49 100% 96%);
+    --color-blue-100: hsl(49 97% 90%);
+    --color-blue-200: hsl(49 97% 80%);
+    --color-blue-300: hsl(49 97% 70%);
+    --color-blue-400: hsl(49 97% 62%);
+    --color-blue-500: hsl(49 97% 54%);
+    --color-blue-600: hsl(48 87% 47%);
+    --color-blue-700: hsl(48 87% 38%);
+    --color-blue-800: hsl(48 87% 29%);
+    --color-blue-900: hsl(48 87% 20%);
+    --color-blue-950: hsl(48 87% 10%);
 }
 
 /*
@@ -128,9 +140,18 @@
 
 @layer base {
     * {
-        @apply border-border outline-ring/50;
+        @apply border-border;
     }
     body {
         @apply bg-background text-foreground;
+    }
+    a,
+    button,
+    select,
+    [role="button"],
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="submit"] {
+        cursor: pointer;
     }
 }
