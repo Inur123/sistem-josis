@@ -30,6 +30,29 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Auth\Events\Login::class,
             function (\Illuminate\Auth\Events\Login $event) {
                 session()->flash('success', 'Selamat datang kembali! Anda berhasil login.');
+
+                /** @var \App\Models\User $user */
+                $user = $event->user;
+
+                activity()
+                    ->causedBy($user)
+                    ->event('login')
+                    ->log("Pengguna berhasil login: {$user->email}");
+            }
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Logout::class,
+            function (\Illuminate\Auth\Events\Logout $event) {
+                /** @var \App\Models\User|null $user */
+                $user = $event->user;
+
+                if ($user) {
+                    activity()
+                        ->causedBy($user)
+                        ->event('logout')
+                        ->log("Pengguna berhasil logout: {$user->email}");
+                }
             }
         );
     }

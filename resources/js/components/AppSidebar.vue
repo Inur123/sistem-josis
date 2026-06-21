@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutDashboard, Users, ClipboardList, UserCog } from '@lucide/vue';
+import { LayoutDashboard, Users, ClipboardList, UserCog, Activity } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -39,6 +39,7 @@ const adminNav: NavItem[] = [
         icon: ClipboardList,
     },
     { title: 'Kelola Akun', href: admin.akun.index.url(), icon: UserCog },
+    { title: 'Log Aktivitas', href: admin.activityLogs.url(), icon: Activity },
 ];
 
 const kecamatanNav: NavItem[] = [

@@ -59,6 +59,11 @@ class AkunService
 
         $user->save();
 
+        activity()
+            ->performedOn($user)
+            ->event('updated')
+            ->log("Mengubah data akun: {$user->email} ({$user->name})");
+
         return null;
     }
 
@@ -73,6 +78,11 @@ class AkunService
         if ($user->id === Auth::id()) {
             return ['error' => 'Anda tidak dapat menghapus akun Anda sendiri.'];
         }
+
+        activity()
+            ->performedOn($user)
+            ->event('deleted')
+            ->log("Menghapus akun: {$user->email} ({$user->name})");
 
         DB::table('users')->where('id', $user->id)->delete();
 

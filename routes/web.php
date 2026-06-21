@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PemilihController as AdminPemilihController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
+use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
 use App\Http\Controllers\Kecamatan\DashboardController as KecamatanDashboardController;
 use App\Http\Controllers\Kecamatan\PemilihController as KecamatanPemilihController;
 use App\Http\Controllers\Desa\DashboardController as DesaDashboardController;
@@ -61,6 +62,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/akun', [AdminAkunController::class, 'index'])->name('akun.index');
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
+        Route::get('/activity-logs', AdminActivityLogController::class)->name('activity-logs');
     });
 
 /*

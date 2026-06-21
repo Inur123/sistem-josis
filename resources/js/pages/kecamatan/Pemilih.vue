@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
+import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { ref, watch } from 'vue';
 
 interface Pemilih {
@@ -14,6 +15,12 @@ interface Pemilih {
     created_at: string;
 }
 
+interface LinkItem {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface PaginatedPemilih {
     data: Pemilih[];
     current_page: number;
@@ -22,6 +29,7 @@ interface PaginatedPemilih {
     per_page: number;
     next_page_url: string | null;
     prev_page_url: string | null;
+    links: LinkItem[];
 }
 
 interface DropdownItem {
@@ -294,24 +302,49 @@ defineOptions({
             <!-- Pagination -->
             <div
                 v-if="props.pemilihs.last_page > 1"
-                class="flex items-center justify-center gap-3 border-t border-gray-100 py-4"
+                class="flex items-center justify-end gap-1.5 border-t border-gray-100 px-6 py-4"
             >
-                <Link
-                    v-if="props.pemilihs.prev_page_url"
-                    :href="props.pemilihs.prev_page_url"
-                    class="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200"
-                    >← Sebelumnya</Link
-                >
-                <span class="text-sm text-gray-500">
-                    Halaman {{ props.pemilihs.current_page }} /
-                    {{ props.pemilihs.last_page }}
-                </span>
-                <Link
-                    v-if="props.pemilihs.next_page_url"
-                    :href="props.pemilihs.next_page_url"
-                    class="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200"
-                    >Selanjutnya →</Link
-                >
+                <template v-for="(link, index) in props.pemilihs.links" :key="index">
+                    <!-- Disabled prev/next or dots -->
+                    <span
+                        v-if="link.url === null"
+                        class="px-2 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-1 select-none font-medium"
+                    >
+                        <template v-if="link.label.includes('Previous')">
+                            <ChevronLeft class="w-4 h-4" /> Previous
+                        </template>
+                        <template v-else-if="link.label.includes('Next')">
+                            Next <ChevronRight class="w-4 h-4" />
+                        </template>
+                        <template v-else>
+                            {{ link.label }}
+                        </template>
+                    </span>
+
+                    <!-- Active Page or Clickable links -->
+                    <Link
+                        v-else
+                        :href="link.url"
+                        :class="[
+                            'text-sm transition-all duration-150 flex items-center justify-center font-medium',
+                            link.label.includes('Previous') || link.label.includes('Next')
+                                ? 'px-2 py-2 text-gray-600 hover:text-gray-900 gap-1'
+                                : link.active
+                                ? 'bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-gray-900'
+                                : 'px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl'
+                        ]"
+                    >
+                        <template v-if="link.label.includes('Previous')">
+                            <ChevronLeft class="w-4 h-4" /> Previous
+                        </template>
+                        <template v-else-if="link.label.includes('Next')">
+                            Next <ChevronRight class="w-4 h-4" />
+                        </template>
+                        <template v-else>
+                            {{ link.label }}
+                        </template>
+                    </Link>
+                </template>
             </div>
         </div>
     </div>

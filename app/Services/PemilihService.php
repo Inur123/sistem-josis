@@ -112,7 +112,7 @@ class PemilihService
             return ['nik' => 'NIK sudah terdaftar dalam sistem.'];
         }
 
-        Pemilih::create([
+        $pemilih = Pemilih::create([
             'nik'           => $data['nik'],
             'nik_hash'      => $nikHash,
             'nama'          => $data['nama'],
@@ -124,6 +124,11 @@ class PemilihService
             'kecamatan_id'  => $kecamatanId,
             'user_id'       => $userId,
         ]);
+
+        activity()
+            ->performedOn($pemilih)
+            ->event('created')
+            ->log("Menambahkan pemilih baru: {$data['nama']}");
 
         return null;
     }
@@ -152,6 +157,11 @@ class PemilihService
         $pemilih->rw            = $data['rw'];
         $pemilih->save();
 
+        activity()
+            ->performedOn($pemilih)
+            ->event('updated')
+            ->log("Mengubah data pemilih: {$data['nama']}");
+
         return null;
     }
 
@@ -160,6 +170,11 @@ class PemilihService
      */
     public function destroy(Pemilih $pemilih): void
     {
+        activity()
+            ->performedOn($pemilih)
+            ->event('deleted')
+            ->log("Menghapus data pemilih: {$pemilih->nama}");
+
         DB::table('pemilihs')->where('id', $pemilih->id)->delete();
     }
 }
