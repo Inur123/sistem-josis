@@ -56,4 +56,12 @@ class Kecamatan extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    /**
+     * Relasi ke anggota tim.
+     */
+    public function anggotaTims(): HasMany
+    {
+        return $this->hasMany(AnggotaTim::class);
+    }
 }

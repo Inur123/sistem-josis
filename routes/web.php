@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
+use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PemilihController as AdminPemilihController;
-use App\Http\Controllers\Admin\AkunController as AdminAkunController;
-use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
-use App\Http\Controllers\Kecamatan\DashboardController as KecamatanDashboardController;
-use App\Http\Controllers\Kecamatan\PemilihController as KecamatanPemilihController;
+use App\Http\Controllers\Admin\TimController as AdminTimController;
 use App\Http\Controllers\Desa\DashboardController as DesaDashboardController;
 use App\Http\Controllers\Desa\PemilihController as DesaPemilihController;
+use App\Http\Controllers\Kecamatan\DashboardController as KecamatanDashboardController;
+use App\Http\Controllers\Kecamatan\PemilihController as KecamatanPemilihController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,7 @@ Route::get('/', fn () => redirect()->route('login'))->name('home');
 */
 
 Route::get('/dashboard', function () {
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = auth()->user();
 
     // Reflash session agar flash message (seperti toast sukses login) bertahan melewati double redirect
@@ -63,6 +64,9 @@ Route::middleware(['auth', 'role:admin'])
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
         Route::get('/activity-logs', AdminActivityLogController::class)->name('activity-logs');
+        Route::get('/relawan', [\App\Http\Controllers\Admin\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}/pemilihs', [\App\Http\Controllers\Admin\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::resource('/tim', AdminTimController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 
 /*
@@ -77,6 +81,8 @@ Route::middleware(['auth', 'role:kecamatan'])
     ->group(function () {
         Route::get('/dashboard', KecamatanDashboardController::class)->name('dashboard');
         Route::get('/pemilih', [KecamatanPemilihController::class, 'index'])->name('pemilih.index');
+        Route::get('/relawan', [\App\Http\Controllers\Kecamatan\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}/pemilihs', [\App\Http\Controllers\Kecamatan\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });
 
 /*
@@ -90,10 +96,12 @@ Route::middleware(['auth', 'role:desa'])
     ->name('desa.')
     ->group(function () {
         Route::get('/dashboard', DesaDashboardController::class)->name('dashboard');
-        Route::get('/pemilih',                 [DesaPemilihController::class, 'index'])  ->name('pemilih.index');
-        Route::get('/pemilih/tambah',          [DesaPemilihController::class, 'create']) ->name('pemilih.create');
-        Route::post('/pemilih',                [DesaPemilihController::class, 'store'])  ->name('pemilih.store');
-        Route::get('/pemilih/{pemilih}/edit',  [DesaPemilihController::class, 'edit'])   ->name('pemilih.edit');
-        Route::put('/pemilih/{pemilih}',       [DesaPemilihController::class, 'update']) ->name('pemilih.update');
-        Route::delete('/pemilih/{pemilih}',    [DesaPemilihController::class, 'destroy'])->name('pemilih.destroy');
+        Route::get('/pemilih', [DesaPemilihController::class, 'index'])->name('pemilih.index');
+        Route::get('/pemilih/tambah', [DesaPemilihController::class, 'create'])->name('pemilih.create');
+        Route::post('/pemilih', [DesaPemilihController::class, 'store'])->name('pemilih.store');
+        Route::get('/pemilih/{pemilih}/edit', [DesaPemilihController::class, 'edit'])->name('pemilih.edit');
+        Route::put('/pemilih/{pemilih}', [DesaPemilihController::class, 'update'])->name('pemilih.update');
+        Route::delete('/pemilih/{pemilih}', [DesaPemilihController::class, 'destroy'])->name('pemilih.destroy');
+        Route::get('/relawan', [\App\Http\Controllers\Desa\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}/pemilihs', [\App\Http\Controllers\Desa\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });

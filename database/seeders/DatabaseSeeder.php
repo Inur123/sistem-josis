@@ -16,5 +16,8 @@ class DatabaseSeeder extends Seeder
 
         // Step 3: Akun user (admin, kecamatan, desa)
         $this->call(UserSeeder::class);
+
+        // Step 4: Data tim (korcam, kordes, relawan)
+        $this->call(TimSeeder::class);
     }
 }

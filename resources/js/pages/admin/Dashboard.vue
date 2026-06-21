@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
+import { Eye } from '@lucide/vue';
+import adminRoutes from '@/routes/admin';
 
 interface Props {
     stats: {
@@ -9,6 +11,7 @@ interface Props {
         total_akun: number;
     };
     per_kecamatan: Array<{
+        id: string;
         nama: string;
         total: number;
         l: number;
@@ -177,6 +180,7 @@ defineOptions({
                             <th class="px-5 py-3 text-right">Jumlah Pemilih</th>
                             <th class="px-5 py-3 text-right">Laki-laki</th>
                             <th class="px-5 py-3 text-right">Perempuan</th>
+                            <th class="px-5 py-3 text-center w-[120px]">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -200,10 +204,19 @@ defineOptions({
                             <td class="px-5 py-3 text-right text-gray-900">
                                 {{ item.p.toLocaleString('id-ID') }}
                             </td>
+                            <td class="px-5 py-3 text-center">
+                                <Link
+                                    :href="adminRoutes.pemilih.index.url({ query: { kecamatan_id: item.id } })"
+                                    class="inline-flex items-center justify-center gap-1 rounded-lg border border-gray-250 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50"
+                                >
+                                    <Eye class="h-3.5 w-3.5" />
+                                    Detail
+                                </Link>
+                            </td>
                         </tr>
                         <tr v-if="!props.per_kecamatan.length">
                             <td
-                                colspan="5"
+                                colspan="6"
                                 class="px-5 py-10 text-center text-gray-400"
                             >
                                 Belum ada data pemilih

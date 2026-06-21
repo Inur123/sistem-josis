@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { ChevronLeft, ChevronRight } from '@lucide/vue';
-import { ref, watch, computed } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import { Loader2 } from '@lucide/vue';
+import { ref, watch, computed, reactive } from 'vue';
+import PaginationBar from '@/components/PaginationBar.vue';
 import adminRoutes from '@/routes/admin';
 
 interface Pemilih {
@@ -14,6 +15,7 @@ interface Pemilih {
     rw: string;
     kecamatan: string;
     desa: string;
+    relawan?: string;
     created_at: string;
 }
 
@@ -59,6 +61,30 @@ const props = defineProps<{
 const searchVal = ref(props.filters.search ?? '');
 const selectedKecamatan = ref(props.filters.kecamatan_id ?? '');
 const selectedDesa = ref(props.filters.desa_id ?? '');
+
+// ─── State ────────────────────────────────────────────────────────────────────
+const currentPage = ref(props.pemilihs.current_page);
+const totalPages  = ref(props.pemilihs.last_page);
+const currentData = ref<Pemilih[]>([...props.pemilihs.data]);
+const currentSummary = ref({ ...props.summary });
+const loading     = ref(false);
+
+const pageCache = reactive<Record<number, Pemilih[]>>({
+    [props.pemilihs.current_page]: [...props.pemilihs.data],
+});
+
+// Watch props to reset when filters change (via Inertia reload)
+watch(() => props.pemilihs, (newPemilihs) => {
+    currentPage.value = newPemilihs.current_page;
+    totalPages.value = newPemilihs.last_page;
+    currentData.value = [...newPemilihs.data];
+    Object.keys(pageCache).forEach(k => delete pageCache[Number(k)]);
+    pageCache[newPemilihs.current_page] = [...newPemilihs.data];
+}, { deep: true });
+
+watch(() => props.summary, (newSummary) => {
+    currentSummary.value = { ...newSummary };
+}, { deep: true });
 
 // Filter desas options based on selected kecamatan
 const filteredDesas = computed(() => {
@@ -117,6 +143,52 @@ function clearFilters() {
     router.get(adminRoutes.pemilih.index.url());
 }
 
+async function goToPage(page: number) {
+    if (page < 1 || page > totalPages.value || page === currentPage.value || loading.value) {
+        return;
+    }
+
+    if (pageCache[page]) {
+        currentPage.value = page;
+        currentData.value = pageCache[page];
+
+        return;
+    }
+
+    loading.value = true;
+
+    try {
+        const queryParams = new URLSearchParams({
+            page: String(page),
+            ...(searchVal.value ? { search: searchVal.value } : {}),
+            ...(selectedKecamatan.value ? { kecamatan_id: selectedKecamatan.value } : {}),
+            ...(selectedDesa.value ? { desa_id: selectedDesa.value } : {}),
+        });
+        const res = await fetch(`/admin/pemilih?${queryParams.toString()}`, {
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (!res.ok) {
+throw new Error('Gagal memuat data');
+}
+
+        const json = await res.json();
+
+        pageCache[page] = json.paginated.data;
+        currentPage.value = page;
+        currentData.value = json.paginated.data;
+        totalPages.value = json.paginated.last_page;
+        currentSummary.value = json.summary;
+    } catch (e) {
+        console.error('Error fetching pemilihs:', e);
+    } finally {
+        loading.value = false;
+    }
+}
+
 defineOptions({
     layout: {
         breadcrumbs: [
@@ -138,7 +210,7 @@ defineOptions({
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
                     Total
-                    {{ props.pemilihs.total.toLocaleString('id-ID') }} pemilih
+                    {{ currentSummary.total.toLocaleString('id-ID') }} pemilih
                     terdaftar di seluruh wilayah.
                 </p>
             </div>
@@ -156,7 +228,7 @@ defineOptions({
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
-                    {{ props.summary.total.toLocaleString('id-ID') }}
+                    {{ currentSummary.total.toLocaleString('id-ID') }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Total Pemilih (Terfilter)</div>
             </div>
@@ -170,7 +242,7 @@ defineOptions({
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
-                    {{ props.summary.l.toLocaleString('id-ID') }}
+                    {{ currentSummary.l.toLocaleString('id-ID') }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Laki-laki</div>
             </div>
@@ -184,7 +256,7 @@ defineOptions({
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
-                    {{ props.summary.p.toLocaleString('id-ID') }}
+                    {{ currentSummary.p.toLocaleString('id-ID') }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Perempuan</div>
             </div>
@@ -263,7 +335,15 @@ defineOptions({
         <div
             class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
         >
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto relative">
+                <!-- Loading Overlay -->
+                <div
+                    v-if="loading"
+                    class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70"
+                >
+                    <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
+                </div>
+
                 <table class="w-full text-sm">
                     <thead>
                         <tr
@@ -277,18 +357,19 @@ defineOptions({
                             <th class="px-4 py-3">Desa / Kel</th>
                             <th class="px-4 py-3">Alamat</th>
                             <th class="px-4 py-3 text-center">RT/RW</th>
+                            <th class="px-4 py-3">Relawan</th>
                             <th class="px-4 py-3">Tanggal Input</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         <tr
-                            v-for="(p, i) in props.pemilihs.data"
+                            v-for="(p, i) in currentData"
                             :key="p.id"
                             class="hover:bg-gray-50"
                         >
                             <td class="px-4 py-3 text-gray-400">
                                 {{
-                                    (props.pemilihs.current_page - 1) *
+                                    (currentPage - 1) *
                                         props.pemilihs.per_page +
                                     i +
                                     1
@@ -327,13 +408,16 @@ defineOptions({
                             <td class="px-4 py-3 text-center text-gray-600">
                                 {{ p.rt }}/{{ p.rw }}
                             </td>
+                            <td class="px-4 py-3 text-gray-600">
+                                {{ p.relawan ?? '-' }}
+                            </td>
                             <td class="px-4 py-3 text-xs text-gray-400">
                                 {{ p.created_at }}
                             </td>
                         </tr>
-                        <tr v-if="!props.pemilihs.data.length">
+                        <tr v-if="!currentData.length && !loading">
                             <td
-                                colspan="9"
+                                colspan="10"
                                 class="px-4 py-12 text-center text-sm text-gray-400"
                             >
                                 Tidak ada data pemilih ditemukan.
@@ -344,51 +428,13 @@ defineOptions({
             </div>
 
             <!-- Pagination -->
-            <div
-                v-if="props.pemilihs.last_page > 1"
-                class="flex items-center justify-end gap-1.5 border-t border-gray-100 px-6 py-4"
-            >
-                <template v-for="(link, index) in props.pemilihs.links" :key="index">
-                    <!-- Disabled prev/next or dots -->
-                    <span
-                        v-if="link.url === null"
-                        class="px-2 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-1 select-none font-medium"
-                    >
-                        <template v-if="link.label.includes('Previous')">
-                            <ChevronLeft class="w-4 h-4" /> Previous
-                        </template>
-                        <template v-else-if="link.label.includes('Next')">
-                            Next <ChevronRight class="w-4 h-4" />
-                        </template>
-                        <template v-else>
-                            {{ link.label }}
-                        </template>
-                    </span>
-
-                    <!-- Active Page or Clickable links -->
-                    <Link
-                        v-else
-                        :href="link.url"
-                        :class="[
-                            'text-sm transition-all duration-150 flex items-center justify-center font-medium',
-                            link.label.includes('Previous') || link.label.includes('Next')
-                                ? 'px-2 py-2 text-gray-600 hover:text-gray-900 gap-1'
-                                : link.active
-                                ? 'bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-gray-900'
-                                : 'px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl'
-                        ]"
-                    >
-                        <template v-if="link.label.includes('Previous')">
-                            <ChevronLeft class="w-4 h-4" /> Previous
-                        </template>
-                        <template v-else-if="link.label.includes('Next')">
-                            Next <ChevronRight class="w-4 h-4" />
-                        </template>
-                        <template v-else>
-                            {{ link.label }}
-                        </template>
-                    </Link>
-                </template>
+            <div v-if="totalPages > 1" class="px-4">
+                <PaginationBar
+                    :current-page="currentPage"
+                    :total-pages="totalPages"
+                    :loading="loading"
+                    @go="goToPage"
+                />
             </div>
         </div>
     </div>

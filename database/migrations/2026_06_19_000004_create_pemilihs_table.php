@@ -37,6 +37,10 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
+            $table->foreignUlid('relawan_id')
+                ->constrained('anggota_tim')
+                ->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

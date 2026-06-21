@@ -3,26 +3,75 @@
 namespace App\Http\Controllers\Kecamatan;
 
 use App\Http\Controllers\Controller;
-use App\Services\DashboardService;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __construct(private DashboardService $dashboard) {}
-
     public function __invoke(Request $request): Response
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
 
-        $data = $this->dashboard->kecamatanStats($user->kecamatan_id);
+        $kecamatanId = $user->kecamatan_id;
+        $kecamatanNama = DB::table('kecamatans')->where('id', $kecamatanId)->value('nama');
+
+        $totalPemilih = DB::table('pemilihs')->where('kecamatan_id', $kecamatanId)->count();
+        $totalDesa = DB::table('desas')->where('kecamatan_id', $kecamatanId)->count();
+
+        $perDesa = DB::table('desas')
+            ->leftJoin('pemilihs', 'pemilihs.desa_id', '=', 'desas.id')
+            ->where('desas.kecamatan_id', $kecamatanId)
+            ->select(
+                'desas.id',
+                'desas.nama',
+                DB::raw('COUNT(pemilihs.id) as total'),
+                DB::raw("SUM(CASE WHEN pemilihs.jenis_kelamin = 'L' THEN 1 ELSE 0 END) as l"),
+                DB::raw("SUM(CASE WHEN pemilihs.jenis_kelamin = 'P' THEN 1 ELSE 0 END) as p")
+            )
+            ->groupBy('desas.id', 'desas.nama')
+            ->orderBy('desas.nama', 'asc')
+            ->get()
+            ->map(fn ($desa) => [
+                'id' => $desa->id,
+                'nama' => $desa->nama,
+                'total' => (int) $desa->total,
+                'l' => (int) $desa->l,
+                'p' => (int) $desa->p,
+            ]);
+
+        $korcams = \App\Models\AnggotaTim::query()
+            ->where('kecamatan_id', $kecamatanId)
+            ->where('role', 'korcam')
+            ->get()
+            ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
+            ->pluck('nama')
+            ->values();
+
+        $kordes = \App\Models\AnggotaTim::query()
+            ->with('desa')
+            ->where('kecamatan_id', $kecamatanId)
+            ->where('role', 'kordes')
+            ->get()
+            ->map(fn ($item) => [
+                'nama' => $item->nama,
+                'desa' => $item->desa?->nama ?? '-',
+            ])
+            ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
 
         return Inertia::render('kecamatan/Dashboard', [
-            'kecamatan' => $data['kecamatan'],
-            'stats'     => $data['stats'],
-            'per_desa'  => $data['per_desa'],
+            'kecamatan' => $kecamatanNama,
+            'korcams' => $korcams,
+            'kordes' => $kordes,
+            'stats' => [
+                'total_pemilih' => $totalPemilih,
+                'total_desa' => $totalDesa,
+            ],
+            'per_desa' => $perDesa,
         ]);
     }
 }

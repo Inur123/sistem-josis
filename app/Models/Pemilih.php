@@ -58,6 +58,7 @@ class Pemilih extends Model
         'desa_id',
         'kecamatan_id',
         'user_id',
+        'relawan_id',
     ];
 
     protected function casts(): array
@@ -97,5 +98,10 @@ class Pemilih extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function relawan(): BelongsTo
+    {
+        return $this->belongsTo(AnggotaTim::class, 'relawan_id');
     }
 }

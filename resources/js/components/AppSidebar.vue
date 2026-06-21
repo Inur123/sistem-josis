@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutDashboard, Users, ClipboardList, UserCog, Activity } from '@lucide/vue';
+import { LayoutDashboard, Users, ClipboardList, UserCog, Activity, UserPlus } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -30,6 +30,7 @@ function handleLinkClick() {
         setOpenMobile(false);
     }
 }
+
 // Nav items per role
 const adminNav: NavItem[] = [
     { title: 'Dashboard', href: admin.dashboard.url(), icon: LayoutDashboard },
@@ -39,6 +40,8 @@ const adminNav: NavItem[] = [
         icon: ClipboardList,
     },
     { title: 'Kelola Akun', href: admin.akun.index.url(), icon: UserCog },
+    { title: 'Kelola Tim', href: admin.tim.index.url(), icon: Users },
+    { title: 'Data Relawan', href: admin.relawan.index.url(), icon: Users },
     { title: 'Log Aktivitas', href: admin.activityLogs.url(), icon: Activity },
 ];
 
@@ -53,6 +56,11 @@ const kecamatanNav: NavItem[] = [
         href: kecamatan.pemilih.index.url(),
         icon: ClipboardList,
     },
+    {
+        title: 'Data Relawan',
+        href: kecamatan.relawan.index.url(),
+        icon: Users,
+    },
 ];
 
 const desaNav: NavItem[] = [
@@ -62,7 +70,8 @@ const desaNav: NavItem[] = [
         href: desa.pemilih.index.url(),
         icon: ClipboardList,
     },
-    { title: 'Tambah Data', href: desa.pemilih.create.url(), icon: Users },
+    { title: 'Tambah Data', href: desa.pemilih.create.url(), icon: UserPlus },
+    { title: 'Data Relawan', href: desa.relawan.index.url(), icon: Users },
 ];
 
 const mainNavItems = computed<NavItem[]>(() => {

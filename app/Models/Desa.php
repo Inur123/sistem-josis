@@ -60,4 +60,12 @@ class Desa extends Model
     {
         return $this->hasMany(Pemilih::class);
     }
+
+    /**
+     * Relasi ke anggota tim.
+     */
+    public function anggotaTims(): HasMany
+    {
+        return $this->hasMany(AnggotaTim::class);
+    }
 }

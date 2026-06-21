@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import desaRoutes from '@/routes/desa';
+
+interface RelawanData {
+    id: string;
+    nama: string;
+}
 
 interface PemilihData {
     id?: string;
@@ -11,15 +16,25 @@ interface PemilihData {
     alamat?: string;
     rt?: string;
     rw?: string;
+    relawan_id?: string;
 }
 
 const props = defineProps<{
     mode: 'create' | 'edit';
     desa: string;
     pemilih?: PemilihData;
+    relawans: RelawanData[];
 }>();
 
 const isEdit = computed(() => props.mode === 'edit');
+
+const rtRwOptions = computed(() => {
+    return Array.from({ length: 50 }, (_, i) => {
+        const num = i + 1;
+
+        return num.toString().padStart(3, '0');
+    });
+});
 
 const form = useForm({
     nik: props.pemilih?.nik ?? '',
@@ -28,6 +43,7 @@ const form = useForm({
     alamat: props.pemilih?.alamat ?? '',
     rt: props.pemilih?.rt ?? '',
     rw: props.pemilih?.rw ?? '',
+    relawan_id: props.pemilih?.relawan_id ?? '',
 });
 
 function submit() {
@@ -204,6 +220,38 @@ defineOptions({
                         </p>
                     </div>
 
+                    <!-- Relawan Pendamping -->
+                    <div class="flex flex-col gap-1.5">
+                        <label
+                            for="relawan_id"
+                            class="text-sm font-medium text-gray-700"
+                        >
+                            Relawan Pendamping <span class="text-red-500">*</span>
+                        </label>
+                        <select
+                            id="relawan_id"
+                            v-model="form.relawan_id"
+                            required
+                            :class="[
+                                'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none focus:ring-2',
+                                form.errors.relawan_id
+                                    ? 'border-red-400 focus:ring-red-100'
+                                    : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
+                            ]"
+                        >
+                            <option value="" disabled>Pilih Relawan</option>
+                            <option v-for="relawan in props.relawans" :key="relawan.id" :value="relawan.id">
+                                {{ relawan.nama }}
+                            </option>
+                        </select>
+                        <p
+                            v-if="form.errors.relawan_id"
+                            class="text-xs text-red-500"
+                        >
+                            {{ form.errors.relawan_id }}
+                        </p>
+                    </div>
+
                     <!-- RT / RW -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1.5">
@@ -213,23 +261,22 @@ defineOptions({
                             >
                                 RT <span class="text-red-500">*</span>
                             </label>
-                            <input
+                            <select
                                 id="rt"
                                 v-model="form.rt"
-                                @input="form.rt = form.rt.replace(/\D/g, '')"
-                                type="text"
-                                inputmode="numeric"
-                                pattern="[0-9]+"
-                                placeholder="001"
-                                maxlength="5"
                                 required
                                 :class="[
-                                    'w-full rounded-lg border px-3 py-2 text-sm transition outline-none focus:ring-2',
+                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none focus:ring-2',
                                     form.errors.rt
                                         ? 'border-red-400 focus:ring-red-100'
                                         : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
                                 ]"
-                            />
+                            >
+                                <option value="" disabled>Pilih RT</option>
+                                <option v-for="opt in rtRwOptions" :key="opt" :value="opt">
+                                    {{ opt }}
+                                </option>
+                            </select>
                             <p
                                 v-if="form.errors.rt"
                                 class="text-xs text-red-500"
@@ -244,23 +291,22 @@ defineOptions({
                             >
                                 RW <span class="text-red-500">*</span>
                             </label>
-                            <input
+                            <select
                                 id="rw"
                                 v-model="form.rw"
-                                @input="form.rw = form.rw.replace(/\D/g, '')"
-                                type="text"
-                                inputmode="numeric"
-                                pattern="[0-9]+"
-                                placeholder="001"
-                                maxlength="5"
                                 required
                                 :class="[
-                                    'w-full rounded-lg border px-3 py-2 text-sm transition outline-none focus:ring-2',
+                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none focus:ring-2',
                                     form.errors.rw
                                         ? 'border-red-400 focus:ring-red-100'
                                         : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100',
                                 ]"
-                            />
+                            >
+                                <option value="" disabled>Pilih RW</option>
+                                <option v-for="opt in rtRwOptions" :key="opt" :value="opt">
+                                    {{ opt }}
+                                </option>
+                            </select>
                             <p
                                 v-if="form.errors.rw"
                                 class="text-xs text-red-500"
@@ -272,10 +318,10 @@ defineOptions({
 
                     <!-- Actions -->
                     <div class="flex items-center gap-3 pt-2 w-full">
-                        <a
+                        <Link
                             :href="desaRoutes.pemilih.index.url()"
                             class="flex-1 text-center rounded-lg bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
-                            >Batal</a
+                            >Batal</Link
                         >
                         <button
                             type="submit"

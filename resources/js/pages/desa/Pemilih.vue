@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ChevronLeft, ChevronRight } from '@lucide/vue';
-import { ref, watch, computed } from 'vue';
+import { Loader2 } from '@lucide/vue';
+import { ref, watch, computed, reactive } from 'vue';
+import PaginationBar from '@/components/PaginationBar.vue';
 import desaRoutes from '@/routes/desa';
 
 interface Pemilih {
@@ -12,6 +13,7 @@ interface Pemilih {
     alamat: string;
     rt: string;
     rw: string;
+    relawan?: string;
     created_at: string;
 }
 
@@ -50,12 +52,36 @@ const confirmDelete = ref<string | null>(null);
 const searchVal = ref(props.filters.search ?? '');
 const selectedJk = ref(props.filters.jenis_kelamin ?? '');
 
+// ─── State ────────────────────────────────────────────────────────────────────
+const currentPage = ref(props.pemilihs.current_page);
+const totalPages  = ref(props.pemilihs.last_page);
+const currentData = ref<Pemilih[]>([...props.pemilihs.data]);
+const currentSummary = ref({ ...props.summary });
+const loading     = ref(false);
+
+const pageCache = reactive<Record<number, Pemilih[]>>({
+    [props.pemilihs.current_page]: [...props.pemilihs.data],
+});
+
+// Watch props to reset when filters change
+watch(() => props.pemilihs, (newPemilihs) => {
+    currentPage.value = newPemilihs.current_page;
+    totalPages.value = newPemilihs.last_page;
+    currentData.value = [...newPemilihs.data];
+    Object.keys(pageCache).forEach(k => delete pageCache[Number(k)]);
+    pageCache[newPemilihs.current_page] = [...newPemilihs.data];
+}, { deep: true });
+
+watch(() => props.summary, (newSummary) => {
+    currentSummary.value = { ...newSummary };
+}, { deep: true });
+
 const selectedVoter = computed(() => {
     if (!confirmDelete.value) {
-return null;
-}
+        return null;
+    }
 
-    return props.pemilihs.data.find((p) => p.id === confirmDelete.value) || null;
+    return currentData.value.find((p) => p.id === confirmDelete.value) || null;
 });
 
 watch(selectedJk, () => {
@@ -89,6 +115,21 @@ function applyFilters() {
     );
 }
 
+// Reset page cache when deleting voter
+function submitDelete() {
+    if (!confirmDelete.value) {
+        return;
+    }
+
+    router.delete(desaRoutes.pemilih.destroy.url(confirmDelete.value), {
+        onSuccess: () => {
+            confirmDelete.value = null;
+            // Clear page cache to reload fresh data
+            Object.keys(pageCache).forEach(k => delete pageCache[Number(k)]);
+        },
+    });
+}
+
 function clearFilters() {
     searchVal.value = '';
     selectedJk.value = '';
@@ -99,20 +140,53 @@ function openDeleteModal(id: string) {
     confirmDelete.value = id;
 }
 
-function submitDelete() {
-    if (!confirmDelete.value) {
-return;
-}
-
-    router.delete(desaRoutes.pemilih.destroy.url(confirmDelete.value), {
-        onSuccess: () => {
-            confirmDelete.value = null;
-        },
-    });
-}
-
 function cancelDelete() {
     confirmDelete.value = null;
+}
+
+async function goToPage(page: number) {
+    if (page < 1 || page > totalPages.value || page === currentPage.value || loading.value) {
+        return;
+    }
+
+    if (pageCache[page]) {
+        currentPage.value = page;
+        currentData.value = pageCache[page];
+
+        return;
+    }
+
+    loading.value = true;
+
+    try {
+        const queryParams = new URLSearchParams({
+            page: String(page),
+            ...(searchVal.value ? { search: searchVal.value } : {}),
+            ...(selectedJk.value ? { jenis_kelamin: selectedJk.value } : {}),
+        });
+        const res = await fetch(`/desa/pemilih?${queryParams.toString()}`, {
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (!res.ok) {
+throw new Error('Gagal memuat data');
+}
+
+        const json = await res.json();
+
+        pageCache[page] = json.paginated.data;
+        currentPage.value = page;
+        currentData.value = json.paginated.data;
+        totalPages.value = json.paginated.last_page;
+        currentSummary.value = json.summary;
+    } catch (e) {
+        console.error('Error fetching pemilihs:', e);
+    } finally {
+        loading.value = false;
+    }
 }
 
 defineOptions({
@@ -168,7 +242,7 @@ defineOptions({
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
-                    {{ props.summary.total.toLocaleString('id-ID') }}
+                    {{ currentSummary.total.toLocaleString('id-ID') }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Total Pemilih (Terfilter)</div>
             </div>
@@ -182,7 +256,7 @@ defineOptions({
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
-                    {{ props.summary.l.toLocaleString('id-ID') }}
+                    {{ currentSummary.l.toLocaleString('id-ID') }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Laki-laki</div>
             </div>
@@ -196,7 +270,7 @@ defineOptions({
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
-                    {{ props.summary.p.toLocaleString('id-ID') }}
+                    {{ currentSummary.p.toLocaleString('id-ID') }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Perempuan</div>
             </div>
@@ -253,7 +327,15 @@ defineOptions({
         <div
             class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
         >
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto relative">
+                <!-- Loading Overlay -->
+                <div
+                    v-if="loading"
+                    class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70"
+                >
+                    <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
+                </div>
+
                 <table class="w-full text-sm">
                     <thead>
                         <tr
@@ -265,19 +347,20 @@ defineOptions({
                             <th class="px-4 py-3">JK</th>
                             <th class="px-4 py-3">Alamat</th>
                             <th class="px-4 py-3 text-center">RT/RW</th>
+                            <th class="px-4 py-3">Relawan</th>
                             <th class="px-4 py-3">Tanggal Input</th>
                             <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         <tr
-                            v-for="(p, i) in props.pemilihs.data"
+                            v-for="(p, i) in currentData"
                             :key="p.id"
                             class="hover:bg-gray-50"
                         >
                             <td class="px-4 py-3 text-gray-400">
                                 {{
-                                    (props.pemilihs.current_page - 1) *
+                                    (currentPage - 1) *
                                         props.pemilihs.per_page +
                                     i +
                                     1
@@ -310,6 +393,9 @@ defineOptions({
                             <td class="px-4 py-3 text-center text-gray-600">
                                 {{ p.rt }}/{{ p.rw }}
                             </td>
+                            <td class="px-4 py-3 text-gray-600">
+                                {{ p.relawan ?? '-' }}
+                            </td>
                             <td class="px-4 py-3 text-xs text-gray-400">
                                 {{ p.created_at }}
                             </td>
@@ -333,9 +419,9 @@ defineOptions({
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="!props.pemilihs.data.length">
+                        <tr v-if="!currentData.length && !loading">
                             <td
-                                colspan="8"
+                                colspan="9"
                                 class="px-4 py-12 text-center text-sm text-gray-400"
                             >
                                 Belum ada data pemilih.
@@ -346,51 +432,13 @@ defineOptions({
             </div>
 
             <!-- Pagination -->
-            <div
-                v-if="props.pemilihs.last_page > 1"
-                class="flex items-center justify-end gap-1.5 border-t border-gray-100 px-6 py-4"
-            >
-                <template v-for="(link, index) in props.pemilihs.links" :key="index">
-                    <!-- Disabled prev/next or dots -->
-                    <span
-                        v-if="link.url === null"
-                        class="px-2 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-1 select-none font-medium"
-                    >
-                        <template v-if="link.label.includes('Previous')">
-                            <ChevronLeft class="w-4 h-4" /> Previous
-                        </template>
-                        <template v-else-if="link.label.includes('Next')">
-                            Next <ChevronRight class="w-4 h-4" />
-                        </template>
-                        <template v-else>
-                            {{ link.label }}
-                        </template>
-                    </span>
-
-                    <!-- Active Page or Clickable links -->
-                    <Link
-                        v-else
-                        :href="link.url"
-                        :class="[
-                            'text-sm transition-all duration-150 flex items-center justify-center font-medium',
-                            link.label.includes('Previous') || link.label.includes('Next')
-                                ? 'px-2 py-2 text-gray-600 hover:text-gray-900 gap-1'
-                                : link.active
-                                ? 'bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-gray-900'
-                                : 'px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl'
-                        ]"
-                    >
-                        <template v-if="link.label.includes('Previous')">
-                            <ChevronLeft class="w-4 h-4" /> Previous
-                        </template>
-                        <template v-else-if="link.label.includes('Next')">
-                            Next <ChevronRight class="w-4 h-4" />
-                        </template>
-                        <template v-else>
-                            {{ link.label }}
-                        </template>
-                    </Link>
-                </template>
+            <div v-if="totalPages > 1" class="px-4">
+                <PaginationBar
+                    :current-page="currentPage"
+                    :total-pages="totalPages"
+                    :loading="loading"
+                    @go="goToPage"
+                />
             </div>
         </div>
     </div>

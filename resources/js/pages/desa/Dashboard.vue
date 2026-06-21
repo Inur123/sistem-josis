@@ -5,6 +5,8 @@ import desaRoutes from '@/routes/desa';
 interface Props {
     desa: string;
     kecamatan: string;
+    kordes: string[];
+    relawans: string[];
     stats: {
         total_pemilih: number;
         laki_laki: number;
@@ -33,6 +35,16 @@ defineOptions({
                 <p class="mt-1 text-sm text-gray-500">
                     Kecamatan {{ props.kecamatan }} · Kabupaten Magetan
                 </p>
+                <div class="mt-2.5 flex flex-col gap-1 text-xs text-gray-600">
+                    <div>
+                        <span class="font-semibold text-gray-700">Pendamping (Kordes):</span>
+                        {{ props.kordes.length ? props.kordes.join(', ') : '-' }}
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-700">Relawan:</span>
+                        {{ props.relawans.length ? props.relawans.join(', ') : '-' }}
+                    </div>
+                </div>
             </div>
             <Link
                 :href="desaRoutes.pemilih.create.url()"
