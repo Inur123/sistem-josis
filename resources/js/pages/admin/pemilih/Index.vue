@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { Loader2 } from '@lucide/vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Loader2, Eye } from '@lucide/vue';
 import { ref, watch, computed, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
 import adminRoutes from '@/routes/admin';
@@ -64,10 +64,10 @@ const selectedDesa = ref(props.filters.desa_id ?? '');
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const currentPage = ref(props.pemilihs.current_page);
-const totalPages  = ref(props.pemilihs.last_page);
+const totalPages = ref(props.pemilihs.last_page);
 const currentData = ref<Pemilih[]>([...props.pemilihs.data]);
 const currentSummary = ref({ ...props.summary });
-const loading     = ref(false);
+const loading = ref(false);
 const isExporting = ref(false);
 
 const pageCache = reactive<Record<number, Pemilih[]>>({
@@ -75,17 +75,25 @@ const pageCache = reactive<Record<number, Pemilih[]>>({
 });
 
 // Watch props to reset when filters change (via Inertia reload)
-watch(() => props.pemilihs, (newPemilihs) => {
-    currentPage.value = newPemilihs.current_page;
-    totalPages.value = newPemilihs.last_page;
-    currentData.value = [...newPemilihs.data];
-    Object.keys(pageCache).forEach(k => delete pageCache[Number(k)]);
-    pageCache[newPemilihs.current_page] = [...newPemilihs.data];
-}, { deep: true });
+watch(
+    () => props.pemilihs,
+    (newPemilihs) => {
+        currentPage.value = newPemilihs.current_page;
+        totalPages.value = newPemilihs.last_page;
+        currentData.value = [...newPemilihs.data];
+        Object.keys(pageCache).forEach((k) => delete pageCache[Number(k)]);
+        pageCache[newPemilihs.current_page] = [...newPemilihs.data];
+    },
+    { deep: true },
+);
 
-watch(() => props.summary, (newSummary) => {
-    currentSummary.value = { ...newSummary };
-}, { deep: true });
+watch(
+    () => props.summary,
+    (newSummary) => {
+        currentSummary.value = { ...newSummary };
+    },
+    { deep: true },
+);
 
 // Filter desas options based on selected kecamatan
 const filteredDesas = computed(() => {
@@ -150,7 +158,9 @@ async function exportExcel() {
     try {
         const params = new URLSearchParams({
             ...(searchVal.value ? { search: searchVal.value } : {}),
-            ...(selectedKecamatan.value ? { kecamatan_id: selectedKecamatan.value } : {}),
+            ...(selectedKecamatan.value
+                ? { kecamatan_id: selectedKecamatan.value }
+                : {}),
             ...(selectedDesa.value ? { desa_id: selectedDesa.value } : {}),
         });
 
@@ -161,8 +171,8 @@ async function exportExcel() {
         });
 
         if (!res.ok) {
-throw new Error('Gagal mengekspor data');
-}
+            throw new Error('Gagal mengekspor data');
+        }
 
         const contentDisposition = res.headers.get('content-disposition');
         let filename = 'Data_Pemilih_Josis.xlsx';
@@ -194,7 +204,12 @@ throw new Error('Gagal mengekspor data');
 }
 
 async function goToPage(page: number) {
-    if (page < 1 || page > totalPages.value || page === currentPage.value || loading.value) {
+    if (
+        page < 1 ||
+        page > totalPages.value ||
+        page === currentPage.value ||
+        loading.value
+    ) {
         return;
     }
 
@@ -211,7 +226,9 @@ async function goToPage(page: number) {
         const queryParams = new URLSearchParams({
             page: String(page),
             ...(searchVal.value ? { search: searchVal.value } : {}),
-            ...(selectedKecamatan.value ? { kecamatan_id: selectedKecamatan.value } : {}),
+            ...(selectedKecamatan.value
+                ? { kecamatan_id: selectedKecamatan.value }
+                : {}),
             ...(selectedDesa.value ? { desa_id: selectedDesa.value } : {}),
         });
         const res = await fetch(`/admin/pemilih?${queryParams.toString()}`, {
@@ -222,8 +239,8 @@ async function goToPage(page: number) {
         });
 
         if (!res.ok) {
-throw new Error('Gagal memuat data');
-}
+            throw new Error('Gagal memuat data');
+        }
 
         const json = await res.json();
 
@@ -253,7 +270,9 @@ defineOptions({
     <Head title="Data Pemilih (Admin)" />
     <div class="flex flex-col gap-5 p-6">
         <!-- Header -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+        >
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
                     Data Pemilih (Magetan)
@@ -266,9 +285,15 @@ defineOptions({
             </div>
             <button
                 @click="exportExcel"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700 shadow-sm transition-all cursor-pointer"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700"
             >
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                    class="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
@@ -280,24 +305,48 @@ defineOptions({
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <!-- Total Pemilih -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-blue-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                        <path
+                            d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                        />
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
                     {{ currentSummary.total.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">Total Pemilih (Terfilter)</div>
+                <div class="mt-0.5 text-xs text-gray-500">
+                    Total Pemilih (Terfilter)
+                </div>
             </div>
 
             <!-- Laki-laki -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50">
-                    <svg class="h-5 w-5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-sky-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -309,9 +358,19 @@ defineOptions({
             </div>
 
             <!-- Perempuan -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50">
-                    <svg class="h-5 w-5 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-pink-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -331,7 +390,12 @@ defineOptions({
                 <div class="relative">
                     <input
                         v-model="searchVal"
-                        @input="searchVal = searchVal.replace(/[^a-zA-Z0-9\s\.\'-]/g, '')"
+                        @input="
+                            searchVal = searchVal.replace(
+                                /[^a-zA-Z0-9\s\.\'-]/g,
+                                '',
+                            )
+                        "
                         type="text"
                         placeholder="Cari Nama / NIK..."
                         class="w-full rounded-lg border border-gray-200 py-2 pr-4 pl-9 text-sm focus:border-blue-500 focus:outline-none"
@@ -349,11 +413,13 @@ defineOptions({
                 </div>
             </form>
 
-            <div class="flex flex-col gap-3 w-full sm:flex-row md:w-auto md:items-center">
+            <div
+                class="flex w-full flex-col gap-3 sm:flex-row md:w-auto md:items-center"
+            >
                 <!-- Kecamatan Select -->
                 <select
                     v-model="selectedKecamatan"
-                    class="w-full sm:flex-1 md:w-48 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none sm:flex-1 md:w-48"
                 >
                     <option value="">Semua Kecamatan</option>
                     <option
@@ -369,7 +435,7 @@ defineOptions({
                 <select
                     v-model="selectedDesa"
                     :disabled="!selectedKecamatan"
-                    class="w-full sm:flex-1 md:w-48 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"
+                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400 sm:flex-1 md:w-48"
                 >
                     <option value="">Semua Desa/Kelurahan</option>
                     <option
@@ -385,7 +451,7 @@ defineOptions({
                 <button
                     v-if="searchVal || selectedKecamatan || selectedDesa"
                     @click="clearFilters"
-                    class="w-full sm:w-auto rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
+                    class="w-full rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 sm:w-auto"
                 >
                     Reset
                 </button>
@@ -396,7 +462,7 @@ defineOptions({
         <div
             class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
         >
-            <div class="overflow-x-auto relative">
+            <div class="relative overflow-x-auto">
                 <!-- Loading Overlay -->
                 <div
                     v-if="loading"
@@ -420,6 +486,7 @@ defineOptions({
                             <th class="px-4 py-3 text-center">RT/RW</th>
                             <th class="px-4 py-3">Relawan</th>
                             <th class="px-4 py-3">Tanggal Input</th>
+                            <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
@@ -475,10 +542,21 @@ defineOptions({
                             <td class="px-4 py-3 text-xs text-gray-400">
                                 {{ p.created_at }}
                             </td>
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex items-center justify-center">
+                                    <Link
+                                        :href="adminRoutes.pemilih.show.url(p.id)"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                        title="Detail"
+                                    >
+                                        <Eye class="h-4 w-4" />
+                                    </Link>
+                                </div>
+                            </td>
                         </tr>
                         <tr v-if="!currentData.length && !loading">
                             <td
-                                colspan="10"
+                                colspan="11"
                                 class="px-4 py-12 text-center text-sm text-gray-400"
                             >
                                 Tidak ada data pemilih ditemukan.
@@ -503,16 +581,23 @@ defineOptions({
     <!-- Export Loading Modal -->
     <div
         v-if="isExporting"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
     >
-        <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-gray-100 flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in duration-200">
-            <div class="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+        <div
+            class="flex w-full max-w-sm animate-in flex-col items-center gap-4 rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-xl duration-200 fade-in zoom-in"
+        >
+            <div
+                class="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600"
+            >
                 <Loader2 class="h-6 w-6 animate-spin" />
             </div>
             <div>
-                <h3 class="text-base font-semibold text-gray-900">Mengekspor Data</h3>
-                <p class="mt-1.5 text-xs text-gray-500 leading-relaxed">
-                    Sedang menyiapkan data pemilih dan menyusun tab Kecamatan & Desa. Mohon tunggu sebentar agar data terproses dengan aman.
+                <h3 class="text-base font-semibold text-gray-900">
+                    Mengekspor Data
+                </h3>
+                <p class="mt-1.5 text-xs leading-relaxed text-gray-500">
+                    Sedang menyiapkan data pemilih dan menyusun tab Kecamatan &
+                    Desa. Mohon tunggu sebentar agar data terproses dengan aman.
                 </p>
             </div>
         </div>

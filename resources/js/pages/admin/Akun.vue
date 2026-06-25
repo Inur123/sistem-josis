@@ -96,8 +96,8 @@ const confirmDeleteId = ref<string | null>(null);
 
 const selectedUser = computed(() => {
     if (!confirmDeleteId.value) {
-return null;
-}
+        return null;
+    }
 
     return props.users.find((u) => u.id === confirmDeleteId.value) || null;
 });
@@ -108,8 +108,8 @@ function openDeleteModal(id: string) {
 
 function submitDelete() {
     if (!confirmDeleteId.value) {
-return;
-}
+        return;
+    }
 
     router.delete(adminRoutes.akun.destroy.url(confirmDeleteId.value), {
         onSuccess: () => {
@@ -212,7 +212,7 @@ defineOptions({
                                     </button>
                                     <button
                                         @click="openDeleteModal(user.id)"
-                                        class="cursor-pointer rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
+                                        class="cursor-pointer rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
                                     >
                                         Hapus
                                     </button>
@@ -394,28 +394,48 @@ defineOptions({
         <!-- Delete Confirmation Modal -->
         <div
             v-if="confirmDeleteId"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
         >
-            <div class="w-full max-w-md overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200">
-                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <div
+                class="w-full max-w-md animate-in overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-xl duration-200 zoom-in-95 fade-in"
+            >
+                <div
+                    class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600"
+                >
+                    <svg
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
                     </svg>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900">Konfirmasi Hapus</h3>
+                <h3 class="text-lg font-bold text-gray-900">
+                    Konfirmasi Hapus
+                </h3>
                 <p class="mt-2 text-sm text-gray-500">
-                    Apakah Anda yakin ingin menghapus data akun bernama <strong class="font-semibold text-gray-800">{{ selectedUser?.name }}</strong>? Tindakan ini tidak dapat dibatalkan.
+                    Apakah Anda yakin ingin menghapus data akun bernama
+                    <strong class="font-semibold text-gray-800">{{
+                        selectedUser?.name
+                    }}</strong
+                    >? Tindakan ini tidak dapat dibatalkan.
                 </p>
                 <div class="mt-6 flex justify-end gap-3">
                     <button
                         @click="cancelDelete"
-                        class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                        class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                     >
                         Batal
                     </button>
                     <button
                         @click="submitDelete"
-                        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 cursor-pointer"
+                        class="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                     >
                         Ya, Hapus
                     </button>

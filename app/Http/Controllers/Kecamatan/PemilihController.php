@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PemilihController extends Controller
 {
@@ -42,7 +43,7 @@ class PemilihController extends Controller
         /** @var Builder<Desa> $desaQuery */
         $desaQuery = Desa::query();
 
-        return Inertia::render('kecamatan/Pemilih', [
+        return Inertia::render('kecamatan/pemilih/Index', [
             'pemilihs' => $result['paginated'],
             'desas' => $desaQuery->where('kecamatan_id', $kecamatanId)->orderBy('nama', 'asc')->get(['id', 'nama']),
             'kecamatan' => $user->kecamatan->nama,
@@ -129,5 +130,31 @@ class PemilihController extends Controller
                 'p' => $countP,
             ],
         ];
+    }
+
+    /**
+     * Detail pemilih untuk Kecamatan.
+     */
+    public function show(Request $request, Pemilih $pemilih): Response
+    {
+        /** @var User $user */
+        $user = $request->user();
+        abort_if($pemilih->kecamatan_id !== $user->kecamatan_id, 403);
+
+        return Inertia::render('kecamatan/pemilih/Show', [
+            'desa' => $pemilih->desa->nama,
+            'pemilih' => [
+                'id' => $pemilih->id,
+                'nik' => $pemilih->nik,
+                'nama' => $pemilih->nama,
+                'jenis_kelamin' => $pemilih->jenis_kelamin,
+                'alamat' => $pemilih->alamat,
+                'rt' => $pemilih->rt,
+                'rw' => $pemilih->rw,
+                'relawan' => $pemilih->relawan?->nama,
+                'created_at' => $pemilih->created_at?->format('d/m/Y'),
+                'foto_ktp' => $pemilih->foto_ktp ? route('pemilih.ktp', $pemilih->id) : null,
+            ],
+        ]);
     }
 }

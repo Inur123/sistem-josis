@@ -63,6 +63,7 @@ class Pemilih extends Model
         'kecamatan_id',
         'user_id',
         'relawan_id',
+        'foto_ktp',
     ];
 
     protected function casts(): array

@@ -68,14 +68,14 @@ const form = useForm({
 // Dropdowns logic
 const filteredDesasForForm = computed(() => {
     if (form.role === 'korcam') {
-return [];
-}
+        return [];
+    }
 
     if (!form.kecamatan_id) {
-return props.desas;
-}
+        return props.desas;
+    }
 
-    return props.desas.filter(d => d.kecamatan_id === form.kecamatan_id);
+    return props.desas.filter((d) => d.kecamatan_id === form.kecamatan_id);
 });
 
 // Watch role change to clear unrelated fields
@@ -89,74 +89,83 @@ const filteredKorcamsTable = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
 
     if (!q) {
-return props.korcams;
-}
+        return props.korcams;
+    }
 
-    return props.korcams.map(kec => {
-        const matchesKec = kec.nama.toLowerCase().includes(q);
-        const filteredMembers = kec.anggota_tims.filter(m => 
-            m.nama.toLowerCase().includes(q) || 
-            (m.nik && m.nik.includes(q)) || 
-            (m.no_hp && m.no_hp.includes(q)) || 
-            (m.alamat && m.alamat.toLowerCase().includes(q))
-        );
+    return props.korcams
+        .map((kec) => {
+            const matchesKec = kec.nama.toLowerCase().includes(q);
+            const filteredMembers = kec.anggota_tims.filter(
+                (m) =>
+                    m.nama.toLowerCase().includes(q) ||
+                    (m.nik && m.nik.includes(q)) ||
+                    (m.no_hp && m.no_hp.includes(q)) ||
+                    (m.alamat && m.alamat.toLowerCase().includes(q)),
+            );
 
-        if (matchesKec || filteredMembers.length > 0) {
-            return { ...kec, anggota_tims: filteredMembers };
-        }
+            if (matchesKec || filteredMembers.length > 0) {
+                return { ...kec, anggota_tims: filteredMembers };
+            }
 
-        return null;
-    }).filter(Boolean) as KecamatanWithMembers[];
+            return null;
+        })
+        .filter(Boolean) as KecamatanWithMembers[];
 });
 
 const filteredKordesTable = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
 
     if (!q) {
-return props.kordes;
-}
+        return props.kordes;
+    }
 
-    return props.kordes.map(desa => {
-        const matchesDesa = desa.nama.toLowerCase().includes(q);
-        const matchesKec = desa.kecamatan?.nama.toLowerCase().includes(q);
-        const filteredMembers = desa.anggota_tims.filter(m => 
-            m.nama.toLowerCase().includes(q) || 
-            (m.nik && m.nik.includes(q)) || 
-            (m.no_hp && m.no_hp.includes(q)) || 
-            (m.alamat && m.alamat.toLowerCase().includes(q))
-        );
+    return props.kordes
+        .map((desa) => {
+            const matchesDesa = desa.nama.toLowerCase().includes(q);
+            const matchesKec = desa.kecamatan?.nama.toLowerCase().includes(q);
+            const filteredMembers = desa.anggota_tims.filter(
+                (m) =>
+                    m.nama.toLowerCase().includes(q) ||
+                    (m.nik && m.nik.includes(q)) ||
+                    (m.no_hp && m.no_hp.includes(q)) ||
+                    (m.alamat && m.alamat.toLowerCase().includes(q)),
+            );
 
-        if (matchesDesa || matchesKec || filteredMembers.length > 0) {
-            return { ...desa, anggota_tims: filteredMembers };
-        }
+            if (matchesDesa || matchesKec || filteredMembers.length > 0) {
+                return { ...desa, anggota_tims: filteredMembers };
+            }
 
-        return null;
-    }).filter(Boolean) as DesaWithMembers[];
+            return null;
+        })
+        .filter(Boolean) as DesaWithMembers[];
 });
 
 const filteredRelawansTable = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
 
     if (!q) {
-return props.relawans;
-}
+        return props.relawans;
+    }
 
-    return props.relawans.map(desa => {
-        const matchesDesa = desa.nama.toLowerCase().includes(q);
-        const matchesKec = desa.kecamatan?.nama.toLowerCase().includes(q);
-        const filteredMembers = desa.anggota_tims.filter(m => 
-            m.nama.toLowerCase().includes(q) || 
-            (m.nik && m.nik.includes(q)) || 
-            (m.no_hp && m.no_hp.includes(q)) || 
-            (m.alamat && m.alamat.toLowerCase().includes(q))
-        );
+    return props.relawans
+        .map((desa) => {
+            const matchesDesa = desa.nama.toLowerCase().includes(q);
+            const matchesKec = desa.kecamatan?.nama.toLowerCase().includes(q);
+            const filteredMembers = desa.anggota_tims.filter(
+                (m) =>
+                    m.nama.toLowerCase().includes(q) ||
+                    (m.nik && m.nik.includes(q)) ||
+                    (m.no_hp && m.no_hp.includes(q)) ||
+                    (m.alamat && m.alamat.toLowerCase().includes(q)),
+            );
 
-        if (matchesDesa || matchesKec || filteredMembers.length > 0) {
-            return { ...desa, anggota_tims: filteredMembers };
-        }
+            if (matchesDesa || matchesKec || filteredMembers.length > 0) {
+                return { ...desa, anggota_tims: filteredMembers };
+            }
 
-        return null;
-    }).filter(Boolean) as DesaWithMembers[];
+            return null;
+        })
+        .filter(Boolean) as DesaWithMembers[];
 });
 
 // Modal Actions
@@ -176,14 +185,16 @@ const openEditModal = (member: AnggotaTim) => {
     form.nik = member.nik || '';
     form.no_hp = member.no_hp || '';
     form.alamat = member.alamat || '';
-    
+
     if (member.role === 'korcam') {
         form.kecamatan_id = member.kecamatan_id;
         form.desa_id = null;
     } else {
         form.desa_id = member.desa_id;
-        const matchingDesa = props.desas.find(d => d.id === member.desa_id);
-        form.kecamatan_id = matchingDesa ? (matchingDesa.kecamatan_id || null) : null;
+        const matchingDesa = props.desas.find((d) => d.id === member.desa_id);
+        form.kecamatan_id = matchingDesa
+            ? matchingDesa.kecamatan_id || null
+            : null;
     }
 
     isModalOpen.value = true;
@@ -244,11 +255,14 @@ defineOptions({
 
     <div class="flex flex-col gap-6 p-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <div>
                 <h2 class="text-xl font-bold text-gray-900">Kelola Tim</h2>
                 <p class="mt-1 text-sm text-gray-500">
-                    Manajemen koordinator kecamatan (Korcam), koordinator desa (Kordes), dan relawan pendukung
+                    Manajemen koordinator kecamatan (Korcam), koordinator desa
+                    (Kordes), dan relawan pendukung
                 </p>
             </div>
             <button
@@ -261,13 +275,19 @@ defineOptions({
         </div>
 
         <!-- Tabs & Search -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
-            <div class="flex border-b sm:border-b-0 border-gray-100 p-0.5 bg-gray-50 rounded-lg">
+        <div
+            class="flex flex-col items-stretch justify-between gap-4 rounded-xl border border-gray-100 bg-white p-3 shadow-sm sm:flex-row sm:items-center"
+        >
+            <div
+                class="flex rounded-lg border-b border-gray-100 bg-gray-50 p-0.5 sm:border-b-0"
+            >
                 <button
                     @click="activeTab = 'korcam'"
                     :class="[
-                        'px-4 py-2 text-sm font-medium rounded-md transition-all',
-                        activeTab === 'korcam' ? 'bg-white text-gray-900 shadow-xs font-semibold' : 'text-gray-500 hover:text-gray-900'
+                        'rounded-md px-4 py-2 text-sm font-medium transition-all',
+                        activeTab === 'korcam'
+                            ? 'bg-white font-semibold text-gray-900 shadow-xs'
+                            : 'text-gray-500 hover:text-gray-900',
                     ]"
                 >
                     Korcam
@@ -275,8 +295,10 @@ defineOptions({
                 <button
                     @click="activeTab = 'kordes'"
                     :class="[
-                        'px-4 py-2 text-sm font-medium rounded-md transition-all',
-                        activeTab === 'kordes' ? 'bg-white text-gray-900 shadow-xs font-semibold' : 'text-gray-500 hover:text-gray-900'
+                        'rounded-md px-4 py-2 text-sm font-medium transition-all',
+                        activeTab === 'kordes'
+                            ? 'bg-white font-semibold text-gray-900 shadow-xs'
+                            : 'text-gray-500 hover:text-gray-900',
                     ]"
                 >
                     Kordes
@@ -284,8 +306,10 @@ defineOptions({
                 <button
                     @click="activeTab = 'relawan'"
                     :class="[
-                        'px-4 py-2 text-sm font-medium rounded-md transition-all',
-                        activeTab === 'relawan' ? 'bg-white text-gray-900 shadow-xs font-semibold' : 'text-gray-500 hover:text-gray-900'
+                        'rounded-md px-4 py-2 text-sm font-medium transition-all',
+                        activeTab === 'relawan'
+                            ? 'bg-white font-semibold text-gray-900 shadow-xs'
+                            : 'text-gray-500 hover:text-gray-900',
                     ]"
                 >
                     Relawan
@@ -293,8 +317,10 @@ defineOptions({
             </div>
 
             <!-- Search -->
-            <div class="relative flex-1 max-w-md">
-                <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <div class="relative max-w-md flex-1">
+                <Search
+                    class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+                />
                 <input
                     v-model="searchQuery"
                     type="text"
@@ -305,61 +331,110 @@ defineOptions({
         </div>
 
         <!-- Table View -->
-        <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div
+            class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+        >
             <div class="overflow-x-auto">
                 <!-- 1. TAB KORCAM TABLE -->
                 <table v-if="activeTab === 'korcam'" class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase">
-                            <th class="px-5 py-3 w-[60px]">No</th>
-                            <th class="px-5 py-3 w-[220px]">Kecamatan</th>
-                            <th class="px-5 py-3">Daftar Koordinator Kecamatan (Korcam)</th>
+                        <tr
+                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
+                        >
+                            <th class="w-[60px] px-5 py-3">No</th>
+                            <th class="w-[220px] px-5 py-3">Kecamatan</th>
+                            <th class="px-5 py-3">
+                                Daftar Koordinator Kecamatan (Korcam)
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
                             v-for="(kec, i) in filteredKorcamsTable"
                             :key="kec.id"
-                            class="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 align-top"
+                            class="border-b border-gray-50 align-top last:border-0 hover:bg-gray-50/50"
                         >
                             <td class="px-5 py-4 text-gray-400">{{ i + 1 }}</td>
-                            <td class="px-5 py-4 font-semibold text-gray-900 uppercase tracking-wide text-xs">
+                            <td
+                                class="px-5 py-4 text-xs font-semibold tracking-wide text-gray-900 uppercase"
+                            >
                                 {{ kec.nama }}
                             </td>
                             <td class="px-5 py-4">
-                                <div v-if="kec.anggota_tims.length" class="divide-y divide-gray-100">
-                                    <div v-for="member in kec.anggota_tims" :key="member.id" class="py-2.5 first:pt-0 last:pb-0 flex items-start justify-between gap-4">
+                                <div
+                                    v-if="kec.anggota_tims.length"
+                                    class="divide-y divide-gray-100"
+                                >
+                                    <div
+                                        v-for="member in kec.anggota_tims"
+                                        :key="member.id"
+                                        class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
+                                    >
                                         <div class="flex-1">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold text-gray-900 text-sm">{{ member.nama }}</span>
-                                                <span v-if="member.nik" class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">NIK: {{ member.nik }}</span>
+                                            <div
+                                                class="flex items-center gap-2"
+                                            >
+                                                <span
+                                                    class="text-sm font-semibold text-gray-900"
+                                                    >{{ member.nama }}</span
+                                                >
+                                                <span
+                                                    v-if="member.nik"
+                                                    class="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs text-gray-600"
+                                                    >NIK: {{ member.nik }}</span
+                                                >
                                             </div>
-                                            <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                                                <span v-if="member.no_hp" class="flex items-center gap-1"><Phone class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.no_hp }}</span>
-                                                <span v-if="member.alamat" class="flex items-center gap-1"><MapPin class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.alamat }}</span>
+                                            <div
+                                                class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500"
+                                            >
+                                                <span
+                                                    v-if="member.no_hp"
+                                                    class="flex items-center gap-1"
+                                                    ><Phone
+                                                        class="h-3.5 w-3.5 shrink-0 text-gray-400"
+                                                    />
+                                                    {{ member.no_hp }}</span
+                                                >
+                                                <span
+                                                    v-if="member.alamat"
+                                                    class="flex items-center gap-1"
+                                                    ><MapPin
+                                                        class="h-3.5 w-3.5 shrink-0 text-gray-400"
+                                                    />
+                                                    {{ member.alamat }}</span
+                                                >
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2.5">
                                             <button
                                                 @click="openEditModal(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-100 hover:bg-blue-50 transition-all"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
                                             >
                                                 <Edit class="h-4 w-4" />
                                             </button>
                                             <button
-                                                @click="confirmDeleteMember(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all"
+                                                @click="
+                                                    confirmDeleteMember(member)
+                                                "
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-red-100 hover:bg-red-50 hover:text-red-600"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <span v-else class="text-gray-400 italic text-xs">Belum ada Korcam yang ditugaskan</span>
+                                <span
+                                    v-else
+                                    class="text-xs text-gray-400 italic"
+                                    >Belum ada Korcam yang ditugaskan</span
+                                >
                             </td>
                         </tr>
                         <tr v-if="!filteredKorcamsTable.length">
-                            <td colspan="3" class="px-5 py-12 text-center text-gray-400">
+                            <td
+                                colspan="3"
+                                class="px-5 py-12 text-center text-gray-400"
+                            >
                                 Tidak ada data kecamatan atau korcam ditemukan.
                             </td>
                         </tr>
@@ -369,60 +444,109 @@ defineOptions({
                 <!-- 2. TAB KORDES TABLE -->
                 <table v-if="activeTab === 'kordes'" class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase">
-                            <th class="px-5 py-3 w-[60px]">No</th>
-                            <th class="px-5 py-3 w-[180px]">Kecamatan</th>
-                            <th class="px-5 py-3 w-[180px]">Desa</th>
-                            <th class="px-5 py-3">Daftar Koordinator Desa (Kordes)</th>
+                        <tr
+                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
+                        >
+                            <th class="w-[60px] px-5 py-3">No</th>
+                            <th class="w-[180px] px-5 py-3">Kecamatan</th>
+                            <th class="w-[180px] px-5 py-3">Desa</th>
+                            <th class="px-5 py-3">
+                                Daftar Koordinator Desa (Kordes)
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
                             v-for="(desa, i) in filteredKordesTable"
                             :key="desa.id"
-                            class="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 align-top"
+                            class="border-b border-gray-50 align-top last:border-0 hover:bg-gray-50/50"
                         >
                             <td class="px-5 py-4 text-gray-400">{{ i + 1 }}</td>
-                            <td class="px-5 py-4 text-gray-500 font-medium text-xs uppercase tracking-wide">
+                            <td
+                                class="px-5 py-4 text-xs font-medium tracking-wide text-gray-500 uppercase"
+                            >
                                 {{ desa.kecamatan?.nama }}
                             </td>
-                            <td class="px-5 py-4 font-semibold text-gray-900 text-xs uppercase tracking-wide">
+                            <td
+                                class="px-5 py-4 text-xs font-semibold tracking-wide text-gray-900 uppercase"
+                            >
                                 {{ desa.nama }}
                             </td>
                             <td class="px-5 py-4">
-                                <div v-if="desa.anggota_tims.length" class="divide-y divide-gray-100">
-                                    <div v-for="member in desa.anggota_tims" :key="member.id" class="py-2.5 first:pt-0 last:pb-0 flex items-start justify-between gap-4">
+                                <div
+                                    v-if="desa.anggota_tims.length"
+                                    class="divide-y divide-gray-100"
+                                >
+                                    <div
+                                        v-for="member in desa.anggota_tims"
+                                        :key="member.id"
+                                        class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
+                                    >
                                         <div class="flex-1">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold text-gray-900 text-sm">{{ member.nama }}</span>
-                                                <span v-if="member.nik" class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">NIK: {{ member.nik }}</span>
+                                            <div
+                                                class="flex items-center gap-2"
+                                            >
+                                                <span
+                                                    class="text-sm font-semibold text-gray-900"
+                                                    >{{ member.nama }}</span
+                                                >
+                                                <span
+                                                    v-if="member.nik"
+                                                    class="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs text-gray-600"
+                                                    >NIK: {{ member.nik }}</span
+                                                >
                                             </div>
-                                            <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                                                <span v-if="member.no_hp" class="flex items-center gap-1"><Phone class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.no_hp }}</span>
-                                                <span v-if="member.alamat" class="flex items-center gap-1"><MapPin class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.alamat }}</span>
+                                            <div
+                                                class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500"
+                                            >
+                                                <span
+                                                    v-if="member.no_hp"
+                                                    class="flex items-center gap-1"
+                                                    ><Phone
+                                                        class="h-3.5 w-3.5 shrink-0 text-gray-400"
+                                                    />
+                                                    {{ member.no_hp }}</span
+                                                >
+                                                <span
+                                                    v-if="member.alamat"
+                                                    class="flex items-center gap-1"
+                                                    ><MapPin
+                                                        class="h-3.5 w-3.5 shrink-0 text-gray-400"
+                                                    />
+                                                    {{ member.alamat }}</span
+                                                >
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2.5">
                                             <button
                                                 @click="openEditModal(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-100 hover:bg-blue-50 transition-all"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
                                             >
                                                 <Edit class="h-4 w-4" />
                                             </button>
                                             <button
-                                                @click="confirmDeleteMember(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all"
+                                                @click="
+                                                    confirmDeleteMember(member)
+                                                "
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-red-100 hover:bg-red-50 hover:text-red-600"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <span v-else class="text-gray-400 italic text-xs">Belum ada Kordes yang ditugaskan</span>
+                                <span
+                                    v-else
+                                    class="text-xs text-gray-400 italic"
+                                    >Belum ada Kordes yang ditugaskan</span
+                                >
                             </td>
                         </tr>
                         <tr v-if="!filteredKordesTable.length">
-                            <td colspan="4" class="px-5 py-12 text-center text-gray-400">
+                            <td
+                                colspan="4"
+                                class="px-5 py-12 text-center text-gray-400"
+                            >
                                 Tidak ada data desa atau kordes ditemukan.
                             </td>
                         </tr>
@@ -432,10 +556,12 @@ defineOptions({
                 <!-- 3. TAB RELAWAN TABLE -->
                 <table v-if="activeTab === 'relawan'" class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase">
-                            <th class="px-5 py-3 w-[60px]">No</th>
-                            <th class="px-5 py-3 w-[180px]">Kecamatan</th>
-                            <th class="px-5 py-3 w-[180px]">Desa</th>
+                        <tr
+                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
+                        >
+                            <th class="w-[60px] px-5 py-3">No</th>
+                            <th class="w-[180px] px-5 py-3">Kecamatan</th>
+                            <th class="w-[180px] px-5 py-3">Desa</th>
                             <th class="px-5 py-3">Daftar Relawan Desa</th>
                         </tr>
                     </thead>
@@ -443,49 +569,94 @@ defineOptions({
                         <tr
                             v-for="(desa, i) in filteredRelawansTable"
                             :key="desa.id"
-                            class="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 align-top"
+                            class="border-b border-gray-50 align-top last:border-0 hover:bg-gray-50/50"
                         >
                             <td class="px-5 py-4 text-gray-400">{{ i + 1 }}</td>
-                            <td class="px-5 py-4 text-gray-500 font-medium text-xs uppercase tracking-wide">
+                            <td
+                                class="px-5 py-4 text-xs font-medium tracking-wide text-gray-500 uppercase"
+                            >
                                 {{ desa.kecamatan?.nama }}
                             </td>
-                            <td class="px-5 py-4 font-semibold text-gray-900 text-xs uppercase tracking-wide">
+                            <td
+                                class="px-5 py-4 text-xs font-semibold tracking-wide text-gray-900 uppercase"
+                            >
                                 {{ desa.nama }}
                             </td>
                             <td class="px-5 py-4">
-                                <div v-if="desa.anggota_tims.length" class="divide-y divide-gray-100">
-                                    <div v-for="member in desa.anggota_tims" :key="member.id" class="py-2.5 first:pt-0 last:pb-0 flex items-start justify-between gap-4">
+                                <div
+                                    v-if="desa.anggota_tims.length"
+                                    class="divide-y divide-gray-100"
+                                >
+                                    <div
+                                        v-for="member in desa.anggota_tims"
+                                        :key="member.id"
+                                        class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
+                                    >
                                         <div class="flex-1">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold text-gray-900 text-sm">{{ member.nama }}</span>
-                                                <span v-if="member.nik" class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">NIK: {{ member.nik }}</span>
+                                            <div
+                                                class="flex items-center gap-2"
+                                            >
+                                                <span
+                                                    class="text-sm font-semibold text-gray-900"
+                                                    >{{ member.nama }}</span
+                                                >
+                                                <span
+                                                    v-if="member.nik"
+                                                    class="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs text-gray-600"
+                                                    >NIK: {{ member.nik }}</span
+                                                >
                                             </div>
-                                            <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                                                <span v-if="member.no_hp" class="flex items-center gap-1"><Phone class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.no_hp }}</span>
-                                                <span v-if="member.alamat" class="flex items-center gap-1"><MapPin class="h-3.5 w-3.5 text-gray-400 shrink-0" /> {{ member.alamat }}</span>
+                                            <div
+                                                class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500"
+                                            >
+                                                <span
+                                                    v-if="member.no_hp"
+                                                    class="flex items-center gap-1"
+                                                    ><Phone
+                                                        class="h-3.5 w-3.5 shrink-0 text-gray-400"
+                                                    />
+                                                    {{ member.no_hp }}</span
+                                                >
+                                                <span
+                                                    v-if="member.alamat"
+                                                    class="flex items-center gap-1"
+                                                    ><MapPin
+                                                        class="h-3.5 w-3.5 shrink-0 text-gray-400"
+                                                    />
+                                                    {{ member.alamat }}</span
+                                                >
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2.5">
                                             <button
                                                 @click="openEditModal(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-100 hover:bg-blue-50 transition-all"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
                                             >
                                                 <Edit class="h-4 w-4" />
                                             </button>
                                             <button
-                                                @click="confirmDeleteMember(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all"
+                                                @click="
+                                                    confirmDeleteMember(member)
+                                                "
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-red-100 hover:bg-red-50 hover:text-red-600"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <span v-else class="text-gray-400 italic text-xs">Belum ada Relawan yang ditugaskan</span>
+                                <span
+                                    v-else
+                                    class="text-xs text-gray-400 italic"
+                                    >Belum ada Relawan yang ditugaskan</span
+                                >
                             </td>
                         </tr>
                         <tr v-if="!filteredRelawansTable.length">
-                            <td colspan="4" class="px-5 py-12 text-center text-gray-400">
+                            <td
+                                colspan="4"
+                                class="px-5 py-12 text-center text-gray-400"
+                            >
                                 Tidak ada data desa atau relawan ditemukan.
                             </td>
                         </tr>
@@ -498,47 +669,65 @@ defineOptions({
     <!-- Add / Edit Modal -->
     <div
         v-if="isModalOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
     >
-        <div class="w-full max-w-lg bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div
+            class="w-full max-w-lg animate-in overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl duration-200 zoom-in-95 fade-in"
+        >
+            <div
+                class="flex items-center justify-between border-b border-gray-100 px-6 py-4"
+            >
                 <h3 class="text-lg font-bold text-gray-900">
                     {{ isEditing ? 'Edit Anggota Tim' : 'Tambah Anggota Tim' }}
                 </h3>
                 <button
                     @click="closeModal"
-                    class="text-gray-400 hover:text-gray-600 rounded-lg p-1 hover:bg-gray-50 transition-all"
+                    class="rounded-lg p-1 text-gray-400 transition-all hover:bg-gray-50 hover:text-gray-600"
                 >
                     <X class="h-5 w-5" />
                 </button>
             </div>
-            
-            <form @submit.prevent="submitForm" class="p-6 space-y-4">
+
+            <form @submit.prevent="submitForm" class="space-y-4 p-6">
                 <!-- Role -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Peran / Posisi</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >Peran / Posisi</label
+                    >
                     <select
                         v-model="form.role"
                         @change="handleRoleChange"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                     >
-                        <option value="korcam">Koordinator Kecamatan (Korcam)</option>
-                        <option value="kordes">Koordinator Desa (Kordes)</option>
+                        <option value="korcam">
+                            Koordinator Kecamatan (Korcam)
+                        </option>
+                        <option value="kordes">
+                            Koordinator Desa (Kordes)
+                        </option>
                         <option value="relawan">Relawan Desa</option>
                     </select>
                 </div>
 
                 <!-- Kecamatan selection -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kecamatan</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >Kecamatan</label
+                    >
                     <select
                         v-model="form.kecamatan_id"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                     >
                         <option :value="null" disabled>Pilih Kecamatan</option>
-                        <option v-for="kec in props.kecamatans" :key="kec.id" :value="kec.id">
+                        <option
+                            v-for="kec in props.kecamatans"
+                            :key="kec.id"
+                            :value="kec.id"
+                        >
                             {{ kec.nama }}
                         </option>
                     </select>
@@ -546,17 +735,28 @@ defineOptions({
 
                 <!-- Desa selection (only for kordes and relawan) -->
                 <div v-if="form.role !== 'korcam'">
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Desa / Kelurahan</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >Desa / Kelurahan</label
+                    >
                     <select
                         v-model="form.desa_id"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                         :disabled="!form.kecamatan_id"
                     >
                         <option :value="null" disabled>
-                            {{ form.kecamatan_id ? 'Pilih Desa' : 'Pilih Kecamatan Terlebih Dahulu' }}
+                            {{
+                                form.kecamatan_id
+                                    ? 'Pilih Desa'
+                                    : 'Pilih Kecamatan Terlebih Dahulu'
+                            }}
                         </option>
-                        <option v-for="desa in filteredDesasForForm" :key="desa.id" :value="desa.id">
+                        <option
+                            v-for="desa in filteredDesasForForm"
+                            :key="desa.id"
+                            :value="desa.id"
+                        >
                             {{ desa.nama }}
                         </option>
                     </select>
@@ -564,52 +764,66 @@ defineOptions({
 
                 <!-- Nama -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >Nama Lengkap</label
+                    >
                     <input
                         v-model="form.nama"
                         type="text"
                         placeholder="Masukkan nama lengkap"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                         required
                     />
                 </div>
 
                 <!-- NIK -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">NIK (Optional)</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >NIK (Optional)</label
+                    >
                     <input
                         v-model="form.nik"
                         type="text"
                         placeholder="Masukkan 16 digit NIK"
                         maxlength="16"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                     />
                 </div>
 
                 <!-- No HP -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">No Handphone (Optional)</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >No Handphone (Optional)</label
+                    >
                     <input
                         v-model="form.no_hp"
                         type="text"
                         placeholder="Contoh: 08123456789"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                     />
                 </div>
 
                 <!-- Alamat -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Alamat Lengkap (Optional)</label>
+                    <label
+                        class="mb-1.5 block text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                        >Alamat Lengkap (Optional)</label
+                    >
                     <textarea
                         v-model="form.alamat"
                         rows="2"
                         placeholder="Alamat domisili"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white resize-none"
+                        class="w-full resize-none rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
                     ></textarea>
                 </div>
 
                 <!-- Submit buttons -->
-                <div class="pt-4 flex justify-end gap-3 border-t border-gray-100">
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-100 pt-4"
+                >
                     <button
                         type="button"
                         @click="closeModal"
@@ -632,15 +846,23 @@ defineOptions({
     <!-- Delete Confirmation Modal -->
     <div
         v-if="confirmDelete"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
     >
-        <div class="w-full max-w-md overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200">
-            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
+        <div
+            class="w-full max-w-md animate-in overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-xl duration-200 zoom-in-95 fade-in"
+        >
+            <div
+                class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600"
+            >
                 <Trash2 class="h-6 w-6" />
             </div>
             <h3 class="text-lg font-bold text-gray-900">Konfirmasi Hapus</h3>
             <p class="mt-2 text-sm text-gray-500">
-                Apakah Anda yakin ingin menghapus data anggota tim <strong class="font-semibold text-gray-800">{{ selectedMember?.nama }}</strong>? Tindakan ini tidak dapat dibatalkan.
+                Apakah Anda yakin ingin menghapus data anggota tim
+                <strong class="font-semibold text-gray-800">{{
+                    selectedMember?.nama
+                }}</strong
+                >? Tindakan ini tidak dapat dibatalkan.
             </p>
             <div class="mt-6 flex justify-end gap-3">
                 <button

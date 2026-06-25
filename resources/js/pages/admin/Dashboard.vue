@@ -74,7 +74,7 @@ defineOptions({
 
             <!-- Total Desa -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm flex items-center justify-between gap-4"
+                class="flex items-center justify-between gap-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
             >
                 <div>
                     <div
@@ -96,14 +96,26 @@ defineOptions({
                     <div class="text-2xl font-bold text-gray-900">
                         {{ props.stats.total_desa }}
                     </div>
-                    <div class="mt-0.5 text-xs text-gray-500">Desa / Kelurahan</div>
+                    <div class="mt-0.5 text-xs text-gray-500">
+                        Desa / Kelurahan
+                    </div>
                 </div>
 
                 <!-- Details side-by-side -->
-                <div class="pl-3 border-l border-gray-100 flex flex-col gap-0.5 text-[9px] text-gray-500 min-w-[105px]">
-                    <div v-for="item in props.desa_per_kecamatan" :key="item.kecamatan_nama" class="flex justify-between gap-1">
-                        <span class="truncate">Kec. {{ item.kecamatan_nama }}:</span>
-                        <span class="font-semibold text-gray-700">{{ item.total }}</span>
+                <div
+                    class="flex min-w-[105px] flex-col gap-0.5 border-l border-gray-100 pl-3 text-[9px] text-gray-500"
+                >
+                    <div
+                        v-for="item in props.desa_per_kecamatan"
+                        :key="item.kecamatan_nama"
+                        class="flex justify-between gap-1"
+                    >
+                        <span class="truncate"
+                            >Kec. {{ item.kecamatan_nama }}:</span
+                        >
+                        <span class="font-semibold text-gray-700">{{
+                            item.total
+                        }}</span>
                     </div>
                 </div>
             </div>
@@ -180,7 +192,9 @@ defineOptions({
                             <th class="px-5 py-3 text-right">Jumlah Pemilih</th>
                             <th class="px-5 py-3 text-right">Laki-laki</th>
                             <th class="px-5 py-3 text-right">Perempuan</th>
-                            <th class="px-5 py-3 text-center w-[120px]">Aksi</th>
+                            <th class="w-[120px] px-5 py-3 text-center">
+                                Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -206,8 +220,12 @@ defineOptions({
                             </td>
                             <td class="px-5 py-3 text-center">
                                 <Link
-                                    :href="adminRoutes.pemilih.index.url({ query: { kecamatan_id: item.id } })"
-                                    class="inline-flex items-center justify-center gap-1 rounded-lg border border-gray-250 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50"
+                                    :href="
+                                        adminRoutes.pemilih.index.url({
+                                            query: { kecamatan_id: item.id },
+                                        })
+                                    "
+                                    class="border-gray-250 inline-flex items-center justify-center gap-1 rounded-lg border bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50"
                                 >
                                     <Eye class="h-3.5 w-3.5" />
                                     Detail

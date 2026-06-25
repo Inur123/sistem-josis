@@ -11,7 +11,8 @@ interface InertiaPageProps {
 
 export function initializeFlashToast(): void {
     router.on('success', (event) => {
-        const pageProps = event.detail.page.props as unknown as InertiaPageProps;
+        const pageProps = event.detail.page
+            .props as unknown as InertiaPageProps;
         const flash = pageProps.flash;
         const data = flash?.toast;
 

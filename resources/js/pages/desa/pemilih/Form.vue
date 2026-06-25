@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import desaRoutes from '@/routes/desa';
 
 interface RelawanData {
@@ -17,6 +17,7 @@ interface PemilihData {
     rt?: string;
     rw?: string;
     relawan_id?: string;
+    foto_ktp?: string;
 }
 
 const props = defineProps<{
@@ -37,6 +38,7 @@ const rtRwOptions = computed(() => {
 });
 
 const form = useForm({
+    _method: isEdit.value ? 'PUT' : 'POST',
     nik: props.pemilih?.nik ?? '',
     nama: props.pemilih?.nama ?? '',
     jenis_kelamin: props.pemilih?.jenis_kelamin ?? 'L',
@@ -44,11 +46,85 @@ const form = useForm({
     rt: props.pemilih?.rt ?? '',
     rw: props.pemilih?.rw ?? '',
     relawan_id: props.pemilih?.relawan_id ?? '',
+    foto_ktp: null as File | null,
 });
+
+const imagePreview = ref<string | null>(props.pemilih?.foto_ktp ?? null);
+const compressError = ref<string | null>(null);
+
+function handleFileChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+
+    if (!target.files || target.files.length === 0) {
+        return;
+    }
+
+    const file = target.files[0];
+    compressError.value = null;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 1200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+
+            if (ctx) {
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            const compressedFile = new File(
+                                [blob],
+                                file.name.replace(/\.[^/.]+$/, '') + '.webp',
+                                {
+                                    type: 'image/webp',
+                                    lastModified: Date.now(),
+                                },
+                            );
+                            form.foto_ktp = compressedFile;
+                            imagePreview.value =
+                                URL.createObjectURL(compressedFile);
+                        } else {
+                            compressError.value = 'Gagal mengompresi gambar.';
+                        }
+                    },
+                    'image/webp',
+                    0.75,
+                );
+            } else {
+                compressError.value = 'Gagal memproses gambar.';
+            }
+        };
+        img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+}
 
 function submit() {
     if (isEdit.value && props.pemilih?.id) {
-        form.put(desaRoutes.pemilih.update.url(props.pemilih.id));
+        // Gunakan POST dengan spoofing _method agar file terkirim dengan baik di PHP
+        form.post(desaRoutes.pemilih.update.url(props.pemilih.id));
     } else {
         form.post(desaRoutes.pemilih.store.url());
     }
@@ -133,7 +209,12 @@ defineOptions({
                         <input
                             id="nama"
                             v-model="form.nama"
-                            @input="form.nama = form.nama.replace(/[^a-zA-Z\s\.\'-]/g, '')"
+                            @input="
+                                form.nama = form.nama.replace(
+                                    /[^a-zA-Z\s\.\'-]/g,
+                                    '',
+                                )
+                            "
                             type="text"
                             placeholder="Nama sesuai KTP"
                             required
@@ -201,7 +282,12 @@ defineOptions({
                         <textarea
                             id="alamat"
                             v-model="form.alamat"
-                            @input="form.alamat = form.alamat.replace(/[^a-zA-Z0-9\s\.,\/#-]/g, '')"
+                            @input="
+                                form.alamat = form.alamat.replace(
+                                    /[^a-zA-Z0-9\s\.,\/#-]/g,
+                                    '',
+                                )
+                            "
                             rows="3"
                             placeholder="Alamat lengkap"
                             required
@@ -226,21 +312,26 @@ defineOptions({
                             for="relawan_id"
                             class="text-sm font-medium text-gray-700"
                         >
-                            Relawan Pendamping <span class="text-red-500">*</span>
+                            Relawan Pendamping
+                            <span class="text-red-500">*</span>
                         </label>
                         <select
                             id="relawan_id"
                             v-model="form.relawan_id"
                             required
                             :class="[
-                                'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none',
+                                'w-full rounded-lg border bg-white px-3 py-2 text-sm transition outline-none',
                                 form.errors.relawan_id
                                     ? 'border-red-400 focus:border-red-500'
                                     : 'border-gray-200 focus:border-blue-500',
                             ]"
                         >
                             <option value="" disabled>Pilih Relawan</option>
-                            <option v-for="relawan in props.relawans" :key="relawan.id" :value="relawan.id">
+                            <option
+                                v-for="relawan in props.relawans"
+                                :key="relawan.id"
+                                :value="relawan.id"
+                            >
                                 {{ relawan.nama }}
                             </option>
                         </select>
@@ -266,14 +357,18 @@ defineOptions({
                                 v-model="form.rt"
                                 required
                                 :class="[
-                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none',
+                                    'w-full rounded-lg border bg-white px-3 py-2 text-sm transition outline-none',
                                     form.errors.rt
                                         ? 'border-red-400 focus:border-red-500'
                                         : 'border-gray-200 focus:border-blue-500',
                                 ]"
                             >
                                 <option value="" disabled>Pilih RT</option>
-                                <option v-for="opt in rtRwOptions" :key="opt" :value="opt">
+                                <option
+                                    v-for="opt in rtRwOptions"
+                                    :key="opt"
+                                    :value="opt"
+                                >
                                     {{ opt }}
                                 </option>
                             </select>
@@ -296,14 +391,18 @@ defineOptions({
                                 v-model="form.rw"
                                 required
                                 :class="[
-                                    'w-full rounded-lg border px-3 py-2 text-sm transition bg-white outline-none',
+                                    'w-full rounded-lg border bg-white px-3 py-2 text-sm transition outline-none',
                                     form.errors.rw
                                         ? 'border-red-400 focus:border-red-500'
                                         : 'border-gray-200 focus:border-blue-500',
                                 ]"
                             >
                                 <option value="" disabled>Pilih RW</option>
-                                <option v-for="opt in rtRwOptions" :key="opt" :value="opt">
+                                <option
+                                    v-for="opt in rtRwOptions"
+                                    :key="opt"
+                                    :value="opt"
+                                >
                                     {{ opt }}
                                 </option>
                             </select>
@@ -316,17 +415,70 @@ defineOptions({
                         </div>
                     </div>
 
+                    <!-- Foto KTP -->
+                    <div class="flex flex-col gap-1.5">
+                        <label
+                            for="foto_ktp"
+                            class="text-sm font-medium text-gray-700"
+                        >
+                            Foto KTP
+                            <span v-if="!isEdit" class="text-red-500">*</span>
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <!-- Image preview -->
+                            <div
+                                v-if="imagePreview"
+                                class="border-gray-250 relative flex h-20 w-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-gray-50"
+                            >
+                                <img
+                                    :src="imagePreview"
+                                    alt="KTP Preview"
+                                    class="h-full w-full object-cover"
+                                />
+                            </div>
+
+                            <!-- Custom File Upload Button -->
+                            <label
+                                class="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-50/50 p-4 text-center transition hover:border-blue-400 hover:bg-blue-50/10"
+                            >
+                                <span class="text-sm font-medium text-gray-600"
+                                    >Klik untuk upload foto KTP</span
+                                >
+                                <span class="mt-1 text-xs text-gray-400"
+                                    >Format: JPG, PNG, WebP (Max 10MB)</span
+                                >
+                                <input
+                                    id="foto_ktp"
+                                    type="file"
+                                    accept="image/*"
+                                    class="sr-only"
+                                    @change="handleFileChange"
+                                    :required="!isEdit"
+                                />
+                            </label>
+                        </div>
+                        <p
+                            v-if="form.errors.foto_ktp"
+                            class="text-xs text-red-500"
+                        >
+                            {{ form.errors.foto_ktp }}
+                        </p>
+                        <p v-if="compressError" class="text-xs text-red-500">
+                            {{ compressError }}
+                        </p>
+                    </div>
+
                     <!-- Actions -->
-                    <div class="flex items-center gap-3 pt-2 w-full">
+                    <div class="flex w-full items-center gap-3 pt-2">
                         <Link
                             :href="desaRoutes.pemilih.index.url()"
-                            class="flex-1 text-center rounded-lg bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
+                            class="flex-1 rounded-lg bg-gray-100 py-2.5 text-center text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
                             >Batal</Link
                         >
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="flex-1 flex items-center justify-center gap-2 rounded-lg bg-gray-900 py-2.5 text-sm font-semibold text-white transition hover:bg-black disabled:opacity-60"
+                            class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gray-900 py-2.5 text-sm font-semibold text-white transition hover:bg-black disabled:opacity-60"
                         >
                             <svg
                                 v-if="form.processing"

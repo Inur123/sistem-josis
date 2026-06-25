@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Loader2 } from '@lucide/vue';
-import { ref, watch, computed, reactive } from 'vue';
+import { Loader2, Eye } from '@lucide/vue';
+import { ref, watch, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
-import desaRoutes from '@/routes/desa';
+import kecamatanRoutes from '@/routes/kecamatan';
 
 interface Pemilih {
     id: string;
@@ -13,6 +13,7 @@ interface Pemilih {
     alamat: string;
     rt: string;
     rw: string;
+    desa: string;
     relawan?: string;
     created_at: string;
 }
@@ -34,12 +35,18 @@ interface PaginatedPemilih {
     links: LinkItem[];
 }
 
+interface DropdownItem {
+    id: string;
+    nama: string;
+}
+
 const props = defineProps<{
     pemilihs: PaginatedPemilih;
-    desa: string;
+    desas: DropdownItem[];
+    kecamatan: string;
     filters: {
+        desa_id: string | null;
         search: string | null;
-        jenis_kelamin: string | null;
     };
     summary: {
         total: number;
@@ -48,43 +55,43 @@ const props = defineProps<{
     };
 }>();
 
-const confirmDelete = ref<string | null>(null);
 const searchVal = ref(props.filters.search ?? '');
-const selectedJk = ref(props.filters.jenis_kelamin ?? '');
+const selectedDesa = ref(props.filters.desa_id ?? '');
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const currentPage = ref(props.pemilihs.current_page);
-const totalPages  = ref(props.pemilihs.last_page);
+const totalPages = ref(props.pemilihs.last_page);
 const currentData = ref<Pemilih[]>([...props.pemilihs.data]);
 const currentSummary = ref({ ...props.summary });
-const loading     = ref(false);
+const loading = ref(false);
 
 const pageCache = reactive<Record<number, Pemilih[]>>({
     [props.pemilihs.current_page]: [...props.pemilihs.data],
 });
 
 // Watch props to reset when filters change
-watch(() => props.pemilihs, (newPemilihs) => {
-    currentPage.value = newPemilihs.current_page;
-    totalPages.value = newPemilihs.last_page;
-    currentData.value = [...newPemilihs.data];
-    Object.keys(pageCache).forEach(k => delete pageCache[Number(k)]);
-    pageCache[newPemilihs.current_page] = [...newPemilihs.data];
-}, { deep: true });
+watch(
+    () => props.pemilihs,
+    (newPemilihs) => {
+        currentPage.value = newPemilihs.current_page;
+        totalPages.value = newPemilihs.last_page;
+        currentData.value = [...newPemilihs.data];
+        Object.keys(pageCache).forEach((k) => delete pageCache[Number(k)]);
+        pageCache[newPemilihs.current_page] = [...newPemilihs.data];
+    },
+    { deep: true },
+);
 
-watch(() => props.summary, (newSummary) => {
-    currentSummary.value = { ...newSummary };
-}, { deep: true });
+watch(
+    () => props.summary,
+    (newSummary) => {
+        currentSummary.value = { ...newSummary };
+    },
+    { deep: true },
+);
 
-const selectedVoter = computed(() => {
-    if (!confirmDelete.value) {
-        return null;
-    }
-
-    return currentData.value.find((p) => p.id === confirmDelete.value) || null;
-});
-
-watch(selectedJk, () => {
+// Trigger filters when desa changes
+watch(selectedDesa, () => {
     applyFilters();
 });
 
@@ -103,10 +110,10 @@ function handleSearch(e: Event) {
 
 function applyFilters() {
     router.get(
-        desaRoutes.pemilih.index.url(),
+        '/kecamatan/pemilih',
         {
             search: searchVal.value || undefined,
-            jenis_kelamin: selectedJk.value || undefined,
+            desa_id: selectedDesa.value || undefined,
         },
         {
             preserveState: true,
@@ -115,37 +122,19 @@ function applyFilters() {
     );
 }
 
-// Reset page cache when deleting voter
-function submitDelete() {
-    if (!confirmDelete.value) {
-        return;
-    }
-
-    router.delete(desaRoutes.pemilih.destroy.url(confirmDelete.value), {
-        onSuccess: () => {
-            confirmDelete.value = null;
-            // Clear page cache to reload fresh data
-            Object.keys(pageCache).forEach(k => delete pageCache[Number(k)]);
-        },
-    });
-}
-
 function clearFilters() {
     searchVal.value = '';
-    selectedJk.value = '';
-    router.get(desaRoutes.pemilih.index.url());
-}
-
-function openDeleteModal(id: string) {
-    confirmDelete.value = id;
-}
-
-function cancelDelete() {
-    confirmDelete.value = null;
+    selectedDesa.value = '';
+    router.get('/kecamatan/pemilih');
 }
 
 async function goToPage(page: number) {
-    if (page < 1 || page > totalPages.value || page === currentPage.value || loading.value) {
+    if (
+        page < 1 ||
+        page > totalPages.value ||
+        page === currentPage.value ||
+        loading.value
+    ) {
         return;
     }
 
@@ -162,18 +151,21 @@ async function goToPage(page: number) {
         const queryParams = new URLSearchParams({
             page: String(page),
             ...(searchVal.value ? { search: searchVal.value } : {}),
-            ...(selectedJk.value ? { jenis_kelamin: selectedJk.value } : {}),
+            ...(selectedDesa.value ? { desa_id: selectedDesa.value } : {}),
         });
-        const res = await fetch(`/desa/pemilih?${queryParams.toString()}`, {
-            headers: {
-                Accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
+        const res = await fetch(
+            `/kecamatan/pemilih?${queryParams.toString()}`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
             },
-        });
+        );
 
         if (!res.ok) {
-throw new Error('Gagal memuat data');
-}
+            throw new Error('Gagal memuat data');
+        }
 
         const json = await res.json();
 
@@ -192,65 +184,75 @@ throw new Error('Gagal memuat data');
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Dashboard', href: desaRoutes.dashboard.url() },
-            { title: 'Data Pemilih', href: desaRoutes.pemilih.index.url() },
+            { title: 'Dashboard', href: '/kecamatan/dashboard' },
+            { title: 'Data Pemilih', href: '/kecamatan/pemilih' },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Data Pemilih" />
+    <Head title="Data Pemilih (Kecamatan)" />
     <div class="flex flex-col gap-5 p-6">
         <!-- Header -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex items-start justify-between">
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
-                    Data Pemilih — {{ props.desa }}
+                    Data Pemilih (Kec. {{ props.kecamatan }})
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
-                    Daftar pemilih terdaftar di desa {{ props.desa }}
+                    Total
+                    {{ currentSummary.total.toLocaleString('id-ID') }} pemilih
+                    terdaftar di wilayah kecamatan ini.
                 </p>
             </div>
-            <Link
-                :href="desaRoutes.pemilih.create.url()"
-                class="flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black w-full sm:w-auto whitespace-nowrap"
-            >
-                <svg
-                    class="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Tambah Pemilih
-            </Link>
         </div>
 
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <!-- Total Pemilih -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-blue-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                        <path
+                            d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                        />
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
                     {{ currentSummary.total.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">Total Pemilih (Terfilter)</div>
+                <div class="mt-0.5 text-xs text-gray-500">
+                    Total Pemilih (Terfilter)
+                </div>
             </div>
 
             <!-- Laki-laki -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50">
-                    <svg class="h-5 w-5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-sky-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -262,9 +264,19 @@ defineOptions({
             </div>
 
             <!-- Perempuan -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50">
-                    <svg class="h-5 w-5 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-pink-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -284,6 +296,12 @@ defineOptions({
                 <div class="relative">
                     <input
                         v-model="searchVal"
+                        @input="
+                            searchVal = searchVal.replace(
+                                /[^a-zA-Z0-9\s\.\'-]/g,
+                                '',
+                            )
+                        "
                         type="text"
                         placeholder="Cari Nama / NIK..."
                         class="w-full rounded-lg border border-gray-200 py-2 pr-4 pl-9 text-sm focus:border-blue-500 focus:outline-none"
@@ -301,22 +319,29 @@ defineOptions({
                 </div>
             </form>
 
-            <div class="flex flex-col gap-3 w-full sm:flex-row md:w-auto md:items-center">
-                <!-- Gender Select -->
+            <div
+                class="flex w-full flex-col gap-3 sm:flex-row md:w-auto md:items-center"
+            >
+                <!-- Desa Select -->
                 <select
-                    v-model="selectedJk"
-                    class="w-full sm:flex-1 md:w-56 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                    v-model="selectedDesa"
+                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none sm:flex-1 md:w-56"
                 >
-                    <option value="">Semua Jenis Kelamin</option>
-                    <option value="L">Laki-laki</option>
-                    <option value="P">Perempuan</option>
+                    <option value="">Semua Desa/Kelurahan</option>
+                    <option
+                        v-for="desa in props.desas"
+                        :key="desa.id"
+                        :value="desa.id"
+                    >
+                        {{ desa.nama }}
+                    </option>
                 </select>
 
                 <!-- Reset Filter Button -->
                 <button
-                    v-if="searchVal || selectedJk"
+                    v-if="searchVal || selectedDesa"
                     @click="clearFilters"
-                    class="w-full sm:w-auto rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
+                    class="w-full rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 sm:w-auto"
                 >
                     Reset
                 </button>
@@ -327,7 +352,7 @@ defineOptions({
         <div
             class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
         >
-            <div class="overflow-x-auto relative">
+            <div class="relative overflow-x-auto">
                 <!-- Loading Overlay -->
                 <div
                     v-if="loading"
@@ -345,6 +370,7 @@ defineOptions({
                             <th class="px-4 py-3">NIK</th>
                             <th class="px-4 py-3">Nama</th>
                             <th class="px-4 py-3">JK</th>
+                            <th class="px-4 py-3">Desa / Kel</th>
                             <th class="px-4 py-3">Alamat</th>
                             <th class="px-4 py-3 text-center">RT/RW</th>
                             <th class="px-4 py-3">Relawan</th>
@@ -385,6 +411,9 @@ defineOptions({
                                     >{{ p.jenis_kelamin }}</span
                                 >
                             </td>
+                            <td class="px-4 py-3 text-gray-600">
+                                {{ p.desa }}
+                            </td>
                             <td
                                 class="max-w-[180px] truncate px-4 py-3 text-gray-600"
                             >
@@ -399,32 +428,24 @@ defineOptions({
                             <td class="px-4 py-3 text-xs text-gray-400">
                                 {{ p.created_at }}
                             </td>
-                            <td class="px-4 py-3">
-                                <div
-                                    class="flex items-center justify-center gap-2"
-                                >
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex items-center justify-center">
                                     <Link
-                                        :href="
-                                            desaRoutes.pemilih.edit.url(p.id)
-                                        "
-                                        class="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200"
-                                        >Edit</Link
+                                        :href="kecamatanRoutes.pemilih.show.url(p.id)"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                        title="Detail"
                                     >
-                                    <button
-                                        @click="openDeleteModal(p.id)"
-                                        class="rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
-                                    >
-                                        Hapus
-                                    </button>
+                                        <Eye class="h-4 w-4" />
+                                    </Link>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="!currentData.length && !loading">
                             <td
-                                colspan="9"
+                                colspan="10"
                                 class="px-4 py-12 text-center text-sm text-gray-400"
                             >
-                                Belum ada data pemilih.
+                                Tidak ada data pemilih ditemukan.
                             </td>
                         </tr>
                     </tbody>
@@ -439,38 +460,6 @@ defineOptions({
                     :loading="loading"
                     @go="goToPage"
                 />
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div
-        v-if="confirmDelete"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-    >
-        <div class="w-full max-w-md overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200">
-            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900">Konfirmasi Hapus</h3>
-            <p class="mt-2 text-sm text-gray-500">
-                Apakah Anda yakin ingin menghapus data pemilih bernama <strong class="font-semibold text-gray-800">{{ selectedVoter?.nama }}</strong>? Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div class="mt-6 flex justify-end gap-3">
-                <button
-                    @click="cancelDelete"
-                    class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                    Batal
-                </button>
-                <button
-                    @click="submitDelete"
-                    class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-                >
-                    Ya, Hapus
-                </button>
             </div>
         </div>
     </div>

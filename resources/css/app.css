@@ -148,10 +148,10 @@
     a,
     button,
     select,
-    [role="button"],
-    input[type="checkbox"],
-    input[type="radio"],
-    input[type="submit"] {
+    [role='button'],
+    input[type='checkbox'],
+    input[type='radio'],
+    input[type='submit'] {
         cursor: pointer;
     }
 }

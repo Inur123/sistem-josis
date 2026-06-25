@@ -31,7 +31,7 @@ const pageItems = computed<PageItem[]>(() => {
 
     // Delta = jumlah halaman di sekitar halaman aktif
     const delta = 2;
-    const left  = current - delta;
+    const left = current - delta;
     const right = current + delta;
 
     // Kumpulkan halaman yang perlu ditampilkan: halaman pertama, terakhir, dan sekitar aktif
@@ -61,19 +61,21 @@ const pageItems = computed<PageItem[]>(() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4">
+    <div
+        class="flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4"
+    >
         <!-- Previous -->
         <button
             :disabled="currentPage === 1 || loading"
             @click="emit('go', currentPage - 1)"
-            class="text-sm transition-all duration-150 flex items-center gap-1 px-2 py-2 font-medium"
+            class="flex items-center gap-1 px-2 py-2 text-sm font-medium transition-all duration-150"
             :class="
                 currentPage === 1 || loading
-                    ? 'text-gray-300 cursor-not-allowed'
+                    ? 'cursor-not-allowed text-gray-300'
                     : 'text-gray-600 hover:text-gray-900'
             "
         >
-            <ChevronLeft class="w-4 h-4" /> Previous
+            <ChevronLeft class="h-4 w-4" /> Previous
         </button>
 
         <!-- Nomor Halaman + Ellipsis -->
@@ -81,7 +83,7 @@ const pageItems = computed<PageItem[]>(() => {
             <!-- Ellipsis -->
             <span
                 v-if="item === '...'"
-                class="select-none px-1 py-2 text-sm text-gray-400"
+                class="px-1 py-2 text-sm text-gray-400 select-none"
             >
                 ...
             </span>
@@ -92,11 +94,11 @@ const pageItems = computed<PageItem[]>(() => {
                 @click="emit('go', item)"
                 :disabled="loading"
                 :class="[
-                    'text-sm transition-all duration-150 flex items-center justify-center font-medium px-3 py-2 rounded-xl min-w-[36px]',
+                    'flex min-w-[36px] items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150',
                     currentPage === item
-                        ? 'bg-gray-50 border border-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                    loading ? 'opacity-50 cursor-not-allowed' : '',
+                        ? 'border border-gray-100 bg-gray-50 text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    loading ? 'cursor-not-allowed opacity-50' : '',
                 ]"
             >
                 {{ item }}
@@ -107,14 +109,14 @@ const pageItems = computed<PageItem[]>(() => {
         <button
             :disabled="currentPage === totalPages || loading"
             @click="emit('go', currentPage + 1)"
-            class="text-sm transition-all duration-150 flex items-center gap-1 px-2 py-2 font-medium"
+            class="flex items-center gap-1 px-2 py-2 text-sm font-medium transition-all duration-150"
             :class="
                 currentPage === totalPages || loading
-                    ? 'text-gray-300 cursor-not-allowed'
+                    ? 'cursor-not-allowed text-gray-300'
                     : 'text-gray-600 hover:text-gray-900'
             "
         >
-            Next <ChevronRight class="w-4 h-4" />
+            Next <ChevronRight class="h-4 w-4" />
         </button>
     </div>
 </template>

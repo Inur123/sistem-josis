@@ -27,7 +27,9 @@ defineOptions({
     <Head title="Dashboard Desa" />
     <div class="flex flex-col gap-6 p-6">
         <!-- Header -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+        >
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
                     {{ props.desa }}
@@ -37,18 +39,28 @@ defineOptions({
                 </p>
                 <div class="mt-2.5 flex flex-col gap-1 text-xs text-gray-600">
                     <div>
-                        <span class="font-semibold text-gray-700">Pendamping (Kordes):</span>
-                        {{ props.kordes.length ? props.kordes.join(', ') : '-' }}
+                        <span class="font-semibold text-gray-700"
+                            >Pendamping (Kordes):</span
+                        >
+                        {{
+                            props.kordes.length ? props.kordes.join(', ') : '-'
+                        }}
                     </div>
                     <div>
-                        <span class="font-semibold text-gray-700">Relawan:</span>
-                        {{ props.relawans.length ? props.relawans.join(', ') : '-' }}
+                        <span class="font-semibold text-gray-700"
+                            >Relawan:</span
+                        >
+                        {{
+                            props.relawans.length
+                                ? props.relawans.join(', ')
+                                : '-'
+                        }}
                     </div>
                 </div>
             </div>
             <Link
                 :href="desaRoutes.pemilih.create.url()"
-                class="flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black w-full sm:w-auto whitespace-nowrap"
+                class="flex w-full items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:bg-black sm:w-auto"
             >
                 <svg
                     class="h-4 w-4"

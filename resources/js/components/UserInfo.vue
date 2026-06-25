@@ -24,8 +24,14 @@ const showAvatar = computed(
 <template>
     <Avatar class="h-8 w-8 overflow-hidden rounded-lg">
         <AvatarImage v-if="showAvatar" :src="user.avatar!" :alt="user.name" />
-        <AvatarFallback class="rounded-lg bg-amber-500/5 flex items-center justify-center p-0.5">
-            <img src="/images/logo_golkar.svg" alt="Golkar" class="h-6 w-6 object-contain" />
+        <AvatarFallback
+            class="flex items-center justify-center rounded-lg bg-amber-500/5 p-0.5"
+        >
+            <img
+                src="/images/logo_golkar.svg"
+                alt="Golkar"
+                class="h-6 w-6 object-contain"
+            />
         </AvatarFallback>
     </Avatar>
 

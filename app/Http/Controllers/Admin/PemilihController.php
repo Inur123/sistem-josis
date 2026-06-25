@@ -42,7 +42,7 @@ class PemilihController extends Controller
         /** @var Builder<Desa> $desaQuery */
         $desaQuery = Desa::query();
 
-        return Inertia::render('admin/Pemilih', [
+        return Inertia::render('admin/pemilih/Index', [
             'pemilihs' => $result['paginated'],
             'kecamatans' => $kecamatanQuery->orderBy('nama', 'asc')->get(['id', 'nama']),
             'desas' => $desaQuery->orderBy('nama', 'asc')->get(['id', 'nama', 'kecamatan_id']),
@@ -476,5 +476,27 @@ class PemilihController extends Controller
         $clean = str_replace(['\\', '/', '?', '*', ':', '[', ']'], '', $title);
 
         return substr($clean, 0, 31);
+    }
+
+    /**
+     * Detail pemilih untuk Admin.
+     */
+    public function show(Request $request, Pemilih $pemilih): Response
+    {
+        return Inertia::render('admin/pemilih/Show', [
+            'desa' => $pemilih->desa->nama,
+            'pemilih' => [
+                'id' => $pemilih->id,
+                'nik' => $pemilih->nik,
+                'nama' => $pemilih->nama,
+                'jenis_kelamin' => $pemilih->jenis_kelamin,
+                'alamat' => $pemilih->alamat,
+                'rt' => $pemilih->rt,
+                'rw' => $pemilih->rw,
+                'relawan' => $pemilih->relawan?->nama,
+                'created_at' => $pemilih->created_at?->format('d/m/Y'),
+                'foto_ktp' => $pemilih->foto_ktp ? route('pemilih.ktp', $pemilih->id) : null,
+            ],
+        ]);
     }
 }

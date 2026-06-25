@@ -253,9 +253,13 @@ const rightNavItems: NavItem[] = [
                                         :alt="auth.user.name"
                                     />
                                     <AvatarFallback
-                                        class="rounded-lg bg-amber-500/5 flex items-center justify-center p-0.5"
+                                        class="flex items-center justify-center rounded-lg bg-amber-500/5 p-0.5"
                                     >
-                                        <img src="/images/logo_golkar.svg" alt="Golkar" class="h-6 w-6 object-contain" />
+                                        <img
+                                            src="/images/logo_golkar.svg"
+                                            alt="Golkar"
+                                            class="h-6 w-6 object-contain"
+                                        />
                                     </AvatarFallback>
                                 </Avatar>
                             </Button>

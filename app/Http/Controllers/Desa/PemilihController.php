@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -43,7 +46,7 @@ class PemilihController extends Controller
             scope: ['desa_id' => $user->desa_id],
         );
 
-        return Inertia::render('desa/Pemilih', [
+        return Inertia::render('desa/pemilih/Index', [
             'pemilihs' => $result['paginated'],
             'desa' => $user->desa->nama,
             'filters' => [
@@ -73,7 +76,7 @@ class PemilihController extends Controller
                 'nama' => $r->nama,
             ]);
 
-        return Inertia::render('desa/PemilihForm', [
+        return Inertia::render('desa/pemilih/Form', [
             'mode' => 'create',
             'desa' => $user->desa->nama,
             'relawans' => $relawans,
@@ -96,17 +99,31 @@ class PemilihController extends Controller
             'rt' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'rw' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'relawan_id' => ['required', 'exists:anggota_tim,id'],
+            'foto_ktp' => ['required', 'image', 'max:10240'],
         ], [
             'nama.regex' => "Nama hanya boleh berisi huruf, spasi, titik, koma atas ('), dan tanda hubung (-).",
             'alamat.regex' => 'Alamat hanya boleh berisi huruf, angka, spasi, titik, koma, garis miring (/), tanda pagar (#), dan tanda hubung (-).',
             'rt.regex' => 'RT hanya boleh berisi angka.',
             'rw.regex' => 'RW hanya boleh berisi angka.',
+            'foto_ktp.required' => 'Foto KTP wajib diunggah.',
+            'foto_ktp.image' => 'File harus berupa gambar.',
+            'foto_ktp.max' => 'Ukuran file gambar maksimal 10MB.',
         ]);
 
         $nikHash = hash('sha256', $data['nik']);
 
         if (DB::table('pemilihs')->where('nik_hash', $nikHash)->exists()) {
             return back()->withErrors(['nik' => 'NIK sudah terdaftar dalam sistem.']);
+        }
+
+        $fotoKtpPath = null;
+        if ($request->hasFile('foto_ktp')) {
+            $file = $request->file('foto_ktp');
+            $fileContents = file_get_contents($file->getRealPath());
+            $encryptedContents = Crypt::encrypt($fileContents);
+            $filename = Str::uuid().'.enc';
+            $fotoKtpPath = 'ktps/'.$filename;
+            Storage::put('private/'.$fotoKtpPath, $encryptedContents);
         }
 
         $pemilih = Pemilih::create([
@@ -121,6 +138,7 @@ class PemilihController extends Controller
             'kecamatan_id' => $user->kecamatan_id,
             'user_id' => $user->id,
             'relawan_id' => $data['relawan_id'] ?? null,
+            'foto_ktp' => $fotoKtpPath,
         ]);
 
         activity()
@@ -130,6 +148,32 @@ class PemilihController extends Controller
 
         return redirect()->route('desa.pemilih.index')
             ->with('success', 'Data pemilih berhasil ditambahkan.');
+    }
+
+    /**
+     * Detail pemilih.
+     */
+    public function show(Request $request, Pemilih $pemilih): Response
+    {
+        /** @var User $user */
+        $user = $request->user();
+        abort_if($pemilih->desa_id !== $user->desa_id, 403);
+
+        return Inertia::render('desa/pemilih/Show', [
+            'desa' => $user->desa->nama,
+            'pemilih' => [
+                'id' => $pemilih->id,
+                'nik' => $pemilih->nik,
+                'nama' => $pemilih->nama,
+                'jenis_kelamin' => $pemilih->jenis_kelamin,
+                'alamat' => $pemilih->alamat,
+                'rt' => $pemilih->rt,
+                'rw' => $pemilih->rw,
+                'relawan' => $pemilih->relawan?->nama,
+                'created_at' => $pemilih->created_at?->format('d/m/Y'),
+                'foto_ktp' => $pemilih->foto_ktp ? route('pemilih.ktp', $pemilih->id) : null,
+            ],
+        ]);
     }
 
     /**
@@ -152,7 +196,7 @@ class PemilihController extends Controller
                 'nama' => $r->nama,
             ]);
 
-        return Inertia::render('desa/PemilihForm', [
+        return Inertia::render('desa/pemilih/Form', [
             'mode' => 'edit',
             'desa' => $user->desa->nama,
             'pemilih' => [
@@ -164,6 +208,7 @@ class PemilihController extends Controller
                 'rt' => $pemilih->rt,
                 'rw' => $pemilih->rw,
                 'relawan_id' => $pemilih->relawan_id,
+                'foto_ktp' => $pemilih->foto_ktp ? route('pemilih.ktp', $pemilih->id) : null,
             ],
             'relawans' => $relawans,
         ]);
@@ -186,17 +231,34 @@ class PemilihController extends Controller
             'rt' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'rw' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'relawan_id' => ['required', 'exists:anggota_tim,id'],
+            'foto_ktp' => ['nullable', 'image', 'max:10240'],
         ], [
             'nama.regex' => "Nama hanya boleh berisi huruf, spasi, titik, koma atas ('), dan tanda hubung (-).",
             'alamat.regex' => 'Alamat hanya boleh berisi huruf, angka, spasi, titik, koma, garis miring (/), tanda pagar (#), dan tanda hubung (-).',
             'rt.regex' => 'RT hanya boleh berisi angka.',
             'rw.regex' => 'RW hanya boleh berisi angka.',
+            'foto_ktp.image' => 'File harus berupa gambar.',
+            'foto_ktp.max' => 'Ukuran file gambar maksimal 10MB.',
         ]);
 
         $nikHash = hash('sha256', $data['nik']);
 
         if (DB::table('pemilihs')->where('nik_hash', $nikHash)->where('id', '!=', $pemilih->id)->exists()) {
             return back()->withErrors(['nik' => 'NIK sudah terdaftar untuk pemilih lain.']);
+        }
+
+        if ($request->hasFile('foto_ktp')) {
+            if ($pemilih->foto_ktp && Storage::exists('private/'.$pemilih->foto_ktp)) {
+                Storage::delete('private/'.$pemilih->foto_ktp);
+            }
+
+            $file = $request->file('foto_ktp');
+            $fileContents = file_get_contents($file->getRealPath());
+            $encryptedContents = Crypt::encrypt($fileContents);
+            $filename = Str::uuid().'.enc';
+            $fotoKtpPath = 'ktps/'.$filename;
+            Storage::put('private/'.$fotoKtpPath, $encryptedContents);
+            $pemilih->foto_ktp = $fotoKtpPath;
         }
 
         $pemilih->nik = $data['nik'];
@@ -231,6 +293,10 @@ class PemilihController extends Controller
             ->performedOn($pemilih)
             ->event('deleted')
             ->log("Menghapus data pemilih: {$pemilih->nama}");
+
+        if ($pemilih->foto_ktp && Storage::exists('private/'.$pemilih->foto_ktp)) {
+            Storage::delete('private/'.$pemilih->foto_ktp);
+        }
 
         DB::table('pemilihs')->where('id', $pemilih->id)->delete();
 
@@ -279,6 +345,7 @@ class PemilihController extends Controller
             'desa' => in_array('desa', $extraColumns) ? $p->desa?->nama : null,
             'relawan' => $p->relawan?->nama,
             'created_at' => $p->created_at?->format('d/m/Y'),
+            'foto_ktp' => $p->foto_ktp ? route('pemilih.ktp', $p->id) : null,
         ], fn ($v) => $v !== null);
 
         if ($search && ! is_numeric($search)) {

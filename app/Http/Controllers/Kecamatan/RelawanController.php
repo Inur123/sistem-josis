@@ -66,7 +66,7 @@ class RelawanController extends Controller
                 ])->values(),
             ]);
 
-        return Inertia::render('kecamatan/Relawan', [
+        return Inertia::render('kecamatan/relawan/Index', [
             'relawans' => $relawans,
             'desas' => $desas,
             'kecamatan' => $user->kecamatan->nama,

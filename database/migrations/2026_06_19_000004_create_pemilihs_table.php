@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('alamat');                    // 🔐 AES-256-GCM
             $table->text('rt');                        // 🔐 AES-256-GCM
             $table->text('rw');                        // 🔐 AES-256-GCM
+            $table->text('foto_ktp')->nullable();      // Path file foto KTP terenkripsi
 
             // Relasi wilayah (tidak dienkripsi — hanya ID)
             $table->foreignUlid('desa_id')

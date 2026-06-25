@@ -10,6 +10,7 @@ use App\Http\Controllers\Desa\DashboardController as DesaDashboardController;
 use App\Http\Controllers\Desa\PemilihController as DesaPemilihController;
 use App\Http\Controllers\Kecamatan\DashboardController as KecamatanDashboardController;
 use App\Http\Controllers\Kecamatan\PemilihController as KecamatanPemilihController;
+use App\Http\Controllers\PemilihKtpController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
         Route::get('/pemilih', [AdminPemilihController::class, 'index'])->name('pemilih.index');
         Route::get('/pemilih/export', [AdminPemilihController::class, 'export'])->name('pemilih.export');
+        Route::get('/pemilih/{pemilih}', [AdminPemilihController::class, 'show'])->name('pemilih.show');
         Route::get('/akun', [AdminAkunController::class, 'index'])->name('akun.index');
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
@@ -83,6 +85,7 @@ Route::middleware(['auth', 'role:kecamatan'])
     ->group(function () {
         Route::get('/dashboard', KecamatanDashboardController::class)->name('dashboard');
         Route::get('/pemilih', [KecamatanPemilihController::class, 'index'])->name('pemilih.index');
+        Route::get('/pemilih/{pemilih}', [KecamatanPemilihController::class, 'show'])->name('pemilih.show');
         Route::get('/relawan', [App\Http\Controllers\Kecamatan\RelawanController::class, 'index'])->name('relawan.index');
         Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Kecamatan\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });
@@ -101,9 +104,14 @@ Route::middleware(['auth', 'role:desa'])
         Route::get('/pemilih', [DesaPemilihController::class, 'index'])->name('pemilih.index');
         Route::get('/pemilih/tambah', [DesaPemilihController::class, 'create'])->name('pemilih.create');
         Route::post('/pemilih', [DesaPemilihController::class, 'store'])->name('pemilih.store');
+        Route::get('/pemilih/{pemilih}', [DesaPemilihController::class, 'show'])->name('pemilih.show');
         Route::get('/pemilih/{pemilih}/edit', [DesaPemilihController::class, 'edit'])->name('pemilih.edit');
         Route::put('/pemilih/{pemilih}', [DesaPemilihController::class, 'update'])->name('pemilih.update');
         Route::delete('/pemilih/{pemilih}', [DesaPemilihController::class, 'destroy'])->name('pemilih.destroy');
         Route::get('/relawan', [App\Http\Controllers\Desa\RelawanController::class, 'index'])->name('relawan.index');
         Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Desa\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pemilih/{pemilih}/ktp', [PemilihKtpController::class, 'show'])->name('pemilih.ktp');
+});

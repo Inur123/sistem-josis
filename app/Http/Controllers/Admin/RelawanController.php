@@ -73,7 +73,7 @@ class RelawanController extends Controller
                 ]);
         }
 
-        return Inertia::render('admin/Relawan', [
+        return Inertia::render('admin/relawan/Index', [
             'relawans' => $relawans,
             'kecamatans' => $kecamatans,
             'desas' => $desas,
