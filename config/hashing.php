@@ -41,10 +41,10 @@ return [
     */
 
     'argon' => [
-        'memory'  => env('ARGON_MEMORY', 65536),   // 64 MB
+        'memory' => env('ARGON_MEMORY', 65536),   // 64 MB
         'threads' => env('ARGON_THREADS', 1),
-        'time'    => env('ARGON_TIME', 2),
-        'verify'  => env('HASH_VERIFY', true),
+        'time' => env('ARGON_TIME', 2),
+        'verify' => env('HASH_VERIFY', true),
     ],
 
 ];

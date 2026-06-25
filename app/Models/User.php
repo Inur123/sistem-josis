@@ -3,30 +3,35 @@
 namespace App\Models;
 
 use App\Casts\EncryptedAesGcm;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 
 /**
  * @property string $id
- * @property string $name           🔐 AES-256-GCM
- * @property string $email          🔐 AES-256-GCM
- * @property string $email_hash     SHA-256 (untuk login lookup)
- * @property string $password       🔑 Argon2id
- * @property string $role           admin | kecamatan | desa
+ * @property string $name 🔐 AES-256-GCM
+ * @property string $email 🔐 AES-256-GCM
+ * @property string $email_hash SHA-256 (untuk login lookup)
+ * @property string $password 🔑 Argon2id
+ * @property string $role admin | kecamatan | desa
  * @property string|null $kecamatan_id
  * @property string|null $desa_id
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\Desa|null $desa
- * @property-read \App\Models\Kecamatan|null $kecamatan
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Desa|null $desa
+ * @property-read Kecamatan|null $kecamatan
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pemilih> $pemilihs
+ * @property-read Collection<int, Pemilih> $pemilihs
  * @property-read int|null $pemilihs_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -41,6 +46,7 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -64,8 +70,8 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'name'     => EncryptedAesGcm::class,  // 🔐 AES-256-GCM
-            'email'    => EncryptedAesGcm::class,  // 🔐 AES-256-GCM
+            'name' => EncryptedAesGcm::class,  // 🔐 AES-256-GCM
+            'email' => EncryptedAesGcm::class,  // 🔐 AES-256-GCM
             'password' => 'hashed',                // 🔑 Argon2id
         ];
     }

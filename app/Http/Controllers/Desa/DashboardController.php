@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Desa;
 
 use App\Http\Controllers\Controller;
+use App\Models\AnggotaTim;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class DashboardController extends Controller
         $lakiLaki = DB::table('pemilihs')->where('desa_id', $desaId)->where('jenis_kelamin', 'L')->count();
         $perempuan = DB::table('pemilihs')->where('desa_id', $desaId)->where('jenis_kelamin', 'P')->count();
 
-        $kordes = \App\Models\AnggotaTim::query()
+        $kordes = AnggotaTim::query()
             ->where('desa_id', $desaId)
             ->where('role', 'kordes')
             ->get()
@@ -34,7 +35,7 @@ class DashboardController extends Controller
             ->pluck('nama')
             ->values();
 
-        $relawans = \App\Models\AnggotaTim::query()
+        $relawans = AnggotaTim::query()
             ->where('desa_id', $desaId)
             ->where('role', 'relawan')
             ->get()

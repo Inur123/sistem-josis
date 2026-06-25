@@ -19,35 +19,35 @@ class ActivityLogController extends Controller
      */
     public function __invoke(Request $request): Response|JsonResponse
     {
-        $page    = max(1, $request->integer('page', 1));
+        $page = max(1, $request->integer('page', 1));
         $perPage = self::PER_PAGE;
 
         $logs = Activity::with('causer')
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page)
             ->through(fn ($log) => [
-                'id'          => $log->id,
-                'log_name'    => $log->log_name,
+                'id' => $log->id,
+                'log_name' => $log->log_name,
                 'description' => $log->description,
-                'event'       => $log->event,
-                'causer'      => $log->causer ? [
-                    'name'  => $log->causer->name,
+                'event' => $log->event,
+                'causer' => $log->causer ? [
+                    'name' => $log->causer->name,
                     'email' => $log->causer->email,
-                    'role'  => $log->causer->role,
+                    'role' => $log->causer->role,
                 ] : null,
-                'created_at'  => $log->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
+                'created_at' => $log->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
             ]);
 
         // Jika AJAX fetch dari frontend (bukan Inertia navigation), kembalikan JSON saja.
         // Inertia juga mengirim X-Requested-With, tapi ia selalu mengirim X-Inertia juga.
         // Fetch biasa dari Vue TIDAK memiliki X-Inertia, sehingga ini aman dibedakan.
-        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && !$request->header('X-Inertia')) {
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && ! $request->header('X-Inertia')) {
             return response()->json([
-                'data'         => $logs->items(),
+                'data' => $logs->items(),
                 'current_page' => $logs->currentPage(),
-                'last_page'    => $logs->lastPage(),
-                'total'        => $logs->total(),
-                'per_page'     => $logs->perPage(),
+                'last_page' => $logs->lastPage(),
+                'total' => $logs->total(),
+                'per_page' => $logs->perPage(),
             ]);
         }
 

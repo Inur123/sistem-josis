@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -26,12 +30,12 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
 
         // Flash message sukses saat login & logout
-        \Illuminate\Support\Facades\Event::listen(
-            \Illuminate\Auth\Events\Login::class,
-            function (\Illuminate\Auth\Events\Login $event) {
+        Event::listen(
+            Login::class,
+            function (Login $event) {
                 session()->flash('success', 'Selamat datang kembali! Anda berhasil login.');
 
-                /** @var \App\Models\User $user */
+                /** @var User $user */
                 $user = $event->user;
 
                 activity()
@@ -41,10 +45,10 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
-        \Illuminate\Support\Facades\Event::listen(
-            \Illuminate\Auth\Events\Logout::class,
-            function (\Illuminate\Auth\Events\Logout $event) {
-                /** @var \App\Models\User|null $user */
+        Event::listen(
+            Logout::class,
+            function (Logout $event) {
+                /** @var User|null $user */
                 $user = $event->user;
 
                 if ($user) {

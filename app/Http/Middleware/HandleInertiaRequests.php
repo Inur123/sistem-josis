@@ -41,12 +41,12 @@ class HandleInertiaRequests extends Middleware
         } elseif ($request->session()->has('success')) {
             $toast = [
                 'type' => 'success',
-                'message' => $request->session()->get('success')
+                'message' => $request->session()->get('success'),
             ];
         } elseif ($request->session()->has('error')) {
             $toast = [
                 'type' => 'error',
-                'message' => $request->session()->get('error')
+                'message' => $request->session()->get('error'),
             ];
         }
 

@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class PemilihController extends Controller
 {
@@ -21,12 +20,13 @@ class PemilihController extends Controller
         $kecamatanId = $user->kecamatan_id;
 
         // Cek jika request adalah AJAX fetch biasa dari Vue (bukan navigasi Inertia)
-        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && !$request->header('X-Inertia')) {
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && ! $request->header('X-Inertia')) {
             $result = $this->paginate(
                 $request,
                 scope: ['kecamatan_id' => $kecamatanId],
                 extraColumns: ['desa']
             );
+
             return response()->json([
                 'paginated' => $result['paginated'],
                 'summary' => $result['summary'],

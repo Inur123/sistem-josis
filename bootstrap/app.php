@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -26,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Alias middleware role untuk pembatasan akses per role
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureRole::class,
+            'role' => EnsureRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

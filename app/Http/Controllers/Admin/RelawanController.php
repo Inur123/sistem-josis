@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AnggotaTim;
-use App\Models\Kecamatan;
 use App\Models\Desa;
+use App\Models\Kecamatan;
 use App\Models\Pemilih;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class RelawanController extends Controller
     public function index(Request $request): Response
     {
         $kecamatanId = $request->query('kecamatan_id');
-        $desaId      = $request->query('desa_id');
+        $desaId = $request->query('desa_id');
 
         // Fetch all kecamatan and desas for dropdown filters
         $kecamatans = Kecamatan::query()->orderBy('nama', 'asc')->get(['id', 'nama']);
@@ -51,35 +51,35 @@ class RelawanController extends Controller
             $relawans = $query->get()
                 ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
                 ->values()
-                ->map(fn($r) => [
-                    'id'             => $r->id,
-                    'nama'           => $r->nama,
-                    'nik'            => $r->nik,
-                    'no_hp'          => $r->no_hp,
-                    'alamat'         => $r->alamat,
-                    'kecamatan'      => $r->kecamatan?->nama ?? '-',
-                    'desa'           => $r->desa?->nama ?? '-',
+                ->map(fn ($r) => [
+                    'id' => $r->id,
+                    'nama' => $r->nama,
+                    'nik' => $r->nik,
+                    'no_hp' => $r->no_hp,
+                    'alamat' => $r->alamat,
+                    'kecamatan' => $r->kecamatan?->nama ?? '-',
+                    'desa' => $r->desa?->nama ?? '-',
                     'pemilihs_count' => $r->pemilihs_count,
-                    'pemilihs'       => $r->pemilihs->map(fn($p) => [
-                        'id'            => $p->id,
-                        'nik'           => $p->nik,
-                        'nama'          => $p->nama,
+                    'pemilihs' => $r->pemilihs->map(fn ($p) => [
+                        'id' => $p->id,
+                        'nik' => $p->nik,
+                        'nama' => $p->nama,
                         'jenis_kelamin' => $p->jenis_kelamin,
-                        'alamat'        => $p->alamat,
-                        'rt'            => $p->rt,
-                        'rw'            => $p->rw,
-                        'created_at'    => $p->created_at?->format('d/m/Y'),
+                        'alamat' => $p->alamat,
+                        'rt' => $p->rt,
+                        'rw' => $p->rw,
+                        'created_at' => $p->created_at?->format('d/m/Y'),
                     ])->values(),
                 ]);
         }
 
         return Inertia::render('admin/Relawan', [
-            'relawans'   => $relawans,
+            'relawans' => $relawans,
             'kecamatans' => $kecamatans,
-            'desas'      => $desas,
-            'filters'    => [
+            'desas' => $desas,
+            'filters' => [
                 'kecamatan_id' => $kecamatanId,
-                'desa_id'      => $desaId,
+                'desa_id' => $desaId,
             ],
         ]);
     }
@@ -93,9 +93,9 @@ class RelawanController extends Controller
         // Pastikan relawan ini memang berrole 'relawan'
         abort_if($relawan->role !== 'relawan', 403);
 
-        $page    = max(1, (int) $request->query('page', 1));
+        $page = max(1, (int) $request->query('page', 1));
         $perPage = self::PER_PAGE;
-        $offset  = ($page - 1) * $perPage;
+        $offset = ($page - 1) * $perPage;
 
         $pemilihs = Pemilih::query()
             ->where('relawan_id', $relawan->id)
@@ -103,20 +103,20 @@ class RelawanController extends Controller
             ->offset($offset)
             ->limit($perPage)
             ->get()
-            ->map(fn($p) => [
-                'id'            => $p->id,
-                'nik'           => $p->nik,
-                'nama'          => $p->nama,
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'nik' => $p->nik,
+                'nama' => $p->nama,
                 'jenis_kelamin' => $p->jenis_kelamin,
-                'alamat'        => $p->alamat,
-                'rt'            => $p->rt,
-                'rw'            => $p->rw,
-                'created_at'    => $p->created_at?->format('d/m/Y'),
+                'alamat' => $p->alamat,
+                'rt' => $p->rt,
+                'rw' => $p->rw,
+                'created_at' => $p->created_at?->format('d/m/Y'),
             ]);
 
         return response()->json([
-            'data'    => $pemilihs->values(),
-            'page'    => $page,
+            'data' => $pemilihs->values(),
+            'page' => $page,
             'perPage' => $perPage,
         ]);
     }

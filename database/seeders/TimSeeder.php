@@ -21,8 +21,8 @@ class TimSeeder extends Seeder
                     'kecamatan_id' => $kec->id,
                     'desa_id' => null,
                     'nama' => "Korcam {$kec->nama} {$i}",
-                    'nik' => '352012' . str_pad((string) rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
-                    'no_hp' => '0812' . str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT),
+                    'nik' => '352012'.str_pad((string) rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
+                    'no_hp' => '0812'.str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT),
                     'alamat' => "Alamat Korcam {$kec->nama} {$i}",
                 ]);
             }
@@ -37,8 +37,8 @@ class TimSeeder extends Seeder
                     'kecamatan_id' => $desa->kecamatan_id,
                     'desa_id' => $desa->id,
                     'nama' => "Kordes {$desa->nama} {$i}",
-                    'nik' => '352012' . str_pad((string) rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
-                    'no_hp' => '0812' . str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT),
+                    'nik' => '352012'.str_pad((string) rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
+                    'no_hp' => '0812'.str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT),
                     'alamat' => "Alamat Kordes {$desa->nama} {$i}",
                 ]);
             }
@@ -50,8 +50,8 @@ class TimSeeder extends Seeder
                     'kecamatan_id' => $desa->kecamatan_id,
                     'desa_id' => $desa->id,
                     'nama' => "Relawan {$desa->nama} {$i}",
-                    'nik' => '352012' . str_pad((string) rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
-                    'no_hp' => '0812' . str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT),
+                    'nik' => '352012'.str_pad((string) rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
+                    'no_hp' => '0812'.str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT),
                     'alamat' => "Alamat Relawan {$desa->nama} {$i}",
                 ]);
             }

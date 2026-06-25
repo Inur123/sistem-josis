@@ -51,6 +51,7 @@ class PemilihSeeder extends Seeder
 
         if ($relawans->isEmpty()) {
             $this->command->warn('⚠️  Tidak ada relawan ditemukan. Jalankan TimSeeder terlebih dahulu.');
+
             return;
         }
 
@@ -59,19 +60,19 @@ class PemilihSeeder extends Seeder
             ->get()
             ->keyBy('desa_id');
 
-        $this->command->info("   Ditemukan {$relawans->count()} relawan. Membuat " . self::PEMILIH_PER_RELAWAN . " pemilih per relawan...");
+        $this->command->info("   Ditemukan {$relawans->count()} relawan. Membuat ".self::PEMILIH_PER_RELAWAN.' pemilih per relawan...');
 
-        $nikCounter  = 1000000;
+        $nikCounter = 1000000;
         $totalInsert = 0;
 
         $bar = $this->command->getOutput()->createProgressBar($relawans->count());
         $bar->start();
 
         foreach ($relawans as $relawan) {
-            $desaId      = $relawan->desa_id;
+            $desaId = $relawan->desa_id;
             $kecamatanId = $relawan->kecamatan_id;
-            $userDesa    = $userDesaMap->get($desaId);
-            $userId      = $userDesa?->id ?? null;
+            $userDesa = $userDesaMap->get($desaId);
+            $userId = $userDesa?->id ?? null;
 
             $desaNama = $relawan->desa?->nama ?? 'Desa';
 
@@ -83,28 +84,28 @@ class PemilihSeeder extends Seeder
                     : self::NAMA_DEPAN_P[array_rand(self::NAMA_DEPAN_P)];
 
                 $namaBelakang = self::NAMA_BELAKANG[array_rand(self::NAMA_BELAKANG)];
-                $nama         = "{$namaDepan} {$namaBelakang}";
+                $nama = "{$namaDepan} {$namaBelakang}";
 
                 // NIK: 16 digit unik (kode wilayah dummy + urutan)
-                $nik = '3520' . str_pad((string) $nikCounter++, 12, '0', STR_PAD_LEFT);
+                $nik = '3520'.str_pad((string) $nikCounter++, 12, '0', STR_PAD_LEFT);
 
-                $jalan  = self::JALAN[array_rand(self::JALAN)];
-                $nomor  = rand(1, 150);
-                $rt     = str_pad((string) rand(1, 6), 3, '0', STR_PAD_LEFT);
-                $rw     = str_pad((string) rand(1, 4), 3, '0', STR_PAD_LEFT);
+                $jalan = self::JALAN[array_rand(self::JALAN)];
+                $nomor = rand(1, 150);
+                $rt = str_pad((string) rand(1, 6), 3, '0', STR_PAD_LEFT);
+                $rw = str_pad((string) rand(1, 4), 3, '0', STR_PAD_LEFT);
                 $alamat = "{$jalan} No. {$nomor}, Desa {$desaNama}";
 
                 Pemilih::create([
-                    'nik'           => $nik,
-                    'nama'          => $nama,
+                    'nik' => $nik,
+                    'nama' => $nama,
                     'jenis_kelamin' => $jk,
-                    'alamat'        => $alamat,
-                    'rt'            => $rt,
-                    'rw'            => $rw,
-                    'desa_id'       => $desaId,
-                    'kecamatan_id'  => $kecamatanId,
-                    'user_id'       => $userId,
-                    'relawan_id'    => $relawan->id,
+                    'alamat' => $alamat,
+                    'rt' => $rt,
+                    'rw' => $rw,
+                    'desa_id' => $desaId,
+                    'kecamatan_id' => $kecamatanId,
+                    'user_id' => $userId,
+                    'relawan_id' => $relawan->id,
                 ]);
 
                 $totalInsert++;

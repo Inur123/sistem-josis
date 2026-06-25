@@ -26,11 +26,12 @@ class PemilihController extends Controller
         $user = $request->user();
 
         // Cek jika request adalah AJAX fetch biasa dari Vue (bukan navigasi Inertia)
-        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && !$request->header('X-Inertia')) {
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest' && ! $request->header('X-Inertia')) {
             $result = $this->paginate(
                 $request,
                 scope: ['desa_id' => $user->desa_id],
             );
+
             return response()->json([
                 'paginated' => $result['paginated'],
                 'summary' => $result['summary'],
@@ -67,7 +68,7 @@ class PemilihController extends Controller
             ->get()
             ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
             ->values()
-            ->map(fn($r) => [
+            ->map(fn ($r) => [
                 'id' => $r->id,
                 'nama' => $r->nama,
             ]);
@@ -146,7 +147,7 @@ class PemilihController extends Controller
             ->get()
             ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
             ->values()
-            ->map(fn($r) => [
+            ->map(fn ($r) => [
                 'id' => $r->id,
                 'nama' => $r->nama,
             ]);

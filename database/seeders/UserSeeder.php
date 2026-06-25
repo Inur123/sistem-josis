@@ -14,9 +14,11 @@ class UserSeeder extends Seeder
     /**
      * Default password sementara — wajib diganti setelah deploy pertama.
      */
-    private const DEFAULT_ADMIN_PASSWORD     = 'Admin@Josis2026!';
+    private const DEFAULT_ADMIN_PASSWORD = 'Admin@Josis2026!';
+
     private const DEFAULT_KECAMATAN_PASSWORD = 'Kecamatan@2026!';
-    private const DEFAULT_DESA_PASSWORD      = 'Desa@2026!';
+
+    private const DEFAULT_DESA_PASSWORD = 'Desa@2026!';
 
     public function run(): void
     {
@@ -53,16 +55,16 @@ class UserSeeder extends Seeder
         User::updateOrCreate(
             ['email_hash' => hash('sha256', $email)],
             [
-                'name'       => 'Administrator JOSIS',
-                'email'      => $email,
+                'name' => 'Administrator JOSIS',
+                'email' => $email,
                 'email_hash' => hash('sha256', $email),
-                'password'   => Hash::make(self::DEFAULT_ADMIN_PASSWORD),
-                'role'       => 'admin',
+                'password' => Hash::make(self::DEFAULT_ADMIN_PASSWORD),
+                'role' => 'admin',
             ]
         );
 
-        $this->command->info('✅ Admin: ' . $email);
-        $this->command->line('   Password: ' . self::DEFAULT_ADMIN_PASSWORD);
+        $this->command->info('✅ Admin: '.$email);
+        $this->command->line('   Password: '.self::DEFAULT_ADMIN_PASSWORD);
         $this->command->newLine();
     }
 
@@ -76,18 +78,18 @@ class UserSeeder extends Seeder
         $kecamatans = Kecamatan::all();
 
         foreach ($kecamatans as $kecamatan) {
-            $slug  = Str::slug($kecamatan->nama, '');
+            $slug = Str::slug($kecamatan->nama, '');
             $email = "kec.{$slug}@josis.magetan.id";
 
             User::updateOrCreate(
                 ['email_hash' => hash('sha256', $email)],
                 [
-                    'name'          => 'Operator Kecamatan ' . $kecamatan->nama,
-                    'email'         => $email,
-                    'email_hash'    => hash('sha256', $email),
-                    'password'      => Hash::make(self::DEFAULT_KECAMATAN_PASSWORD),
-                    'role'          => 'kecamatan',
-                    'kecamatan_id'  => $kecamatan->id,
+                    'name' => 'Operator Kecamatan '.$kecamatan->nama,
+                    'email' => $email,
+                    'email_hash' => hash('sha256', $email),
+                    'password' => Hash::make(self::DEFAULT_KECAMATAN_PASSWORD),
+                    'role' => 'kecamatan',
+                    'kecamatan_id' => $kecamatan->id,
                 ]
             );
 
@@ -108,19 +110,19 @@ class UserSeeder extends Seeder
 
         foreach ($desas as $desa) {
             $slugDesa = Str::slug($desa->nama, '');
-            $slugKec  = Str::slug($desa->kecamatan->nama, '');
-            $email    = "desa.{$slugDesa}.{$slugKec}@josis.magetan.id";
+            $slugKec = Str::slug($desa->kecamatan->nama, '');
+            $email = "desa.{$slugDesa}.{$slugKec}@josis.magetan.id";
 
             User::updateOrCreate(
                 ['email_hash' => hash('sha256', $email)],
                 [
-                    'name'          => 'Operator Desa ' . $desa->nama,
-                    'email'         => $email,
-                    'email_hash'    => hash('sha256', $email),
-                    'password'      => Hash::make(self::DEFAULT_DESA_PASSWORD),
-                    'role'          => 'desa',
-                    'kecamatan_id'  => $desa->kecamatan_id,
-                    'desa_id'       => $desa->id,
+                    'name' => 'Operator Desa '.$desa->nama,
+                    'email' => $email,
+                    'email_hash' => hash('sha256', $email),
+                    'password' => Hash::make(self::DEFAULT_DESA_PASSWORD),
+                    'role' => 'desa',
+                    'kecamatan_id' => $desa->kecamatan_id,
+                    'desa_id' => $desa->id,
                 ]
             );
 

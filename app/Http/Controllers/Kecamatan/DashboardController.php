@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kecamatan;
 
 use App\Http\Controllers\Controller;
+use App\Models\AnggotaTim;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,7 @@ class DashboardController extends Controller
                 'p' => (int) $desa->p,
             ]);
 
-        $korcams = \App\Models\AnggotaTim::query()
+        $korcams = AnggotaTim::query()
             ->where('kecamatan_id', $kecamatanId)
             ->where('role', 'korcam')
             ->get()
@@ -51,7 +52,7 @@ class DashboardController extends Controller
             ->pluck('nama')
             ->values();
 
-        $kordes = \App\Models\AnggotaTim::query()
+        $kordes = AnggotaTim::query()
             ->with('desa')
             ->where('kecamatan_id', $kecamatanId)
             ->where('role', 'kordes')

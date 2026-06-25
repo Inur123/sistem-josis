@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -19,10 +20,13 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(\Laravel\Fortify\Contracts\LogoutResponse::class, function ($app) {
-            return new class implements \Laravel\Fortify\Contracts\LogoutResponse {
-                public function toResponse($request) {
+        $this->app->singleton(LogoutResponse::class, function ($app) {
+            return new class implements LogoutResponse
+            {
+                public function toResponse($request)
+                {
                     session()->flash('success', 'Anda telah berhasil logout.');
+
                     return redirect()->route('login');
                 }
             };
@@ -78,7 +82,7 @@ class FortifyServiceProvider extends ServiceProvider
     {
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(
-                Str::lower($request->input(Fortify::username())) . '|' . $request->ip()
+                Str::lower($request->input(Fortify::username())).'|'.$request->ip()
             );
 
             return Limit::perMinute(5)->by($throttleKey);

@@ -70,7 +70,7 @@ class WilayahSeeder extends Seeder
             $desas = $response->json('data', []);
 
             if (empty($desas)) {
-                $this->command->warn("   ⚠️  Tidak ada desa ditemukan.");
+                $this->command->warn('   ⚠️  Tidak ada desa ditemukan.');
 
                 return;
             }
@@ -81,8 +81,8 @@ class WilayahSeeder extends Seeder
                 Desa::updateOrCreate(
                     ['kode' => $desaData['code']],
                     [
-                        'nama'          => $desaData['name'],
-                        'kecamatan_id'  => $kecamatan->id,
+                        'nama' => $desaData['name'],
+                        'kecamatan_id' => $kecamatan->id,
                     ],
                 );
                 $count++;

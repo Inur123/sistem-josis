@@ -15,8 +15,10 @@ use RuntimeException;
  */
 class AesGcmEncryption
 {
-    private const ALGORITHM  = 'aes-256-gcm';
-    private const IV_LENGTH  = 12;  // 96-bit nonce (recommended untuk GCM)
+    private const ALGORITHM = 'aes-256-gcm';
+
+    private const IV_LENGTH = 12;  // 96-bit nonce (recommended untuk GCM)
+
     private const TAG_LENGTH = 16;  // 128-bit authentication tag
 
     /**
@@ -25,7 +27,7 @@ class AesGcmEncryption
     public static function encrypt(string $plaintext): string
     {
         $key = self::getKey();
-        $iv  = random_bytes(self::IV_LENGTH); // Nonce unik setiap enkripsi
+        $iv = random_bytes(self::IV_LENGTH); // Nonce unik setiap enkripsi
         $tag = '';
 
         $ciphertext = openssl_encrypt(
@@ -40,11 +42,11 @@ class AesGcmEncryption
         );
 
         if ($ciphertext === false) {
-            throw new RuntimeException('Enkripsi AES-256-GCM gagal: ' . openssl_error_string());
+            throw new RuntimeException('Enkripsi AES-256-GCM gagal: '.openssl_error_string());
         }
 
         // Gabungkan IV + TAG + CIPHERTEXT lalu encode ke base64
-        return base64_encode($iv . $tag . $ciphertext);
+        return base64_encode($iv.$tag.$ciphertext);
     }
 
     /**
@@ -53,7 +55,7 @@ class AesGcmEncryption
      */
     public static function decrypt(string $encrypted): string
     {
-        $key  = self::getKey();
+        $key = self::getKey();
         $data = base64_decode($encrypted, strict: false);
 
         $minLength = self::IV_LENGTH + self::TAG_LENGTH;
@@ -62,8 +64,8 @@ class AesGcmEncryption
             throw new RuntimeException('Format data enkripsi tidak valid.');
         }
 
-        $iv         = substr($data, 0, self::IV_LENGTH);
-        $tag        = substr($data, self::IV_LENGTH, self::TAG_LENGTH);
+        $iv = substr($data, 0, self::IV_LENGTH);
+        $tag = substr($data, self::IV_LENGTH, self::TAG_LENGTH);
         $ciphertext = substr($data, $minLength);
 
         $plaintext = openssl_decrypt(
@@ -96,7 +98,7 @@ class AesGcmEncryption
 
         // Jika key berbasis base64, decode dulu, lalu derive 32 bytes
         $decoded = base64_decode($rawKey, strict: false);
-        $source  = ($decoded !== false && strlen($decoded) >= 16) ? $decoded : $rawKey;
+        $source = ($decoded !== false && strlen($decoded) >= 16) ? $decoded : $rawKey;
 
         return hash('sha256', $source, true); // Selalu 32 bytes (256-bit)
     }

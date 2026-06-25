@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Activity;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -29,23 +30,23 @@ class ActivityLogged implements ShouldBroadcast
         $activity->load('causer');
 
         $this->activity = [
-            'id'          => $activity->id,
-            'log_name'    => $activity->log_name,
+            'id' => $activity->id,
+            'log_name' => $activity->log_name,
             'description' => $activity->description, // Decrypted because of the model cast
-            'event'       => $activity->event,
-            'causer'      => $activity->causer ? [
-                'name'  => $activity->causer->name,
+            'event' => $activity->event,
+            'causer' => $activity->causer ? [
+                'name' => $activity->causer->name,
                 'email' => $activity->causer->email,
-                'role'  => $activity->causer->role,
+                'role' => $activity->causer->role,
             ] : null,
-            'created_at'  => $activity->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
+            'created_at' => $activity->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
         ];
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return array<int, Channel>
      */
     public function broadcastOn(): array
     {

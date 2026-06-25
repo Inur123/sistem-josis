@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogControll
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PemilihController as AdminPemilihController;
+use App\Http\Controllers\Admin\RelawanController;
 use App\Http\Controllers\Admin\TimController as AdminTimController;
 use App\Http\Controllers\Desa\DashboardController as DesaDashboardController;
 use App\Http\Controllers\Desa\PemilihController as DesaPemilihController;
@@ -60,12 +61,13 @@ Route::middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
         Route::get('/pemilih', [AdminPemilihController::class, 'index'])->name('pemilih.index');
+        Route::get('/pemilih/export', [AdminPemilihController::class, 'export'])->name('pemilih.export');
         Route::get('/akun', [AdminAkunController::class, 'index'])->name('akun.index');
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
         Route::get('/activity-logs', AdminActivityLogController::class)->name('activity-logs');
-        Route::get('/relawan', [\App\Http\Controllers\Admin\RelawanController::class, 'index'])->name('relawan.index');
-        Route::get('/relawan/{relawan}/pemilihs', [\App\Http\Controllers\Admin\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::get('/relawan', [RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}/pemilihs', [RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
         Route::resource('/tim', AdminTimController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 
@@ -81,8 +83,8 @@ Route::middleware(['auth', 'role:kecamatan'])
     ->group(function () {
         Route::get('/dashboard', KecamatanDashboardController::class)->name('dashboard');
         Route::get('/pemilih', [KecamatanPemilihController::class, 'index'])->name('pemilih.index');
-        Route::get('/relawan', [\App\Http\Controllers\Kecamatan\RelawanController::class, 'index'])->name('relawan.index');
-        Route::get('/relawan/{relawan}/pemilihs', [\App\Http\Controllers\Kecamatan\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::get('/relawan', [App\Http\Controllers\Kecamatan\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Kecamatan\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });
 
 /*
@@ -102,6 +104,6 @@ Route::middleware(['auth', 'role:desa'])
         Route::get('/pemilih/{pemilih}/edit', [DesaPemilihController::class, 'edit'])->name('pemilih.edit');
         Route::put('/pemilih/{pemilih}', [DesaPemilihController::class, 'update'])->name('pemilih.update');
         Route::delete('/pemilih/{pemilih}', [DesaPemilihController::class, 'destroy'])->name('pemilih.destroy');
-        Route::get('/relawan', [\App\Http\Controllers\Desa\RelawanController::class, 'index'])->name('relawan.index');
-        Route::get('/relawan/{relawan}/pemilihs', [\App\Http\Controllers\Desa\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::get('/relawan', [App\Http\Controllers\Desa\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Desa\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });

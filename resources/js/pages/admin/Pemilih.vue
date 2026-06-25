@@ -68,6 +68,7 @@ const totalPages  = ref(props.pemilihs.last_page);
 const currentData = ref<Pemilih[]>([...props.pemilihs.data]);
 const currentSummary = ref({ ...props.summary });
 const loading     = ref(false);
+const isExporting = ref(false);
 
 const pageCache = reactive<Record<number, Pemilih[]>>({
     [props.pemilihs.current_page]: [...props.pemilihs.data],
@@ -143,6 +144,55 @@ function clearFilters() {
     router.get(adminRoutes.pemilih.index.url());
 }
 
+async function exportExcel() {
+    isExporting.value = true;
+
+    try {
+        const params = new URLSearchParams({
+            ...(searchVal.value ? { search: searchVal.value } : {}),
+            ...(selectedKecamatan.value ? { kecamatan_id: selectedKecamatan.value } : {}),
+            ...(selectedDesa.value ? { desa_id: selectedDesa.value } : {}),
+        });
+
+        const res = await fetch(`/admin/pemilih/export?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (!res.ok) {
+throw new Error('Gagal mengekspor data');
+}
+
+        const contentDisposition = res.headers.get('content-disposition');
+        let filename = 'Data_Pemilih_Josis.xlsx';
+
+        if (contentDisposition) {
+            const matches = /filename="([^"]+)"/.exec(contentDisposition);
+
+            if (matches && matches[1]) {
+                filename = matches[1];
+            }
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+
+        link.parentNode?.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Terjadi kesalahan saat memproses ekspor Excel.');
+    } finally {
+        isExporting.value = false;
+    }
+}
+
 async function goToPage(page: number) {
     if (page < 1 || page > totalPages.value || page === currentPage.value || loading.value) {
         return;
@@ -203,7 +253,7 @@ defineOptions({
     <Head title="Data Pemilih (Admin)" />
     <div class="flex flex-col gap-5 p-6">
         <!-- Header -->
-        <div class="flex items-start justify-between">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <h2 class="text-xl font-bold text-gray-900">
                     Data Pemilih (Magetan)
@@ -214,6 +264,17 @@ defineOptions({
                     terdaftar di seluruh wilayah.
                 </p>
             </div>
+            <button
+                @click="exportExcel"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700 shadow-sm transition-all cursor-pointer"
+            >
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Export Excel
+            </button>
         </div>
 
         <!-- Summary Cards -->
@@ -435,6 +496,24 @@ defineOptions({
                     :loading="loading"
                     @go="goToPage"
                 />
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Loading Modal -->
+    <div
+        v-if="isExporting"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+    >
+        <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-gray-100 flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in duration-200">
+            <div class="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                <Loader2 class="h-6 w-6 animate-spin" />
+            </div>
+            <div>
+                <h3 class="text-base font-semibold text-gray-900">Mengekspor Data</h3>
+                <p class="mt-1.5 text-xs text-gray-500 leading-relaxed">
+                    Sedang menyiapkan data pemilih dan menyusun tab Kecamatan & Desa. Mohon tunggu sebentar agar data terproses dengan aman.
+                </p>
             </div>
         </div>
     </div>
