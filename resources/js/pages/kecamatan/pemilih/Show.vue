@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { ArrowLeft, AlertCircle } from '@lucide/vue';
+import { ref, onMounted } from 'vue';
 import kecamatanRoutes from '@/routes/kecamatan';
 
 interface PemilihData {
@@ -18,8 +20,10 @@ interface PemilihData {
     alasan_ditolak?: string | null;
 }
 
-// eslint-disable-next-line import/order
-import { ref, onMounted } from 'vue';
+interface PemilihChangedEvent {
+    pemilihId: string;
+    event: 'created' | 'updated' | 'verified' | 'deleted';
+}
 
 const props = defineProps<{
     desa: string;
@@ -63,6 +67,27 @@ queryParams.set('desa_id', des);
         backUrl.value = `/kecamatan/relawan/${relawanId}`;
     }
 });
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`kecamatan.pemilih.${user.kecamatan_id}`, 'PemilihChanged', (event: PemilihChangedEvent) => {
+        if (event.pemilihId !== props.pemilih.id) {
+            return;
+        }
+
+        if (event.event === 'deleted') {
+            router.visit(backUrl.value);
+
+            return;
+        }
+
+        router.reload({
+            only: ['pemilih', 'desa'],
+        });
+    });
+}
 
 defineOptions({
     layout: {

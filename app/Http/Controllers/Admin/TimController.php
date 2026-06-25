@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\TeamChanged;
 use App\Http\Controllers\Controller;
 use App\Models\AnggotaTim;
 use App\Models\Desa;
@@ -104,6 +105,8 @@ class TimController extends Controller
             ->event('created')
             ->log("Menambahkan anggota tim: {$anggota->nama} ({$validated['role']})");
 
+        TeamChanged::dispatch($anggota, 'created');
+
         return redirect()->route('admin.tim.index')
             ->with('success', 'Anggota tim berhasil ditambahkan.');
     }
@@ -113,6 +116,9 @@ class TimController extends Controller
      */
     public function update(Request $request, AnggotaTim $tim): RedirectResponse
     {
+        $oldKecamatanId = $tim->kecamatan_id;
+        $oldDesaId = $tim->desa_id;
+
         $validated = $request->validate([
             'role' => 'required|in:korcam,kordes,relawan',
             'kecamatan_id' => 'required_if:role,korcam|nullable|exists:kecamatans,id',
@@ -146,6 +152,8 @@ class TimController extends Controller
             ->event('updated')
             ->log("Mengubah data anggota tim: {$tim->nama} ({$validated['role']})");
 
+        TeamChanged::dispatch($tim, 'updated', $oldKecamatanId, $oldDesaId);
+
         return redirect()->route('admin.tim.index')
             ->with('success', 'Anggota tim berhasil diperbarui.');
     }
@@ -163,6 +171,8 @@ class TimController extends Controller
         activity()
             ->event('deleted')
             ->log("Menghapus anggota tim: {$oldName} ({$oldRole})");
+
+        TeamChanged::dispatch($tim, 'deleted');
 
         return redirect()->route('admin.tim.index')
             ->with('success', 'Anggota tim berhasil dihapus.');

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Plus, Search, Trash2, Edit, X, Phone, MapPin } from '@lucide/vue';
 import { ref, computed } from 'vue';
 import adminRoutes from '@/routes/admin';
@@ -239,6 +240,12 @@ const submitDelete = () => {
         });
     }
 };
+
+if (typeof window !== 'undefined') {
+    useEcho('admin.team', 'TeamChanged', () => {
+        router.reload();
+    });
+}
 
 defineOptions({
     layout: {

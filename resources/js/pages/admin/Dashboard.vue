@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Eye } from '@lucide/vue';
 import adminRoutes from '@/routes/admin';
 
@@ -24,6 +25,16 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+if (typeof window !== 'undefined') {
+    useEcho('admin.pemilih', 'PemilihChanged', () => {
+        router.reload();
+    });
+
+    useEcho('admin.accounts', 'UserChanged', () => {
+        router.reload();
+    });
+}
 
 defineOptions({
     layout: {

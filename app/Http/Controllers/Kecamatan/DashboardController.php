@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $perDesa = DB::table('desas')
             ->leftJoin('pemilihs', function ($join) {
                 $join->on('pemilihs.desa_id', '=', 'desas.id')
-                     ->where('pemilihs.status', '=', 'terverifikasi');
+                    ->where('pemilihs.status', '=', 'terverifikasi');
             })
             ->where('desas.kecamatan_id', $kecamatanId)
             ->select(

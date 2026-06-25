@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Loader2, Eye, CheckCircle, XCircle, Clock } from '@lucide/vue';
 import { ref, watch, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
@@ -74,6 +75,17 @@ const currentPages = reactive<Record<string, number>>({});
 const pageCache = reactive<Record<string, Record<number, Pemilih[]>>>({});
 const loadingMap = reactive<Record<string, boolean>>({});
 
+function clearRelawanCache() {
+    Object.keys(pageCache).forEach((key) => delete pageCache[key]);
+    Object.keys(currentPages).forEach((key) => delete currentPages[key]);
+    Object.keys(loadingMap).forEach((key) => delete loadingMap[key]);
+}
+
+function reloadRelawans() {
+    clearRelawanCache();
+    router.reload();
+}
+
 function initCache(relawan: Relawan) {
     if (!pageCache[relawan.id]) {
         pageCache[relawan.id] = { 1: relawan.pemilihs };
@@ -139,6 +151,14 @@ async function goToPage(relawan: Relawan, page: number) {
     } finally {
         loadingMap[relawan.id] = false;
     }
+}
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`kecamatan.pemilih.${user.kecamatan_id}`, 'PemilihChanged', reloadRelawans);
+    useEcho(`kecamatan.team.${user.kecamatan_id}`, 'TeamChanged', reloadRelawans);
 }
 
 defineOptions({

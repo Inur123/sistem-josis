@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import desaRoutes from '@/routes/desa';
 
 interface Props {
@@ -15,6 +16,19 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`desa.pemilih.${user.desa_id}`, 'PemilihChanged', () => {
+        router.reload();
+    });
+
+    useEcho(`desa.team.${user.desa_id}`, 'TeamChanged', () => {
+        router.reload();
+    });
+}
 
 defineOptions({
     layout: {

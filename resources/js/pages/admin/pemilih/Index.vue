@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Loader2, Eye, CheckCircle, XCircle, Clock } from '@lucide/vue';
 import { ref, watch, computed, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
@@ -269,6 +270,13 @@ async function goToPage(page: number) {
     } finally {
         loading.value = false;
     }
+}
+
+// ─── Real-time via Echo ────────────────────────────────────────────────────────
+if (typeof window !== 'undefined') {
+    useEcho('admin.pemilih', 'PemilihChanged', () => {
+        router.reload();
+    });
 }
 
 defineOptions({

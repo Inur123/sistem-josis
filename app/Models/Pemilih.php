@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\EncryptedAesGcm;
+use App\Events\PemilihChanged;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -118,5 +119,24 @@ class Pemilih extends Model
     public function verifiedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Pemilih $pemilih) {
+            PemilihChanged::dispatch($pemilih, 'created');
+        });
+
+        static::updated(function (Pemilih $pemilih) {
+            $event = $pemilih->isDirty('status') ? 'verified' : 'updated';
+            PemilihChanged::dispatch($pemilih, $event);
+        });
+
+        static::deleted(function (Pemilih $pemilih) {
+            PemilihChanged::dispatch($pemilih, 'deleted');
+        });
     }
 }

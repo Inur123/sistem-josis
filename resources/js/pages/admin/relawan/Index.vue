@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Loader2, Eye, CheckCircle, XCircle, Clock } from '@lucide/vue';
 import { ref, watch, computed, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
@@ -110,6 +111,17 @@ const pageCache = reactive<Record<string, Record<number, Pemilih[]>>>({});
 // Loading state per relawan
 const loadingMap = reactive<Record<string, boolean>>({});
 
+function clearRelawanCache() {
+    Object.keys(pageCache).forEach((key) => delete pageCache[key]);
+    Object.keys(currentPages).forEach((key) => delete currentPages[key]);
+    Object.keys(loadingMap).forEach((key) => delete loadingMap[key]);
+}
+
+function reloadRelawans() {
+    clearRelawanCache();
+    router.reload();
+}
+
 // Inisialisasi cache halaman 1 dari data yang sudah ada di props
 function initCache(relawan: Relawan) {
     if (!pageCache[relawan.id]) {
@@ -181,6 +193,11 @@ async function goToPage(relawan: Relawan, page: number) {
     } finally {
         loadingMap[relawan.id] = false;
     }
+}
+
+if (typeof window !== 'undefined') {
+    useEcho('admin.pemilih', 'PemilihChanged', reloadRelawans);
+    useEcho('admin.team', 'TeamChanged', reloadRelawans);
 }
 
 defineOptions({

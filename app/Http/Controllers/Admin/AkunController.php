@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\UserChanged;
 use App\Http\Controllers\Controller;
 use App\Models\Desa;
 use App\Models\Kecamatan;
@@ -71,6 +72,8 @@ class AkunController extends Controller
             ->event('updated')
             ->log("Mengubah data akun: {$user->email} ({$user->name})");
 
+        UserChanged::dispatch($user, 'updated');
+
         return back()->with('success', 'Akun berhasil diperbarui.');
     }
 
@@ -86,6 +89,8 @@ class AkunController extends Controller
             ->log("Menghapus akun: {$user->email} ({$user->name})");
 
         DB::table('users')->where('id', $user->id)->delete();
+
+        UserChanged::dispatch($user, 'deleted');
 
         return back()->with('success', 'Akun berhasil dihapus.');
     }

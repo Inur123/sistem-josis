@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { ref, computed, watch } from 'vue';
 import adminRoutes from '@/routes/admin';
 
@@ -120,6 +121,12 @@ function submitDelete() {
 
 function cancelDelete() {
     confirmDeleteId.value = null;
+}
+
+if (typeof window !== 'undefined') {
+    useEcho('admin.accounts', 'UserChanged', () => {
+        router.reload();
+    });
 }
 
 defineOptions({

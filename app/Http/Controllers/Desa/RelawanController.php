@@ -8,6 +8,7 @@ use App\Models\Pemilih;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,7 +34,7 @@ class RelawanController extends Controller
             ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
             ->values()
             ->map(function ($r) {
-                $counts = \Illuminate\Support\Facades\DB::table('pemilihs')
+                $counts = DB::table('pemilihs')
                     ->where('relawan_id', $r->id)
                     ->selectRaw("
                         COUNT(*) as total_count,
@@ -91,7 +92,7 @@ class RelawanController extends Controller
             403
         );
 
-        $counts = \Illuminate\Support\Facades\DB::table('pemilihs')
+        $counts = DB::table('pemilihs')
             ->where('relawan_id', $relawan->id)
             ->selectRaw("
                 COUNT(*) as total_count,
@@ -150,9 +151,9 @@ class RelawanController extends Controller
         /** @var User $user */
         $user = $request->user();
         abort_if(
-            $relawan->role !== 'relawan' || 
-            $relawan->desa_id !== $user->desa_id || 
-            $pemilih->relawan_id !== $relawan->id, 
+            $relawan->role !== 'relawan' ||
+            $relawan->desa_id !== $user->desa_id ||
+            $pemilih->relawan_id !== $relawan->id,
             403
         );
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Eye } from '@lucide/vue';
 import kecamatanRoutes from '@/routes/kecamatan';
 
@@ -26,6 +27,19 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`kecamatan.pemilih.${user.kecamatan_id}`, 'PemilihChanged', () => {
+        router.reload();
+    });
+
+    useEcho(`kecamatan.team.${user.kecamatan_id}`, 'TeamChanged', () => {
+        router.reload();
+    });
+}
 
 defineOptions({
     layout: {

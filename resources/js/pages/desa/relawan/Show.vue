@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Loader2, Eye, CheckCircle, XCircle, Clock, ArrowLeft } from '@lucide/vue';
 import { ref, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
@@ -37,6 +38,12 @@ interface Relawan {
     pemilihs: Pemilih[];
 }
 
+interface TeamChangedEvent {
+    memberId: string;
+    event: 'created' | 'updated' | 'deleted';
+    desaId: string | null;
+}
+
 const props = defineProps<{
     relawan: Relawan;
 }>();
@@ -47,6 +54,16 @@ const pageCache = reactive<Record<number, Pemilih[]>>({
     1: props.relawan.pemilihs
 });
 const isLoading = ref(false);
+
+function clearPemilihCache() {
+    Object.keys(pageCache).forEach((key) => delete pageCache[Number(key)]);
+    currentPage.value = 1;
+}
+
+function reloadRelawan() {
+    clearPemilihCache();
+    router.reload();
+}
 
 const getPemilihPage = (): Pemilih[] => {
     return pageCache[currentPage.value] ?? [];
@@ -92,6 +109,26 @@ throw new Error('Gagal memuat data');
         isLoading.value = false;
     }
 };
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`desa.pemilih.${user.desa_id}`, 'PemilihChanged', reloadRelawan);
+    useEcho(`desa.team.${user.desa_id}`, 'TeamChanged', (event: TeamChangedEvent) => {
+        if (event.memberId !== props.relawan.id) {
+            return;
+        }
+
+        if (event.event === 'deleted' || event.desaId !== user.desa_id) {
+            router.visit(desaRoutes.relawan.index.url());
+
+            return;
+        }
+
+        reloadRelawan();
+    });
+}
 
 defineOptions({
     layout: {

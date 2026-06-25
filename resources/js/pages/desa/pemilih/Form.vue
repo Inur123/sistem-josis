@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { computed, ref } from 'vue';
 import desaRoutes from '@/routes/desa';
 
@@ -128,6 +129,17 @@ function submit() {
     } else {
         form.post(desaRoutes.pemilih.store.url());
     }
+}
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`desa.team.${user.desa_id}`, 'TeamChanged', () => {
+        router.reload({
+            only: ['relawans'],
+        });
+    });
 }
 
 defineOptions({

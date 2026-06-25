@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { ArrowLeft, CheckCircle, XCircle, AlertCircle, Loader2 } from '@lucide/vue';
 import { ref, onMounted } from 'vue';
 import adminRoutes from '@/routes/admin';
@@ -19,6 +20,11 @@ interface PemilihData {
     alasan_ditolak?: string | null;
     verified_by_nama?: string | null;
     verified_at?: string | null;
+}
+
+interface PemilihChangedEvent {
+    pemilihId: string;
+    event: 'created' | 'updated' | 'verified' | 'deleted';
 }
 
 const props = defineProps<{
@@ -101,6 +107,24 @@ function verifyVoter(status: 'terverifikasi' | 'ditolak') {
             }
         }
     );
+}
+
+if (typeof window !== 'undefined') {
+    useEcho('admin.pemilih', 'PemilihChanged', (event: PemilihChangedEvent) => {
+        if (event.pemilihId !== props.pemilih.id) {
+            return;
+        }
+
+        if (event.event === 'deleted') {
+            router.visit(backUrl.value);
+
+            return;
+        }
+
+        router.reload({
+            only: ['pemilih', 'desa'],
+        });
+    });
 }
 
 defineOptions({

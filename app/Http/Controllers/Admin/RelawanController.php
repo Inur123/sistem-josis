@@ -9,6 +9,7 @@ use App\Models\Kecamatan;
 use App\Models\Pemilih;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -52,7 +53,7 @@ class RelawanController extends Controller
                 ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
                 ->values()
                 ->map(function ($r) {
-                    $counts = \Illuminate\Support\Facades\DB::table('pemilihs')
+                    $counts = DB::table('pemilihs')
                         ->where('relawan_id', $r->id)
                         ->selectRaw("
                             COUNT(*) as total_count,
@@ -113,7 +114,7 @@ class RelawanController extends Controller
 
         $relawan->load(['kecamatan', 'desa']);
 
-        $counts = \Illuminate\Support\Facades\DB::table('pemilihs')
+        $counts = DB::table('pemilihs')
             ->where('relawan_id', $relawan->id)
             ->selectRaw("
                 COUNT(*) as total_count,

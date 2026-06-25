@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Loader2, Eye, Pencil, Trash2, CheckCircle, XCircle, Clock } from '@lucide/vue';
 import { ref, watch, computed, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
@@ -215,6 +216,15 @@ async function goToPage(page: number) {
     } finally {
         loading.value = false;
     }
+}
+
+const page = usePage();
+const user = page.props.auth.user as any;
+
+if (typeof window !== 'undefined' && user) {
+    useEcho(`desa.pemilih.${user.desa_id}`, 'PemilihChanged', () => {
+        router.reload();
+    });
 }
 
 defineOptions({
