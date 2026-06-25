@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft } from '@lucide/vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ArrowLeft, CheckCircle, XCircle, AlertCircle, Loader2 } from '@lucide/vue';
+import { ref, onMounted } from 'vue';
 import adminRoutes from '@/routes/admin';
 
 interface PemilihData {
@@ -14,12 +15,93 @@ interface PemilihData {
     relawan?: string;
     created_at: string;
     foto_ktp?: string | null;
+    status: 'belum_verifikasi' | 'terverifikasi' | 'ditolak';
+    alasan_ditolak?: string | null;
+    verified_by_nama?: string | null;
+    verified_at?: string | null;
 }
 
 const props = defineProps<{
     desa: string;
     pemilih: PemilihData;
 }>();
+
+const isVerifying = ref(false);
+const showRejectModal = ref(false);
+const rejectReason = ref('');
+const rejectError = ref('');
+
+const backUrl = ref(adminRoutes.pemilih.index.url());
+
+onMounted(() => {
+    const pathname = window.location.pathname;
+    const adminMatch = pathname.match(/^\/admin\/relawan\/([^\/]+)\/pemilih\/[^\/]+$/);
+
+    if (adminMatch) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPage = urlParams.get('from');
+
+        if (fromPage === 'index') {
+            const queryParams = new URLSearchParams();
+            const kec = urlParams.get('kecamatan_id');
+            const des = urlParams.get('desa_id');
+
+            if (kec) {
+queryParams.set('kecamatan_id', kec);
+}
+
+            if (des) {
+queryParams.set('desa_id', des);
+}
+
+            const qStr = queryParams.toString();
+            backUrl.value = '/admin/relawan' + (qStr ? '?' + qStr : '');
+        } else {
+            backUrl.value = `/admin/relawan/${adminMatch[1]}`;
+        }
+
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromPage = urlParams.get('from');
+    const relawanId = urlParams.get('relawan_id');
+
+    if (fromPage === 'relawan') {
+        backUrl.value = '/admin/relawan';
+    } else if (fromPage === 'relawan_show' && relawanId) {
+        backUrl.value = `/admin/relawan/${relawanId}`;
+    }
+});
+
+
+function verifyVoter(status: 'terverifikasi' | 'ditolak') {
+    if (status === 'ditolak' && !rejectReason.value.trim()) {
+        rejectError.value = 'Alasan penolakan harus diisi.';
+
+        return;
+    }
+
+    isVerifying.value = true;
+    rejectError.value = '';
+
+    router.post(
+        adminRoutes.pemilih.verify.url(props.pemilih.id),
+        {
+            status: status,
+            alasan_ditolak: status === 'ditolak' ? rejectReason.value : null
+        },
+        {
+            onSuccess: () => {
+                showRejectModal.value = false;
+                rejectReason.value = '';
+            },
+            onFinish: () => {
+                isVerifying.value = false;
+            }
+        }
+    );
+}
 
 defineOptions({
     layout: {
@@ -39,12 +121,33 @@ defineOptions({
             <!-- Navigation Actions -->
             <div class="mb-5 flex items-center justify-between">
                 <Link
-                    :href="adminRoutes.pemilih.index.url()"
+                    :href="backUrl"
                     class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
                 >
                     <ArrowLeft class="h-4 w-4" />
                     Kembali
                 </Link>
+
+                <!-- Actions for Verification -->
+                <div v-if="props.pemilih.status !== 'terverifikasi'" class="flex items-center gap-2">
+                    <button
+                        @click="showRejectModal = true"
+                        :disabled="isVerifying"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-100 disabled:opacity-50"
+                    >
+                        <XCircle class="h-4 w-4" />
+                        Tolak
+                    </button>
+                    <button
+                        @click="verifyVoter('terverifikasi')"
+                        :disabled="isVerifying"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50"
+                    >
+                        <Loader2 v-if="isVerifying" class="h-4 w-4 animate-spin" />
+                        <CheckCircle v-else class="h-4 w-4" />
+                        Setujui
+                    </button>
+                </div>
             </div>
 
             <!-- Detail Card -->
@@ -52,13 +155,62 @@ defineOptions({
                 class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
             >
                 <!-- Card Header -->
-                <div class="border-b border-gray-100 px-6 py-4">
-                    <h2 class="text-base font-semibold text-gray-900">
-                        Detail Informasi Pemilih
-                    </h2>
-                    <p class="mt-0.5 text-xs text-gray-500">
-                        Desa {{ props.desa }}
-                    </p>
+                <div class="border-b border-gray-100 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-900">
+                            Detail Informasi Pemilih
+                        </h2>
+                        <p class="mt-0.5 text-xs text-gray-500">
+                            Desa {{ props.desa }}
+                        </p>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div>
+                        <span
+                            v-if="props.pemilih.status === 'terverifikasi'"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-600/20 ring-inset"
+                        >
+                            <span class="h-1.5 w-1.5 rounded-full bg-green-600" />
+                            Terverifikasi
+                        </span>
+                        <span
+                            v-else-if="props.pemilih.status === 'ditolak'"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-600/20 ring-inset"
+                        >
+                            <span class="h-1.5 w-1.5 rounded-full bg-red-600" />
+                            Ditolak
+                        </span>
+                        <span
+                            v-else
+                            class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-600/20 ring-inset"
+                        >
+                            <span class="h-1.5 w-1.5 rounded-full bg-amber-600" />
+                            Belum Verifikasi
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Rejection Alert -->
+                <div v-if="props.pemilih.status === 'ditolak'" class="border-b border-red-100 bg-red-50/50 p-4">
+                    <div class="flex gap-2">
+                        <AlertCircle class="h-5 w-5 text-red-600 shrink-0" />
+                        <div>
+                            <h4 class="text-sm font-semibold text-red-950">Alasan Ditolak:</h4>
+                            <p class="mt-1 text-sm text-red-900 leading-relaxed">{{ props.pemilih.alasan_ditolak || '-' }}</p>
+                            <p class="mt-2 text-xs text-red-700">Ditolak oleh {{ props.pemilih.verified_by_nama }} pada {{ props.pemilih.verified_at }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Info -->
+                <div v-if="props.pemilih.status === 'terverifikasi' && props.pemilih.verified_by_nama" class="border-b border-green-100 bg-green-50/50 p-4">
+                    <div class="flex gap-2">
+                        <CheckCircle class="h-5 w-5 text-green-600 shrink-0" />
+                        <div>
+                            <p class="text-sm text-green-900">Diverifikasi oleh <span class="font-semibold">{{ props.pemilih.verified_by_nama }}</span> pada {{ props.pemilih.verified_at }}</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Card Body (Grid: Left Data Form, Right KTP) -->
@@ -159,7 +311,7 @@ defineOptions({
                         <label class="text-sm font-medium text-gray-700">
                             Foto KTP
                         </label>
-                        
+
                         <div v-if="props.pemilih.foto_ktp" class="overflow-hidden rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm">
                             <img
                                 :src="props.pemilih.foto_ktp"
@@ -190,6 +342,49 @@ defineOptions({
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div
+        v-if="showRejectModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+    >
+        <div class="w-full max-w-md bg-white rounded-xl border border-gray-100 p-6 shadow-xl animate-in fade-in duration-200">
+            <h3 class="text-lg font-bold text-gray-900">Alasan Menolak Data Pemilih</h3>
+            <p class="mt-1.5 text-xs text-gray-500">Berikan penjelasan mengapa data pemilih ini ditolak.</p>
+
+            <div class="mt-4 flex flex-col gap-1.5">
+                <textarea
+                    v-model="rejectReason"
+                    placeholder="Contoh: Foto KTP buram / tidak terbaca, NIK tidak sesuai KTP, dll."
+                    rows="4"
+                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none"
+                    @input="rejectError = ''"
+                />
+                <span v-if="rejectError" class="text-xs font-medium text-red-600">{{ rejectError }}</span>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-3">
+                <button
+                    @click="showRejectModal = false; rejectReason = ''; rejectError = ''"
+                    class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    :disabled="isVerifying"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="verifyVoter('ditolak')"
+                    class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                    :disabled="isVerifying"
+                >
+                    <span v-if="isVerifying" class="inline-flex items-center gap-1">
+                        <Loader2 class="h-3 w-3 animate-spin" />
+                        Menyimpan...
+                    </span>
+                    <span v-else>Ya, Tolak</span>
+                </button>
             </div>
         </div>
     </div>

@@ -12,6 +12,8 @@ interface Props {
     }>;
     stats: {
         total_pemilih: number;
+        laki_laki: number;
+        perempuan: number;
         total_desa: number;
     };
     per_desa: Array<{
@@ -99,7 +101,7 @@ defineOptions({
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
             <div
                 class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
             >
@@ -123,7 +125,60 @@ defineOptions({
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.total_pemilih.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">Total Pemilih</div>
+                <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-1.5">
+                    <span>Total Pemilih</span>
+                    <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Terverifikasi</span>
+                </div>
+            </div>
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-indigo-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.laki_laki.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-1.5">
+                    <span>Laki-laki</span>
+                    <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Terverifikasi</span>
+                </div>
+            </div>
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-pink-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.perempuan.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-1.5">
+                    <span>Perempuan</span>
+                    <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Terverifikasi</span>
+                </div>
             </div>
             <div
                 class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
@@ -168,9 +223,9 @@ defineOptions({
                         >
                             <th class="px-5 py-3">No</th>
                             <th class="px-5 py-3">Desa / Kelurahan</th>
-                            <th class="px-5 py-3 text-right">Jumlah Pemilih</th>
-                            <th class="px-5 py-3 text-right">Laki-laki</th>
-                            <th class="px-5 py-3 text-right">Perempuan</th>
+                            <th class="px-5 py-3 text-right">Jumlah Pemilih <span class="text-[9px] font-normal text-green-600 block">(Terverifikasi)</span></th>
+                            <th class="px-5 py-3 text-right">Laki-laki <span class="text-[9px] font-normal text-green-600 block">(Terverifikasi)</span></th>
+                            <th class="px-5 py-3 text-right">Perempuan <span class="text-[9px] font-normal text-green-600 block">(Terverifikasi)</span></th>
                             <th class="w-[120px] px-5 py-3 text-center">
                                 Aksi
                             </th>

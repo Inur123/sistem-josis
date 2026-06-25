@@ -23,9 +23,9 @@ class DashboardController extends Controller
         $desaNama = DB::table('desas')->where('id', $desaId)->value('nama');
         $kecamatanNama = DB::table('kecamatans')->where('id', $kecamatanId)->value('nama');
 
-        $totalPemilih = DB::table('pemilihs')->where('desa_id', $desaId)->count();
-        $lakiLaki = DB::table('pemilihs')->where('desa_id', $desaId)->where('jenis_kelamin', 'L')->count();
-        $perempuan = DB::table('pemilihs')->where('desa_id', $desaId)->where('jenis_kelamin', 'P')->count();
+        $totalPemilih = DB::table('pemilihs')->where('desa_id', $desaId)->where('status', 'terverifikasi')->count();
+        $lakiLaki = DB::table('pemilihs')->where('desa_id', $desaId)->where('jenis_kelamin', 'L')->where('status', 'terverifikasi')->count();
+        $perempuan = DB::table('pemilihs')->where('desa_id', $desaId)->where('jenis_kelamin', 'P')->where('status', 'terverifikasi')->count();
 
         $kordes = AnggotaTim::query()
             ->where('desa_id', $desaId)

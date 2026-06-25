@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft } from '@lucide/vue';
+import { ArrowLeft, AlertCircle } from '@lucide/vue';
 import kecamatanRoutes from '@/routes/kecamatan';
 
 interface PemilihData {
@@ -14,12 +14,55 @@ interface PemilihData {
     relawan?: string;
     created_at: string;
     foto_ktp?: string | null;
+    status: 'belum_verifikasi' | 'terverifikasi' | 'ditolak';
+    alasan_ditolak?: string | null;
 }
+
+// eslint-disable-next-line import/order
+import { ref, onMounted } from 'vue';
 
 const props = defineProps<{
     desa: string;
     pemilih: PemilihData;
 }>();
+
+const backUrl = ref(kecamatanRoutes.pemilih.index.url());
+
+onMounted(() => {
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/kecamatan\/relawan\/([^\/]+)\/pemilih\/[^\/]+$/);
+
+    if (match) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPage = urlParams.get('from');
+
+        if (fromPage === 'index') {
+            const queryParams = new URLSearchParams();
+            const des = urlParams.get('desa_id');
+
+            if (des) {
+queryParams.set('desa_id', des);
+}
+
+            const qStr = queryParams.toString();
+            backUrl.value = '/kecamatan/relawan' + (qStr ? '?' + qStr : '');
+        } else {
+            backUrl.value = `/kecamatan/relawan/${match[1]}`;
+        }
+
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromPage = urlParams.get('from');
+    const relawanId = urlParams.get('relawan_id');
+
+    if (fromPage === 'relawan') {
+        backUrl.value = '/kecamatan/relawan';
+    } else if (fromPage === 'relawan_show' && relawanId) {
+        backUrl.value = `/kecamatan/relawan/${relawanId}`;
+    }
+});
 
 defineOptions({
     layout: {
@@ -39,7 +82,7 @@ defineOptions({
             <!-- Navigation Actions -->
             <div class="mb-5 flex items-center justify-between">
                 <Link
-                    :href="kecamatanRoutes.pemilih.index.url()"
+                    :href="backUrl"
                     class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
                 >
                     <ArrowLeft class="h-4 w-4" />
@@ -52,13 +95,51 @@ defineOptions({
                 class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
             >
                 <!-- Card Header -->
-                <div class="border-b border-gray-100 px-6 py-4">
-                    <h2 class="text-base font-semibold text-gray-900">
-                        Detail Informasi Pemilih
-                    </h2>
-                    <p class="mt-0.5 text-xs text-gray-500">
-                        Desa {{ props.desa }}
-                    </p>
+                <div class="border-b border-gray-100 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-900">
+                            Detail Informasi Pemilih
+                        </h2>
+                        <p class="mt-0.5 text-xs text-gray-500">
+                            Desa {{ props.desa }}
+                        </p>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div>
+                        <span
+                            v-if="props.pemilih.status === 'terverifikasi'"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-600/20 ring-inset"
+                        >
+                            <span class="h-1.5 w-1.5 rounded-full bg-green-600" />
+                            Terverifikasi
+                        </span>
+                        <span
+                            v-else-if="props.pemilih.status === 'ditolak'"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-600/20 ring-inset"
+                        >
+                            <span class="h-1.5 w-1.5 rounded-full bg-red-600" />
+                            Ditolak
+                        </span>
+                        <span
+                            v-else
+                            class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-600/20 ring-inset"
+                        >
+                            <span class="h-1.5 w-1.5 rounded-full bg-amber-600" />
+                            Belum Verifikasi
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Rejection Alert -->
+                <div v-if="props.pemilih.status === 'ditolak'" class="border-b border-red-100 bg-red-50/50 p-4">
+                    <div class="flex gap-2">
+                        <AlertCircle class="h-5 w-5 text-red-600 shrink-0" />
+                        <div>
+                            <h4 class="text-sm font-semibold text-red-950">Alasan Ditolak:</h4>
+                            <p class="mt-1 text-sm text-red-900 leading-relaxed">{{ props.pemilih.alasan_ditolak || '-' }}</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Card Body (Grid: Left Data Form, Right KTP) -->
@@ -159,7 +240,7 @@ defineOptions({
                         <label class="text-sm font-medium text-gray-700">
                             Foto KTP
                         </label>
-                        
+
                         <div v-if="props.pemilih.foto_ktp" class="overflow-hidden rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm">
                             <img
                                 :src="props.pemilih.foto_ktp"

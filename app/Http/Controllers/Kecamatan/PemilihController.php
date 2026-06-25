@@ -50,6 +50,7 @@ class PemilihController extends Controller
             'filters' => [
                 'desa_id' => $request->query('desa_id'),
                 'search' => $request->query('search'),
+                'status' => $request->query('status'),
             ],
             'summary' => $result['summary'],
         ]);
@@ -78,24 +79,34 @@ class PemilihController extends Controller
         if ($request->query('jenis_kelamin')) {
             $query->where('jenis_kelamin', $request->query('jenis_kelamin'));
         }
+        if ($request->query('status')) {
+            $query->where('status', $request->query('status'));
+        }
 
         if ($search && is_numeric($search)) {
             $query->where('nik_hash', hash('sha256', $search));
         }
 
-        $formatRow = fn ($p) => array_filter([
-            'id' => $p->id,
-            'nik' => $p->nik,
-            'nama' => $p->nama,
-            'jenis_kelamin' => $p->jenis_kelamin,
-            'alamat' => $p->alamat,
-            'rt' => $p->rt,
-            'rw' => $p->rw,
-            'kecamatan' => in_array('kecamatan', $extraColumns) ? $p->kecamatan?->nama : null,
-            'desa' => in_array('desa', $extraColumns) ? $p->desa?->nama : null,
-            'relawan' => $p->relawan?->nama,
-            'created_at' => $p->created_at?->format('d/m/Y'),
-        ], fn ($v) => $v !== null);
+        $formatRow = function ($p) use ($extraColumns) {
+            $row = array_filter([
+                'id' => $p->id,
+                'nik' => $p->nik,
+                'nama' => $p->nama,
+                'jenis_kelamin' => $p->jenis_kelamin,
+                'alamat' => $p->alamat,
+                'rt' => $p->rt,
+                'rw' => $p->rw,
+                'kecamatan' => in_array('kecamatan', $extraColumns) ? $p->kecamatan?->nama : null,
+                'desa' => in_array('desa', $extraColumns) ? $p->desa?->nama : null,
+                'relawan' => $p->relawan?->nama,
+                'created_at' => $p->created_at?->format('d/m/Y'),
+            ], fn ($v) => $v !== null);
+
+            $row['status'] = $p->status;
+            $row['alasan_ditolak'] = $p->alasan_ditolak;
+
+            return $row;
+        };
 
         if ($search && ! is_numeric($search)) {
             // In-memory name search (required because nama is encrypted)
@@ -106,6 +117,9 @@ class PemilihController extends Controller
             $countTotal = $all->count();
             $countL = $all->where('jenis_kelamin', 'L')->count();
             $countP = $all->where('jenis_kelamin', 'P')->count();
+            $countBelum = $all->where('status', 'belum_verifikasi')->count();
+            $countTerverifikasi = $all->where('status', 'terverifikasi')->count();
+            $countDitolak = $all->where('status', 'ditolak')->count();
             $currentPage = (int) $request->query('page', 1);
 
             $paginated = new LengthAwarePaginator(
@@ -119,6 +133,9 @@ class PemilihController extends Controller
             $countTotal = $query->count();
             $countL = (clone $query)->where('jenis_kelamin', 'L')->count();
             $countP = (clone $query)->where('jenis_kelamin', 'P')->count();
+            $countBelum = (clone $query)->where('status', 'belum_verifikasi')->count();
+            $countTerverifikasi = (clone $query)->where('status', 'terverifikasi')->count();
+            $countDitolak = (clone $query)->where('status', 'ditolak')->count();
             $paginated = $query->paginate($perPage)->through($formatRow);
         }
 
@@ -128,6 +145,9 @@ class PemilihController extends Controller
                 'total' => $countTotal,
                 'l' => $countL,
                 'p' => $countP,
+                'belum_verifikasi' => $countBelum,
+                'terverifikasi' => $countTerverifikasi,
+                'ditolak' => $countDitolak,
             ],
         ];
     }
@@ -154,6 +174,8 @@ class PemilihController extends Controller
                 'relawan' => $pemilih->relawan?->nama,
                 'created_at' => $pemilih->created_at?->format('d/m/Y'),
                 'foto_ktp' => $pemilih->foto_ktp ? route('pemilih.ktp', $pemilih->id) : null,
+                'status' => $pemilih->status,
+                'alasan_ditolak' => $pemilih->alasan_ditolak,
             ],
         ]);
     }

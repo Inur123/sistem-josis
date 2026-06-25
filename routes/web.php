@@ -64,11 +64,14 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/pemilih', [AdminPemilihController::class, 'index'])->name('pemilih.index');
         Route::get('/pemilih/export', [AdminPemilihController::class, 'export'])->name('pemilih.export');
         Route::get('/pemilih/{pemilih}', [AdminPemilihController::class, 'show'])->name('pemilih.show');
+        Route::post('/pemilih/{pemilih}/verify', [AdminPemilihController::class, 'verify'])->name('pemilih.verify');
         Route::get('/akun', [AdminAkunController::class, 'index'])->name('akun.index');
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
         Route::get('/activity-logs', AdminActivityLogController::class)->name('activity-logs');
         Route::get('/relawan', [RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}', [RelawanController::class, 'show'])->name('relawan.show');
+        Route::get('/relawan/{relawan}/pemilih/{pemilih}', [RelawanController::class, 'showPemilih'])->name('relawan.pemilih.show');
         Route::get('/relawan/{relawan}/pemilihs', [RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
         Route::resource('/tim', AdminTimController::class)->only(['index', 'store', 'update', 'destroy']);
     });
@@ -87,6 +90,8 @@ Route::middleware(['auth', 'role:kecamatan'])
         Route::get('/pemilih', [KecamatanPemilihController::class, 'index'])->name('pemilih.index');
         Route::get('/pemilih/{pemilih}', [KecamatanPemilihController::class, 'show'])->name('pemilih.show');
         Route::get('/relawan', [App\Http\Controllers\Kecamatan\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}', [App\Http\Controllers\Kecamatan\RelawanController::class, 'show'])->name('relawan.show');
+        Route::get('/relawan/{relawan}/pemilih/{pemilih}', [App\Http\Controllers\Kecamatan\RelawanController::class, 'showPemilih'])->name('relawan.pemilih.show');
         Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Kecamatan\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });
 
@@ -109,6 +114,8 @@ Route::middleware(['auth', 'role:desa'])
         Route::put('/pemilih/{pemilih}', [DesaPemilihController::class, 'update'])->name('pemilih.update');
         Route::delete('/pemilih/{pemilih}', [DesaPemilihController::class, 'destroy'])->name('pemilih.destroy');
         Route::get('/relawan', [App\Http\Controllers\Desa\RelawanController::class, 'index'])->name('relawan.index');
+        Route::get('/relawan/{relawan}', [App\Http\Controllers\Desa\RelawanController::class, 'show'])->name('relawan.show');
+        Route::get('/relawan/{relawan}/pemilih/{pemilih}', [App\Http\Controllers\Desa\RelawanController::class, 'showPemilih'])->name('relawan.pemilih.show');
         Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Desa\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
     });
 

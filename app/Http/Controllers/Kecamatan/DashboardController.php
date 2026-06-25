@@ -20,11 +20,16 @@ class DashboardController extends Controller
         $kecamatanId = $user->kecamatan_id;
         $kecamatanNama = DB::table('kecamatans')->where('id', $kecamatanId)->value('nama');
 
-        $totalPemilih = DB::table('pemilihs')->where('kecamatan_id', $kecamatanId)->count();
+        $totalPemilih = DB::table('pemilihs')->where('kecamatan_id', $kecamatanId)->where('status', 'terverifikasi')->count();
+        $lakiLaki = DB::table('pemilihs')->where('kecamatan_id', $kecamatanId)->where('jenis_kelamin', 'L')->where('status', 'terverifikasi')->count();
+        $perempuan = DB::table('pemilihs')->where('kecamatan_id', $kecamatanId)->where('jenis_kelamin', 'P')->where('status', 'terverifikasi')->count();
         $totalDesa = DB::table('desas')->where('kecamatan_id', $kecamatanId)->count();
 
         $perDesa = DB::table('desas')
-            ->leftJoin('pemilihs', 'pemilihs.desa_id', '=', 'desas.id')
+            ->leftJoin('pemilihs', function ($join) {
+                $join->on('pemilihs.desa_id', '=', 'desas.id')
+                     ->where('pemilihs.status', '=', 'terverifikasi');
+            })
             ->where('desas.kecamatan_id', $kecamatanId)
             ->select(
                 'desas.id',
@@ -70,6 +75,8 @@ class DashboardController extends Controller
             'kordes' => $kordes,
             'stats' => [
                 'total_pemilih' => $totalPemilih,
+                'laki_laki' => $lakiLaki,
+                'perempuan' => $perempuan,
                 'total_desa' => $totalDesa,
             ],
             'per_desa' => $perDesa,

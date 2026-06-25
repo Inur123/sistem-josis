@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 
 class PemilihSeeder extends Seeder
 {
-    private const PEMILIH_PER_RELAWAN = 100;
+    private const PEMILIH_PER_RELAWAN = 10;
 
     /** Nama depan untuk data dummy */
     private const NAMA_DEPAN_L = [
@@ -95,6 +95,18 @@ class PemilihSeeder extends Seeder
                 $rw = str_pad((string) rand(1, 4), 3, '0', STR_PAD_LEFT);
                 $alamat = "{$jalan} No. {$nomor}, Desa {$desaNama}";
 
+                $rand = rand(1, 100);
+                if ($rand <= 80) {
+                    $status = 'terverifikasi';
+                    $alasan = null;
+                } elseif ($rand <= 95) {
+                    $status = 'belum_verifikasi';
+                    $alasan = null;
+                } else {
+                    $status = 'ditolak';
+                    $alasan = 'Foto KTP tidak terbaca jelas atau buram.';
+                }
+
                 Pemilih::create([
                     'nik' => $nik,
                     'nama' => $nama,
@@ -106,6 +118,8 @@ class PemilihSeeder extends Seeder
                     'kecamatan_id' => $kecamatanId,
                     'user_id' => $userId,
                     'relawan_id' => $relawan->id,
+                    'status' => $status,
+                    'alasan_ditolak' => $alasan,
                 ]);
 
                 $totalInsert++;

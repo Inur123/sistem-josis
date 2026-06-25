@@ -64,6 +64,10 @@ class Pemilih extends Model
         'user_id',
         'relawan_id',
         'foto_ktp',
+        'status',
+        'alasan_ditolak',
+        'verified_by',
+        'verified_at',
     ];
 
     protected function casts(): array
@@ -74,6 +78,7 @@ class Pemilih extends Model
             'alamat' => EncryptedAesGcm::class, // 🔐 AES-256-GCM
             'rt' => EncryptedAesGcm::class, // 🔐 AES-256-GCM
             'rw' => EncryptedAesGcm::class, // 🔐 AES-256-GCM
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -108,5 +113,10 @@ class Pemilih extends Model
     public function relawan(): BelongsTo
     {
         return $this->belongsTo(AnggotaTim::class, 'relawan_id');
+    }
+
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 }

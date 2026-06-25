@@ -42,6 +42,14 @@ return new class extends Migration
                 ->constrained('anggota_tim')
                 ->cascadeOnDelete();
 
+            $table->string('status', 30)->default('belum_verifikasi');
+            $table->text('alasan_ditolak')->nullable();
+            $table->foreignUlid('verified_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+            $table->timestamp('verified_at')->nullable();
+
             $table->timestamps();
         });
     }

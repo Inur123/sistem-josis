@@ -13,7 +13,7 @@ class DashboardController extends Controller
     public function __invoke(Request $request): Response
     {
         $stats = [
-            'total_pemilih' => DB::table('pemilihs')->count(),
+            'total_pemilih' => DB::table('pemilihs')->where('status', 'terverifikasi')->count(),
             'total_kecamatan' => DB::table('kecamatans')->count(),
             'total_desa' => DB::table('desas')->count(),
             'total_akun' => DB::table('users')->count(),
@@ -27,9 +27,9 @@ class DashboardController extends Controller
                 return [
                     'id' => $kec->id,
                     'nama' => $kec->nama,
-                    'total' => DB::table('pemilihs')->where('kecamatan_id', $kec->id)->count(),
-                    'l' => DB::table('pemilihs')->where('kecamatan_id', $kec->id)->where('jenis_kelamin', 'L')->count(),
-                    'p' => DB::table('pemilihs')->where('kecamatan_id', $kec->id)->where('jenis_kelamin', 'P')->count(),
+                    'total' => DB::table('pemilihs')->where('kecamatan_id', $kec->id)->where('status', 'terverifikasi')->count(),
+                    'l' => DB::table('pemilihs')->where('kecamatan_id', $kec->id)->where('jenis_kelamin', 'L')->where('status', 'terverifikasi')->count(),
+                    'p' => DB::table('pemilihs')->where('kecamatan_id', $kec->id)->where('jenis_kelamin', 'P')->where('status', 'terverifikasi')->count(),
                 ];
             });
 

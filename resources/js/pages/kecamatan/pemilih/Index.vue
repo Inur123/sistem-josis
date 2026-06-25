@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Loader2, Eye } from '@lucide/vue';
+import { Loader2, Eye, CheckCircle, XCircle, Clock } from '@lucide/vue';
 import { ref, watch, reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
 import kecamatanRoutes from '@/routes/kecamatan';
@@ -16,6 +16,8 @@ interface Pemilih {
     desa: string;
     relawan?: string;
     created_at: string;
+    status: 'belum_verifikasi' | 'terverifikasi' | 'ditolak';
+    alasan_ditolak?: string | null;
 }
 
 interface LinkItem {
@@ -45,6 +47,7 @@ const props = defineProps<{
     desas: DropdownItem[];
     kecamatan: string;
     filters: {
+        status: string;
         desa_id: string | null;
         search: string | null;
     };
@@ -52,11 +55,15 @@ const props = defineProps<{
         total: number;
         l: number;
         p: number;
+        belum_verifikasi: number;
+        terverifikasi: number;
+        ditolak: number;
     };
 }>();
 
 const searchVal = ref(props.filters.search ?? '');
 const selectedDesa = ref(props.filters.desa_id ?? '');
+const selectedStatus = ref(props.filters.status ?? '');
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const currentPage = ref(props.pemilihs.current_page);
@@ -95,6 +102,11 @@ watch(selectedDesa, () => {
     applyFilters();
 });
 
+// Trigger filters when status changes
+watch(selectedStatus, () => {
+    applyFilters();
+});
+
 let searchTimeout: ReturnType<typeof setTimeout>;
 watch(searchVal, () => {
     clearTimeout(searchTimeout);
@@ -114,6 +126,7 @@ function applyFilters() {
         {
             search: searchVal.value || undefined,
             desa_id: selectedDesa.value || undefined,
+            status: selectedStatus.value || undefined,
         },
         {
             preserveState: true,
@@ -125,6 +138,7 @@ function applyFilters() {
 function clearFilters() {
     searchVal.value = '';
     selectedDesa.value = '';
+    selectedStatus.value = '';
     router.get('/kecamatan/pemilih');
 }
 
@@ -152,6 +166,7 @@ async function goToPage(page: number) {
             page: String(page),
             ...(searchVal.value ? { search: searchVal.value } : {}),
             ...(selectedDesa.value ? { desa_id: selectedDesa.value } : {}),
+            ...(selectedStatus.value ? { status: selectedStatus.value } : {}),
         });
         const res = await fetch(
             `/kecamatan/pemilih?${queryParams.toString()}`,
@@ -209,16 +224,16 @@ defineOptions({
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             <!-- Total Pemilih -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50"
                 >
                     <svg
-                        class="h-5 w-5 text-blue-600"
+                        class="h-4.5 w-4.5 text-blue-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -231,23 +246,23 @@ defineOptions({
                         />
                     </svg>
                 </div>
-                <div class="text-2xl font-bold text-gray-900">
+                <div class="text-xl font-bold text-gray-900 leading-tight">
                     {{ currentSummary.total.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">
-                    Total Pemilih (Terfilter)
+                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+                    Total Pemilih
                 </div>
             </div>
 
             <!-- Laki-laki -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50"
                 >
                     <svg
-                        class="h-5 w-5 text-sky-600"
+                        class="h-4.5 w-4.5 text-sky-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -257,21 +272,21 @@ defineOptions({
                         <circle cx="12" cy="7" r="4" />
                     </svg>
                 </div>
-                <div class="text-2xl font-bold text-gray-900">
+                <div class="text-xl font-bold text-gray-900 leading-tight">
                     {{ currentSummary.l.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">Laki-laki</div>
+                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Laki-laki</div>
             </div>
 
             <!-- Perempuan -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-pink-50"
                 >
                     <svg
-                        class="h-5 w-5 text-pink-600"
+                        class="h-4.5 w-4.5 text-pink-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -281,10 +296,83 @@ defineOptions({
                         <circle cx="12" cy="7" r="4" />
                     </svg>
                 </div>
-                <div class="text-2xl font-bold text-gray-900">
+                <div class="text-xl font-bold text-gray-900 leading-tight">
                     {{ currentSummary.p.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500">Perempuan</div>
+                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Perempuan</div>
+            </div>
+
+            <!-- Belum Verifikasi -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+            >
+                <div
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
+                >
+                    <svg
+                        class="h-4.5 w-4.5 text-amber-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                </div>
+                <div class="text-xl font-bold text-gray-900 leading-tight">
+                    {{ (currentSummary.belum_verifikasi ?? 0).toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Belum Verifikasi</div>
+            </div>
+
+            <!-- Terverifikasi -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+            >
+                <div
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-green-50"
+                >
+                    <svg
+                        class="h-4.5 w-4.5 text-green-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </div>
+                <div class="text-xl font-bold text-gray-900 leading-tight">
+                    {{ (currentSummary.terverifikasi ?? 0).toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Terverifikasi</div>
+            </div>
+
+            <!-- Ditolak -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+            >
+                <div
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-red-50"
+                >
+                    <svg
+                        class="h-4.5 w-4.5 text-red-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="15" y1="9" x2="9" y2="15" />
+                        <line x1="9" y1="9" x2="15" y2="15" />
+                    </svg>
+                </div>
+                <div class="text-xl font-bold text-gray-900 leading-tight">
+                    {{ (currentSummary.ditolak ?? 0).toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Ditolak</div>
             </div>
         </div>
 
@@ -337,9 +425,20 @@ defineOptions({
                     </option>
                 </select>
 
+                <!-- Status Select -->
+                <select
+                    v-model="selectedStatus"
+                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none sm:flex-1 md:w-48"
+                >
+                    <option value="">Semua Status</option>
+                    <option value="belum_verifikasi">Belum Verifikasi</option>
+                    <option value="terverifikasi">Terverifikasi</option>
+                    <option value="ditolak">Ditolak</option>
+                </select>
+
                 <!-- Reset Filter Button -->
                 <button
-                    v-if="searchVal || selectedDesa"
+                    v-if="searchVal || selectedDesa || selectedStatus"
                     @click="clearFilters"
                     class="w-full rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 sm:w-auto"
                 >
@@ -361,30 +460,32 @@ defineOptions({
                     <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
                 </div>
 
-                <table class="w-full text-sm">
+                <table class="w-full text-xs lg:text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                            class="border-b border-gray-100 bg-gray-50 text-left text-xxs lg:text-xs font-semibold tracking-wide text-gray-500 uppercase"
                         >
-                            <th class="px-4 py-3">No</th>
-                            <th class="px-4 py-3">NIK</th>
-                            <th class="px-4 py-3">Nama</th>
-                            <th class="px-4 py-3">JK</th>
-                            <th class="px-4 py-3">Desa / Kel</th>
-                            <th class="px-4 py-3">Alamat</th>
-                            <th class="px-4 py-3 text-center">RT/RW</th>
-                            <th class="px-4 py-3">Relawan</th>
-                            <th class="px-4 py-3">Tanggal Input</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
+                            <th class="px-2 py-3 text-center">No</th>
+                            <th class="px-2 py-3">NIK</th>
+                            <th class="px-2.5 py-3">Nama</th>
+                            <th class="px-1.5 py-3 text-center">JK</th>
+                            <th class="px-2 py-3">Desa / Kel</th>
+                            <th class="px-2.5 py-3">Alamat</th>
+                            <th class="px-1.5 py-3 text-center">RT/RW</th>
+                            <th class="px-2 py-3">Relawan</th>
+                            <th class="px-2 py-3">Tgl Input</th>
+                            <th class="px-2 py-3 text-center">Status</th>
+                            <th class="px-2 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         <tr
                             v-for="(p, i) in currentData"
                             :key="p.id"
-                            class="hover:bg-gray-50"
+                            class="hover:bg-gray-50/80 cursor-pointer transition-colors"
+                            @click="router.visit(kecamatanRoutes.pemilih.show.url(p.id))"
                         >
-                            <td class="px-4 py-3 text-gray-400">
+                            <td class="px-2 py-3 text-center text-gray-400">
                                 {{
                                     (currentPage - 1) *
                                         props.pemilihs.per_page +
@@ -393,17 +494,17 @@ defineOptions({
                                 }}
                             </td>
                             <td
-                                class="px-4 py-3 font-mono text-xs text-gray-500"
+                                class="px-2 py-3 font-mono text-xxs lg:text-xs text-gray-500"
                             >
                                 {{ p.nik }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900">
+                            <td class="px-2.5 py-3 font-medium text-gray-900">
                                 {{ p.nama }}
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-1.5 py-3 text-center">
                                 <span
                                     :class="[
-                                        'inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold',
+                                        'inline-flex h-4.5 w-4.5 items-center justify-center rounded-full text-[10px] font-bold',
                                         p.jenis_kelamin === 'L'
                                             ? 'bg-blue-100 text-blue-700'
                                             : 'bg-pink-100 text-pink-700',
@@ -411,38 +512,57 @@ defineOptions({
                                     >{{ p.jenis_kelamin }}</span
                                 >
                             </td>
-                            <td class="px-4 py-3 text-gray-600">
+                            <td class="px-2 py-3 text-gray-600">
                                 {{ p.desa }}
                             </td>
                             <td
-                                class="max-w-[180px] truncate px-4 py-3 text-gray-600"
+                                class="max-w-[180px] truncate px-2.5 py-3 text-gray-600"
                             >
                                 {{ p.alamat }}
                             </td>
-                            <td class="px-4 py-3 text-center text-gray-600">
+                            <td class="px-1.5 py-3 text-center text-gray-600">
                                 {{ p.rt }}/{{ p.rw }}
                             </td>
-                            <td class="px-4 py-3 text-gray-600">
+                            <td class="px-2 py-3 text-gray-600">
                                 {{ p.relawan ?? '-' }}
                             </td>
-                            <td class="px-4 py-3 text-xs text-gray-400">
+                            <td class="px-2 py-3 text-xs text-gray-400">
                                 {{ p.created_at }}
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-3 text-center">
+                                <div class="flex justify-center">
+                                    <CheckCircle
+                                        v-if="p.status === 'terverifikasi'"
+                                        class="h-5 w-5 text-green-600"
+                                        title="Terverifikasi"
+                                    />
+                                    <XCircle
+                                        v-else-if="p.status === 'ditolak'"
+                                        class="h-5 w-5 text-red-600 animate-pulse"
+                                        :title="p.alasan_ditolak ? 'Ditolak: ' + p.alasan_ditolak : 'Ditolak'"
+                                    />
+                                    <Clock
+                                        v-else
+                                        class="h-5 w-5 text-amber-500"
+                                        title="Belum Verifikasi"
+                                    />
+                                </div>
+                            </td>
+                            <td class="px-2 py-3 text-center">
                                 <div class="flex items-center justify-center">
                                     <Link
                                         :href="kecamatanRoutes.pemilih.show.url(p.id)"
-                                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                        class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
                                         title="Detail"
                                     >
-                                        <Eye class="h-4 w-4" />
+                                        <Eye class="h-3.5 w-3.5" />
                                     </Link>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="!currentData.length && !loading">
                             <td
-                                colspan="10"
+                                colspan="11"
                                 class="px-4 py-12 text-center text-sm text-gray-400"
                             >
                                 Tidak ada data pemilih ditemukan.

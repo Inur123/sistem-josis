@@ -19,5 +19,8 @@ class DatabaseSeeder extends Seeder
 
         // Step 4: Data tim (korcam, kordes, relawan)
         $this->call(TimSeeder::class);
+
+        // Step 5: Data pemilih
+        $this->call(PemilihSeeder::class);
     }
 }

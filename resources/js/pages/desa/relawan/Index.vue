@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Loader2, Eye } from '@lucide/vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Loader2, Eye, CheckCircle, XCircle, Clock } from '@lucide/vue';
 import { reactive } from 'vue';
 import PaginationBar from '@/components/PaginationBar.vue';
 import desaRoutes from '@/routes/desa';
@@ -14,6 +14,8 @@ interface Pemilih {
     rt: string;
     rw: string;
     created_at: string;
+    status: 'belum_verifikasi' | 'terverifikasi' | 'ditolak';
+    alasan_ditolak?: string | null;
 }
 
 interface Relawan {
@@ -24,6 +26,14 @@ interface Relawan {
     alamat: string;
     pemilihs_count: number;
     pemilihs: Pemilih[];
+    summary: {
+        total: number;
+        l: number;
+        p: number;
+        belum_verifikasi: number;
+        terverifikasi: number;
+        ditolak: number;
+    };
 }
 
 const props = defineProps<{
@@ -31,12 +41,6 @@ const props = defineProps<{
     desa: string;
 }>();
 
-const getGenderStats = (pemilihs: Pemilih[]) => {
-    const l = pemilihs.filter((p) => p.jenis_kelamin === 'L').length;
-    const p = pemilihs.filter((p) => p.jenis_kelamin === 'P').length;
-
-    return { l, p };
-};
 
 // ─── Server-side pagination per relawan ───────────────────────────────────────
 const ITEMS_PER_PAGE = 10;
@@ -147,14 +151,29 @@ defineOptions({
                     class="flex flex-col justify-between gap-4 border-b border-gray-100 pb-4 sm:flex-row sm:items-center"
                 >
                     <div>
-                        <h3
-                            class="flex items-center gap-2 text-base font-semibold text-gray-900"
-                        >
-                            <span
-                                class="inline-flex h-2 w-2 rounded-full bg-blue-600"
-                            ></span>
-                            Relawan: {{ r.nama }}
-                        </h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3
+                                class="flex items-center gap-2 text-base font-semibold text-gray-900"
+                            >
+                                <span
+                                    class="inline-flex h-2 w-2 rounded-full bg-blue-600"
+                                ></span>
+                                Relawan:
+                                <Link
+                                    :href="`/desa/relawan/${r.id}`"
+                                    class="hover:text-blue-600 hover:underline transition-colors"
+                                >
+                                    {{ r.nama }}
+                                </Link>
+                            </h3>
+                            <Link
+                                :href="`/desa/relawan/${r.id}`"
+                                class="inline-flex items-center gap-1 rounded bg-gray-100 hover:bg-gray-200 px-2 py-0.5 text-xs font-semibold text-gray-700 transition-colors"
+                            >
+                                <Eye class="h-3 w-3" />
+                                Detail Relawan
+                            </Link>
+                        </div>
                         <div
                             class="mt-1.5 flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs text-gray-500"
                         >
@@ -169,28 +188,51 @@ defineOptions({
                             >
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-medium text-gray-500"
-                            >Pemilih Didampingi:</span
-                        >
-                        <div class="flex items-center gap-1.5">
+                    <div class="grid grid-cols-[125px_1fr] items-center gap-y-2 text-xs">
+                        <span class="font-semibold text-gray-500">Pemilih Didampingi:</span>
+                        <div class="flex flex-wrap items-center gap-3">
                             <span
-                                class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700"
+                                class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-bold text-blue-700"
                                 title="Total Pemilih"
                             >
                                 Total: {{ r.pemilihs_count }}
                             </span>
                             <span
-                                class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-sky-100 px-2.5 py-1 text-xs font-bold text-sky-700"
+                                class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-bold text-sky-700"
                                 title="Laki-laki"
                             >
-                                L: {{ getGenderStats(r.pemilihs).l }}
+                                L: {{ r.summary.l }}
                             </span>
                             <span
-                                class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-pink-100 px-2.5 py-1 text-xs font-bold text-pink-700"
+                                class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-pink-100 px-2.5 py-0.5 text-xs font-bold text-pink-700"
                                 title="Perempuan"
                             >
-                                P: {{ getGenderStats(r.pemilihs).p }}
+                                P: {{ r.summary.p }}
+                            </span>
+                        </div>
+
+                        <span class="font-semibold text-gray-500">Status:</span>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span
+                                class="inline-flex items-center gap-1 text-xs font-bold text-amber-600"
+                                title="Belum Verifikasi"
+                            >
+                                <Clock class="h-4 w-4 text-amber-500" />
+                                <span>{{ r.summary.belum_verifikasi }}</span>
+                            </span>
+                            <span
+                                class="inline-flex items-center gap-1 text-xs font-bold text-green-600"
+                                title="Terverifikasi"
+                            >
+                                <CheckCircle class="h-4 w-4 text-green-500" />
+                                <span>{{ r.summary.terverifikasi }}</span>
+                            </span>
+                            <span
+                                class="inline-flex items-center gap-1 text-xs font-bold text-red-600"
+                                title="Ditolak"
+                            >
+                                <XCircle class="h-4 w-4 text-red-500" />
+                                <span>{{ r.summary.ditolak }}</span>
                             </span>
                         </div>
                     </div>
@@ -206,32 +248,30 @@ defineOptions({
                         <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
                     </div>
 
-                    <table class="w-full text-sm">
+                    <table class="w-full text-xs lg:text-sm">
                         <thead>
                             <tr
-                                class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                                class="border-b border-gray-100 bg-gray-50 text-left text-xxs lg:text-xs font-semibold tracking-wide text-gray-500 uppercase"
                             >
-                                <th class="w-[60px] px-4 py-3">No</th>
-                                <th class="px-4 py-3">NIK</th>
-                                <th class="px-4 py-3">Nama Pemilih</th>
-                                <th class="w-[80px] px-4 py-3">JK</th>
-                                <th class="px-4 py-3">Alamat</th>
-                                <th class="w-[100px] px-4 py-3 text-center">
-                                    RT/RW
-                                </th>
-                                <th class="w-[150px] px-4 py-3">
-                                    Tanggal Input
-                                </th>
-                                <th class="w-[80px] px-4 py-3 text-center">Aksi</th>
+                                <th class="w-[50px] px-2 py-3 text-center">No</th>
+                                <th class="px-2 py-3">NIK</th>
+                                <th class="px-2.5 py-3">Nama</th>
+                                <th class="w-[60px] px-1.5 py-3 text-center">JK</th>
+                                <th class="px-2.5 py-3">Alamat</th>
+                                <th class="w-[80px] px-1.5 py-3 text-center">RT/RW</th>
+                                <th class="w-[120px] px-2 py-3">Tgl Input</th>
+                                <th class="w-[80px] px-2 py-3 text-center">Status</th>
+                                <th class="w-[80px] px-2 py-3 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             <tr
                                 v-for="(p, pi) in getPemilihPage(r)"
                                 :key="p.id"
-                                class="hover:bg-gray-50"
+                                class="hover:bg-gray-50/80 cursor-pointer transition-colors"
+                                @click="router.visit(desaRoutes.relawan.pemilih.show.url({ relawan: r.id, pemilih: p.id }, { query: { from: 'index' } }))"
                             >
-                                <td class="px-4 py-3 text-gray-400">
+                                <td class="px-2 py-3 text-center text-gray-400">
                                     {{
                                         ((currentPages[r.id] ?? 1) - 1) *
                                             ITEMS_PER_PAGE +
@@ -240,17 +280,17 @@ defineOptions({
                                     }}
                                 </td>
                                 <td
-                                    class="px-4 py-3 font-mono text-xs text-gray-500"
+                                    class="px-2 py-3 font-mono text-xxs lg:text-xs text-gray-500"
                                 >
                                     {{ p.nik }}
                                 </td>
-                                <td class="px-4 py-3 font-medium text-gray-900">
+                                <td class="px-2.5 py-3 font-medium text-gray-900">
                                     {{ p.nama }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-1.5 py-3 text-center">
                                     <span
                                         :class="[
-                                            'inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold',
+                                            'inline-flex h-4.5 w-4.5 items-center justify-center rounded-full text-[10px] font-bold',
                                             p.jenis_kelamin === 'L'
                                                 ? 'bg-blue-100 text-blue-700'
                                                 : 'bg-pink-100 text-pink-700',
@@ -260,20 +300,27 @@ defineOptions({
                                     </span>
                                 </td>
                                 <td
-                                    class="max-w-[300px] truncate px-4 py-3 text-gray-600"
+                                    class="max-w-[300px] truncate px-2.5 py-3 text-gray-600"
                                 >
                                     {{ p.alamat }}
                                 </td>
-                                <td class="px-4 py-3 text-center text-gray-600">
+                                <td class="px-1.5 py-3 text-center text-gray-600">
                                     {{ p.rt }}/{{ p.rw }}
                                 </td>
-                                <td class="px-4 py-3 text-xs text-gray-400">
+                                <td class="px-2 py-3 text-xs text-gray-400">
                                     {{ p.created_at }}
                                 </td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-2 py-3 text-center">
+                                    <div class="flex justify-center" @click.stop>
+                                        <CheckCircle v-if="p.status === 'terverifikasi'" class="h-4.5 w-4.5 text-green-600" title="Terverifikasi" />
+                                        <XCircle v-else-if="p.status === 'ditolak'" class="h-4.5 w-4.5 text-red-600" :title="p.alasan_ditolak ? 'Ditolak: ' + p.alasan_ditolak : 'Ditolak'" />
+                                        <Clock v-else class="h-4.5 w-4.5 text-amber-500" title="Belum Verifikasi" />
+                                    </div>
+                                </td>
+                                <td class="px-2 py-3 text-center">
                                     <div class="flex items-center justify-center">
                                         <Link
-                                            :href="desaRoutes.pemilih.show.url(p.id)"
+                                            :href="desaRoutes.relawan.pemilih.show.url({ relawan: r.id, pemilih: p.id }, { query: { from: 'index' } })"
                                             class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
                                             title="Detail"
                                         >
@@ -289,7 +336,7 @@ defineOptions({
                                 "
                             >
                                 <td
-                                    colspan="8"
+                                    colspan="9"
                                     class="px-4 py-8 text-center text-sm text-gray-400"
                                 >
                                     Belum ada data pemilih pendamping untuk
