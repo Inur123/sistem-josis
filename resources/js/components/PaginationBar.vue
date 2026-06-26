@@ -61,8 +61,44 @@ const pageItems = computed<PageItem[]>(() => {
 </script>
 
 <template>
+    <!-- Mobile Pagination (Prev - Page Indicator - Next) -->
     <div
-        class="flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4"
+        class="flex items-center justify-between border-t border-gray-100 px-2 pt-4 sm:hidden"
+    >
+        <button
+            :disabled="currentPage === 1 || loading"
+            @click="emit('go', currentPage - 1)"
+            class="flex items-center gap-1 rounded-xl border border-gray-100 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-all duration-150 active:bg-gray-50"
+            :class="
+                currentPage === 1 || loading
+                    ? 'cursor-not-allowed opacity-50'
+                    : 'hover:bg-gray-50'
+            "
+        >
+            <ChevronLeft class="h-3.5 w-3.5" /> Prev
+        </button>
+
+        <span class="text-xs font-semibold text-gray-500">
+            Hal {{ currentPage }} / {{ totalPages }}
+        </span>
+
+        <button
+            :disabled="currentPage === totalPages || loading"
+            @click="emit('go', currentPage + 1)"
+            class="flex items-center gap-1 rounded-xl border border-gray-100 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-all duration-150 active:bg-gray-50"
+            :class="
+                currentPage === totalPages || loading
+                    ? 'cursor-not-allowed opacity-50'
+                    : 'hover:bg-gray-50'
+            "
+        >
+            Next <ChevronRight class="h-3.5 w-3.5" />
+        </button>
+    </div>
+
+    <!-- Desktop Pagination -->
+    <div
+        class="hidden sm:flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4"
     >
         <!-- Previous -->
         <button
