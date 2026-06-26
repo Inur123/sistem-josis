@@ -55,7 +55,7 @@ defineOptions({
         </div>
 
         <!-- Stat Cards -->
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- Total Pemilih -->
             <div
                 class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"

@@ -212,7 +212,7 @@ defineOptions({
                         class="min-w-[280px] rounded-xl border border-gray-100/50 bg-gray-50/50 p-4"
                     >
                         <div
-                            class="grid grid-cols-[125px_1fr] items-center gap-y-2 text-xs"
+                            class="grid grid-cols-1 sm:grid-cols-[125px_1fr] items-start sm:items-center gap-y-2 text-xs"
                         >
                             <span class="font-semibold text-gray-500"
                                 >Pemilih Didampingi:</span
