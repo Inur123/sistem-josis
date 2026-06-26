@@ -1,12 +1,12 @@
 {
-  "name": "Sistem Josis",
+  "name": "Sistem Josis - Kawal Suara",
   "short_name": "Josis",
-  "description": "Sistem Informasi Josis untuk pemantauan data pemilih dan koordinator wilayah.",
+  "description": "Platform pemantauan data relawan pendamping dan koordinasi input data pemilih di wilayah Kabupaten Magetan.",
   "start_url": "/login",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#111827",
+  "background_color": "#eab308",
+  "theme_color": "#eab308",
   "icons": [
     {
       "src": "/images/pwa-192x192.png",
