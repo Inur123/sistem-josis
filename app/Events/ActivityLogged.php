@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Activity;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -28,16 +29,17 @@ class ActivityLogged implements ShouldBroadcast
     {
         // Eager load causer details
         $activity->load('causer');
+        $causer = $activity->causer;
 
         $this->activity = [
             'id' => $activity->id,
             'log_name' => $activity->log_name,
             'description' => $activity->description, // Decrypted because of the model cast
             'event' => $activity->event,
-            'causer' => $activity->causer ? [
-                'name' => $activity->causer->name,
-                'email' => $activity->causer->email,
-                'role' => $activity->causer->role,
+            'causer' => $causer instanceof User ? [
+                'name' => $causer->name,
+                'email' => $causer->email,
+                'role' => $causer->role,
             ] : null,
             'created_at' => $activity->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
         ];

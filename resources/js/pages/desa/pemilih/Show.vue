@@ -34,7 +34,9 @@ const backUrl = ref(desaRoutes.pemilih.index.url());
 
 onMounted(() => {
     const pathname = window.location.pathname;
-    const match = pathname.match(/^\/desa\/relawan\/([^\/]+)\/pemilih\/[^\/]+$/);
+    const match = pathname.match(
+        /^\/desa\/relawan\/([^\/]+)\/pemilih\/[^\/]+$/,
+    );
 
     if (match) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -64,21 +66,25 @@ const page = usePage();
 const user = page.props.auth.user as any;
 
 if (typeof window !== 'undefined' && user) {
-    useEcho(`desa.pemilih.${user.desa_id}`, 'PemilihChanged', (event: PemilihChangedEvent) => {
-        if (event.pemilihId !== props.pemilih.id) {
-            return;
-        }
+    useEcho(
+        `desa.pemilih.${user.desa_id}`,
+        'PemilihChanged',
+        (event: PemilihChangedEvent) => {
+            if (event.pemilihId !== props.pemilih.id) {
+                return;
+            }
 
-        if (event.event === 'deleted') {
-            router.visit(backUrl.value);
+            if (event.event === 'deleted') {
+                router.visit(backUrl.value);
 
-            return;
-        }
+                return;
+            }
 
-        router.reload({
-            only: ['pemilih', 'desa'],
-        });
-    });
+            router.reload({
+                only: ['pemilih', 'desa'],
+            });
+        },
+    );
 }
 
 defineOptions({
@@ -120,7 +126,9 @@ defineOptions({
                 class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
             >
                 <!-- Card Header -->
-                <div class="border-b border-gray-100 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div
+                    class="flex flex-col gap-4 border-b border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+                >
                     <div>
                         <h2 class="text-base font-semibold text-gray-900">
                             Detail Informasi Pemilih
@@ -136,7 +144,9 @@ defineOptions({
                             v-if="props.pemilih.status === 'terverifikasi'"
                             class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-600/20 ring-inset"
                         >
-                            <span class="h-1.5 w-1.5 rounded-full bg-green-600" />
+                            <span
+                                class="h-1.5 w-1.5 rounded-full bg-green-600"
+                            />
                             Terverifikasi
                         </span>
                         <span
@@ -150,20 +160,34 @@ defineOptions({
                             v-else
                             class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-600/20 ring-inset"
                         >
-                            <span class="h-1.5 w-1.5 rounded-full bg-amber-600" />
+                            <span
+                                class="h-1.5 w-1.5 rounded-full bg-amber-600"
+                            />
                             Belum Verifikasi
                         </span>
                     </div>
                 </div>
 
                 <!-- Rejection Alert -->
-                <div v-if="props.pemilih.status === 'ditolak'" class="border-b border-red-100 bg-red-50/50 p-4">
+                <div
+                    v-if="props.pemilih.status === 'ditolak'"
+                    class="border-b border-red-100 bg-red-50/50 p-4"
+                >
                     <div class="flex gap-2">
-                        <AlertCircle class="h-5 w-5 text-red-600 shrink-0" />
+                        <AlertCircle class="h-5 w-5 shrink-0 text-red-600" />
                         <div>
-                            <h4 class="text-sm font-semibold text-red-950">Alasan Ditolak:</h4>
-                            <p class="mt-1 text-sm text-red-900 leading-relaxed">{{ props.pemilih.alasan_ditolak || '-' }}</p>
-                            <p class="mt-2 text-xs text-red-700">Silakan edit kembali data pemilih ini untuk mengajukan verifikasi ulang.</p>
+                            <h4 class="text-sm font-semibold text-red-950">
+                                Alasan Ditolak:
+                            </h4>
+                            <p
+                                class="mt-1 text-sm leading-relaxed text-red-900"
+                            >
+                                {{ props.pemilih.alasan_ditolak || '-' }}
+                            </p>
+                            <p class="mt-2 text-xs text-red-700">
+                                Silakan edit kembali data pemilih ini untuk
+                                mengajukan verifikasi ulang.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -174,104 +198,127 @@ defineOptions({
                     <div class="space-y-5 lg:col-span-7">
                         <!-- NIK -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-sm font-medium text-gray-700">NIK</label>
+                            <label class="text-sm font-medium text-gray-700"
+                                >NIK</label
+                            >
                             <input
                                 type="text"
                                 readonly
                                 :value="props.pemilih.nik"
-                                class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 font-mono tracking-wider outline-none cursor-default shadow-sm"
+                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 font-mono text-sm tracking-wider text-gray-900 shadow-sm outline-none"
                             />
                         </div>
 
                         <!-- Nama Lengkap -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-sm font-medium text-gray-700">Nama Lengkap</label>
+                            <label class="text-sm font-medium text-gray-700"
+                                >Nama Lengkap</label
+                            >
                             <input
                                 type="text"
                                 readonly
                                 :value="props.pemilih.nama"
-                                class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 outline-none cursor-default shadow-sm"
+                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 shadow-sm outline-none"
                             />
                         </div>
 
                         <!-- Jenis Kelamin -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-sm font-medium text-gray-700">Jenis Kelamin</label>
+                            <label class="text-sm font-medium text-gray-700"
+                                >Jenis Kelamin</label
+                            >
                             <input
                                 type="text"
                                 readonly
-                                :value="props.pemilih.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'"
-                                class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 outline-none cursor-default shadow-sm"
+                                :value="
+                                    props.pemilih.jenis_kelamin === 'L'
+                                        ? 'Laki-laki'
+                                        : 'Perempuan'
+                                "
+                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 shadow-sm outline-none"
                             />
                         </div>
 
                         <!-- Alamat -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-sm font-medium text-gray-700">Alamat</label>
+                            <label class="text-sm font-medium text-gray-700"
+                                >Alamat</label
+                            >
                             <textarea
                                 readonly
                                 rows="3"
                                 :value="props.pemilih.alamat"
-                                class="w-full resize-none rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 outline-none cursor-default shadow-sm"
+                                class="w-full cursor-default resize-none rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 shadow-sm outline-none"
                             />
                         </div>
 
                         <!-- RT / RW -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col gap-1.5">
-                                <label class="text-sm font-medium text-gray-700">RT</label>
+                                <label class="text-sm font-medium text-gray-700"
+                                    >RT</label
+                                >
                                 <input
                                     type="text"
                                     readonly
                                     :value="props.pemilih.rt"
-                                    class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 outline-none cursor-default shadow-sm"
+                                    class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 shadow-sm outline-none"
                                 />
                             </div>
                             <div class="flex flex-col gap-1.5">
-                                <label class="text-sm font-medium text-gray-700">RW</label>
+                                <label class="text-sm font-medium text-gray-700"
+                                    >RW</label
+                                >
                                 <input
                                     type="text"
                                     readonly
                                     :value="props.pemilih.rw"
-                                    class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 outline-none cursor-default shadow-sm"
+                                    class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 shadow-sm outline-none"
                                 />
                             </div>
                         </div>
 
                         <!-- Relawan Pendamping -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-sm font-medium text-gray-700">Relawan Pendamping</label>
+                            <label class="text-sm font-medium text-gray-700"
+                                >Relawan Pendamping</label
+                            >
                             <input
                                 type="text"
                                 readonly
                                 :value="props.pemilih.relawan ?? '-'"
-                                class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 outline-none cursor-default shadow-sm"
+                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 shadow-sm outline-none"
                             />
                         </div>
 
                         <!-- Tanggal Input -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-sm font-medium text-gray-700">Tanggal Ditambahkan</label>
+                            <label class="text-sm font-medium text-gray-700"
+                                >Tanggal Ditambahkan</label
+                            >
                             <input
                                 type="text"
                                 readonly
                                 :value="props.pemilih.created_at"
-                                class="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-500 outline-none cursor-default shadow-sm"
+                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-500 shadow-sm outline-none"
                             />
                         </div>
                     </div>
 
                     <!-- Right Column: Foto KTP (5 cols) -->
-                    <div class="lg:col-span-5 flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 lg:col-span-5">
                         <label class="text-sm font-medium text-gray-700">
                             Foto KTP
                         </label>
 
-                        <div v-if="props.pemilih.foto_ktp" class="overflow-hidden rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm">
+                        <div
+                            v-if="props.pemilih.foto_ktp"
+                            class="overflow-hidden rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm"
+                        >
                             <img
                                 :src="props.pemilih.foto_ktp"
                                 alt="Foto KTP"
-                                class="w-full h-auto max-h-[400px] rounded object-contain"
+                                class="h-auto max-h-[400px] w-full rounded object-contain"
                             />
                         </div>
                         <div

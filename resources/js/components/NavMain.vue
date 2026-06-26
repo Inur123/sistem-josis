@@ -35,7 +35,10 @@ function isActive(href: any) {
 
     // Keep "Data Pemilih" active when viewing detail or editing, but not when creating new data
     if (hrefStr.endsWith('/pemilih')) {
-        return currentPath.startsWith(hrefStr) && !currentPath.includes('/pemilih/create');
+        return (
+            currentPath.startsWith(hrefStr) &&
+            !currentPath.includes('/pemilih/create')
+        );
     }
 
     // For other menus, support subpaths unless it is the dashboard

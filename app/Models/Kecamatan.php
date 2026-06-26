@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Kecamatan extends Model
 {
+    /** @use HasFactory<Factory<static>> */
     use HasFactory, HasUlids;
 
     protected $fillable = ['kode', 'nama'];
@@ -42,11 +44,17 @@ class Kecamatan extends Model
     /**
      * Relasi ke desas.
      */
+    /**
+     * @return HasMany<Pemilih, $this>
+     */
     public function pemilihs(): HasMany
     {
         return $this->hasMany(Pemilih::class);
     }
 
+    /**
+     * @return HasMany<Desa, $this>
+     */
     public function desas(): HasMany
     {
         return $this->hasMany(Desa::class);
@@ -55,6 +63,9 @@ class Kecamatan extends Model
     /**
      * Relasi ke users (akun kecamatan).
      */
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
@@ -62,6 +73,9 @@ class Kecamatan extends Model
 
     /**
      * Relasi ke anggota tim.
+     */
+    /**
+     * @return HasMany<AnggotaTim, $this>
      */
     public function anggotaTims(): HasMany
     {

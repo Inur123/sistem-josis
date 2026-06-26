@@ -98,7 +98,6 @@ function clearFilters() {
     router.get('/admin/relawan');
 }
 
-
 // ─── Server-side pagination per relawan ───────────────────────────────────────
 const ITEMS_PER_PAGE = 10;
 
@@ -294,7 +293,7 @@ defineOptions({
                                     Relawan:
                                     <Link
                                         :href="`/admin/relawan/${r.id}`"
-                                        class="hover:text-blue-600 hover:underline transition-colors"
+                                        class="transition-colors hover:text-blue-600 hover:underline"
                                     >
                                         {{ r.nama }}
                                     </Link>
@@ -311,7 +310,7 @@ defineOptions({
                                 </span>
                                 <Link
                                     :href="`/admin/relawan/${r.id}`"
-                                    class="inline-flex items-center gap-1 rounded bg-gray-100 hover:bg-gray-200 px-2 py-0.5 text-xs font-semibold text-gray-700 transition-colors"
+                                    class="inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-200"
                                 >
                                     <Eye class="h-3 w-3" />
                                     Detail Relawan
@@ -333,8 +332,12 @@ defineOptions({
                                 >
                             </div>
                         </div>
-                        <div class="grid grid-cols-[125px_1fr] items-center gap-y-2 text-xs">
-                            <span class="font-semibold text-gray-500">Pemilih Didampingi:</span>
+                        <div
+                            class="grid grid-cols-[125px_1fr] items-center gap-y-2 text-xs"
+                        >
+                            <span class="font-semibold text-gray-500"
+                                >Pemilih Didampingi:</span
+                            >
                             <div class="flex flex-wrap items-center gap-3">
                                 <span
                                     class="inline-flex min-w-[28px] items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-bold text-blue-700"
@@ -356,20 +359,26 @@ defineOptions({
                                 </span>
                             </div>
 
-                            <span class="font-semibold text-gray-500">Status:</span>
+                            <span class="font-semibold text-gray-500"
+                                >Status:</span
+                            >
                             <div class="flex flex-wrap items-center gap-3">
                                 <span
                                     class="inline-flex items-center gap-1 text-xs font-bold text-amber-600"
                                     title="Belum Verifikasi"
                                 >
                                     <Clock class="h-4 w-4 text-amber-500" />
-                                    <span>{{ r.summary.belum_verifikasi }}</span>
+                                    <span>{{
+                                        r.summary.belum_verifikasi
+                                    }}</span>
                                 </span>
                                 <span
                                     class="inline-flex items-center gap-1 text-xs font-bold text-green-600"
                                     title="Terverifikasi"
                                 >
-                                    <CheckCircle class="h-4 w-4 text-green-500" />
+                                    <CheckCircle
+                                        class="h-4 w-4 text-green-500"
+                                    />
                                     <span>{{ r.summary.terverifikasi }}</span>
                                 </span>
                                 <span
@@ -398,31 +407,55 @@ defineOptions({
                         <table class="w-full text-xs lg:text-sm">
                             <thead>
                                 <tr
-                                    class="border-b border-gray-100 bg-gray-50 text-left text-xxs lg:text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                                    class="text-xxs border-b border-gray-100 bg-gray-50 text-left font-semibold tracking-wide text-gray-500 uppercase lg:text-xs"
                                 >
-                                    <th class="w-[50px] px-2 py-3 text-center">No</th>
+                                    <th class="w-[50px] px-2 py-3 text-center">
+                                        No
+                                    </th>
                                     <th class="px-2 py-3">NIK</th>
                                     <th class="px-2.5 py-3">Nama</th>
-                                    <th class="w-[60px] px-1.5 py-3 text-center">JK</th>
+                                    <th
+                                        class="w-[60px] px-1.5 py-3 text-center"
+                                    >
+                                        JK
+                                    </th>
                                     <th class="px-2.5 py-3">Alamat</th>
-                                    <th class="w-[80px] px-1.5 py-3 text-center">
+                                    <th
+                                        class="w-[80px] px-1.5 py-3 text-center"
+                                    >
                                         RT/RW
                                     </th>
                                     <th class="w-[120px] px-2 py-3">
                                         Tgl Input
                                     </th>
-                                    <th class="w-[80px] px-2 py-3 text-center">Status</th>
-                                    <th class="w-[80px] px-2 py-3 text-center">Aksi</th>
+                                    <th class="w-[80px] px-2 py-3 text-center">
+                                        Status
+                                    </th>
+                                    <th class="w-[80px] px-2 py-3 text-center">
+                                        Aksi
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 <tr
                                     v-for="(p, pi) in getPemilihPage(r)"
                                     :key="p.id"
-                                    class="hover:bg-gray-50/80 cursor-pointer transition-colors"
-                                    @click="router.visit(`/admin/relawan/${r.id}/pemilih/${p.id}?from=index` + (selectedKecamatan ? `&kecamatan_id=${selectedKecamatan}` : '') + (selectedDesa ? `&desa_id=${selectedDesa}` : ''))"
+                                    class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                                    @click="
+                                        router.visit(
+                                            `/admin/relawan/${r.id}/pemilih/${p.id}?from=index` +
+                                                (selectedKecamatan
+                                                    ? `&kecamatan_id=${selectedKecamatan}`
+                                                    : '') +
+                                                (selectedDesa
+                                                    ? `&desa_id=${selectedDesa}`
+                                                    : ''),
+                                        )
+                                    "
                                 >
-                                    <td class="px-2 py-3 text-center text-gray-400">
+                                    <td
+                                        class="px-2 py-3 text-center text-gray-400"
+                                    >
                                         {{
                                             ((currentPages[r.id] ?? 1) - 1) *
                                                 ITEMS_PER_PAGE +
@@ -431,7 +464,7 @@ defineOptions({
                                         }}
                                     </td>
                                     <td
-                                        class="px-2 py-3 font-mono text-xxs lg:text-xs text-gray-500"
+                                        class="text-xxs px-2 py-3 font-mono text-gray-500 lg:text-xs"
                                     >
                                         {{ p.nik }}
                                     </td>
@@ -466,16 +499,50 @@ defineOptions({
                                         {{ p.created_at }}
                                     </td>
                                     <td class="px-2 py-3 text-center">
-                                        <div class="flex justify-center" @click.stop>
-                                            <CheckCircle v-if="p.status === 'terverifikasi'" class="h-4.5 w-4.5 text-green-600" title="Terverifikasi" />
-                                            <XCircle v-else-if="p.status === 'ditolak'" class="h-4.5 w-4.5 text-red-600" :title="p.alasan_ditolak ? 'Ditolak: ' + p.alasan_ditolak : 'Ditolak'" />
-                                            <Clock v-else class="h-4.5 w-4.5 text-amber-500" title="Belum Verifikasi" />
+                                        <div
+                                            class="flex justify-center"
+                                            @click.stop
+                                        >
+                                            <CheckCircle
+                                                v-if="
+                                                    p.status === 'terverifikasi'
+                                                "
+                                                class="h-4.5 w-4.5 text-green-600"
+                                                title="Terverifikasi"
+                                            />
+                                            <XCircle
+                                                v-else-if="
+                                                    p.status === 'ditolak'
+                                                "
+                                                class="h-4.5 w-4.5 text-red-600"
+                                                :title="
+                                                    p.alasan_ditolak
+                                                        ? 'Ditolak: ' +
+                                                          p.alasan_ditolak
+                                                        : 'Ditolak'
+                                                "
+                                            />
+                                            <Clock
+                                                v-else
+                                                class="h-4.5 w-4.5 text-amber-500"
+                                                title="Belum Verifikasi"
+                                            />
                                         </div>
                                     </td>
                                     <td class="px-2 py-3 text-center">
-                                        <div class="flex items-center justify-center">
+                                        <div
+                                            class="flex items-center justify-center"
+                                        >
                                             <Link
-                                                :href="`/admin/relawan/${r.id}/pemilih/${p.id}?from=index` + (selectedKecamatan ? `&kecamatan_id=${selectedKecamatan}` : '') + (selectedDesa ? `&desa_id=${selectedDesa}` : '')"
+                                                :href="
+                                                    `/admin/relawan/${r.id}/pemilih/${p.id}?from=index` +
+                                                    (selectedKecamatan
+                                                        ? `&kecamatan_id=${selectedKecamatan}`
+                                                        : '') +
+                                                    (selectedDesa
+                                                        ? `&desa_id=${selectedDesa}`
+                                                        : '')
+                                                "
                                                 class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
                                                 title="Detail"
                                             >

@@ -6,6 +6,7 @@ use App\Casts\EncryptedAesGcm;
 use App\Events\PemilihChanged;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Kecamatan|null $kecamatan
  * @property-read User|null $user
  * @property-read AnggotaTim|null $relawan
+ * @property-read User|null $verifiedBy
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pemilih newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pemilih newQuery()
@@ -50,6 +52,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Pemilih extends Model
 {
+    /** @use HasFactory<Factory<static>> */
     use HasFactory, HasUlids;
 
     protected $fillable = [
@@ -96,26 +99,41 @@ class Pemilih extends Model
 
     // ─── Relasi ───────────────────────────────────────────────────
 
+    /**
+     * @return BelongsTo<Desa, $this>
+     */
     public function desa(): BelongsTo
     {
         return $this->belongsTo(Desa::class);
     }
 
+    /**
+     * @return BelongsTo<Kecamatan, $this>
+     */
     public function kecamatan(): BelongsTo
     {
         return $this->belongsTo(Kecamatan::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<AnggotaTim, $this>
+     */
     public function relawan(): BelongsTo
     {
         return $this->belongsTo(AnggotaTim::class, 'relawan_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function verifiedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');

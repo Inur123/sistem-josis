@@ -15,8 +15,11 @@ class PemilihChanged implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public string $pemilihId;
+
     public string $event;
+
     public string $kecamatanId;
+
     public string $desaId;
 
     /**

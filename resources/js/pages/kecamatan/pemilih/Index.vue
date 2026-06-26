@@ -256,10 +256,12 @@ defineOptions({
                         />
                     </svg>
                 </div>
-                <div class="text-xl font-bold text-gray-900 leading-tight">
+                <div class="text-xl leading-tight font-bold text-gray-900">
                     {{ currentSummary.total.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+                <div
+                    class="mt-0.5 text-[10px] font-medium tracking-wider text-gray-500 uppercase"
+                >
                     Total Pemilih
                 </div>
             </div>
@@ -282,10 +284,14 @@ defineOptions({
                         <circle cx="12" cy="7" r="4" />
                     </svg>
                 </div>
-                <div class="text-xl font-bold text-gray-900 leading-tight">
+                <div class="text-xl leading-tight font-bold text-gray-900">
                     {{ currentSummary.l.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Laki-laki</div>
+                <div
+                    class="mt-0.5 text-[10px] font-medium tracking-wider text-gray-500 uppercase"
+                >
+                    Laki-laki
+                </div>
             </div>
 
             <!-- Perempuan -->
@@ -306,10 +312,14 @@ defineOptions({
                         <circle cx="12" cy="7" r="4" />
                     </svg>
                 </div>
-                <div class="text-xl font-bold text-gray-900 leading-tight">
+                <div class="text-xl leading-tight font-bold text-gray-900">
                     {{ currentSummary.p.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Perempuan</div>
+                <div
+                    class="mt-0.5 text-[10px] font-medium tracking-wider text-gray-500 uppercase"
+                >
+                    Perempuan
+                </div>
             </div>
 
             <!-- Belum Verifikasi -->
@@ -330,10 +340,18 @@ defineOptions({
                         <polyline points="12 6 12 12 16 14" />
                     </svg>
                 </div>
-                <div class="text-xl font-bold text-gray-900 leading-tight">
-                    {{ (currentSummary.belum_verifikasi ?? 0).toLocaleString('id-ID') }}
+                <div class="text-xl leading-tight font-bold text-gray-900">
+                    {{
+                        (currentSummary.belum_verifikasi ?? 0).toLocaleString(
+                            'id-ID',
+                        )
+                    }}
                 </div>
-                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Belum Verifikasi</div>
+                <div
+                    class="mt-0.5 text-[10px] font-medium tracking-wider text-gray-500 uppercase"
+                >
+                    Belum Verifikasi
+                </div>
             </div>
 
             <!-- Terverifikasi -->
@@ -354,10 +372,18 @@ defineOptions({
                         <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                 </div>
-                <div class="text-xl font-bold text-gray-900 leading-tight">
-                    {{ (currentSummary.terverifikasi ?? 0).toLocaleString('id-ID') }}
+                <div class="text-xl leading-tight font-bold text-gray-900">
+                    {{
+                        (currentSummary.terverifikasi ?? 0).toLocaleString(
+                            'id-ID',
+                        )
+                    }}
                 </div>
-                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Terverifikasi</div>
+                <div
+                    class="mt-0.5 text-[10px] font-medium tracking-wider text-gray-500 uppercase"
+                >
+                    Terverifikasi
+                </div>
             </div>
 
             <!-- Ditolak -->
@@ -379,10 +405,14 @@ defineOptions({
                         <line x1="9" y1="9" x2="15" y2="15" />
                     </svg>
                 </div>
-                <div class="text-xl font-bold text-gray-900 leading-tight">
+                <div class="text-xl leading-tight font-bold text-gray-900">
                     {{ (currentSummary.ditolak ?? 0).toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-[10px] font-medium text-gray-500 uppercase tracking-wider">Ditolak</div>
+                <div
+                    class="mt-0.5 text-[10px] font-medium tracking-wider text-gray-500 uppercase"
+                >
+                    Ditolak
+                </div>
             </div>
         </div>
 
@@ -473,7 +503,7 @@ defineOptions({
                 <table class="w-full text-xs lg:text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xxs lg:text-xs font-semibold tracking-wide text-gray-500 uppercase"
+                            class="text-xxs border-b border-gray-100 bg-gray-50 text-left font-semibold tracking-wide text-gray-500 uppercase lg:text-xs"
                         >
                             <th class="px-2 py-3 text-center">No</th>
                             <th class="px-2 py-3">NIK</th>
@@ -492,8 +522,12 @@ defineOptions({
                         <tr
                             v-for="(p, i) in currentData"
                             :key="p.id"
-                            class="hover:bg-gray-50/80 cursor-pointer transition-colors"
-                            @click="router.visit(kecamatanRoutes.pemilih.show.url(p.id))"
+                            class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                            @click="
+                                router.visit(
+                                    kecamatanRoutes.pemilih.show.url(p.id),
+                                )
+                            "
                         >
                             <td class="px-2 py-3 text-center text-gray-400">
                                 {{
@@ -504,7 +538,7 @@ defineOptions({
                                 }}
                             </td>
                             <td
-                                class="px-2 py-3 font-mono text-xxs lg:text-xs text-gray-500"
+                                class="text-xxs px-2 py-3 font-mono text-gray-500 lg:text-xs"
                             >
                                 {{ p.nik }}
                             </td>
@@ -548,8 +582,12 @@ defineOptions({
                                     />
                                     <XCircle
                                         v-else-if="p.status === 'ditolak'"
-                                        class="h-5 w-5 text-red-600 animate-pulse"
-                                        :title="p.alasan_ditolak ? 'Ditolak: ' + p.alasan_ditolak : 'Ditolak'"
+                                        class="h-5 w-5 animate-pulse text-red-600"
+                                        :title="
+                                            p.alasan_ditolak
+                                                ? 'Ditolak: ' + p.alasan_ditolak
+                                                : 'Ditolak'
+                                        "
                                     />
                                     <Clock
                                         v-else
@@ -561,7 +599,11 @@ defineOptions({
                             <td class="px-2 py-3 text-center">
                                 <div class="flex items-center justify-center">
                                     <Link
-                                        :href="kecamatanRoutes.pemilih.show.url(p.id)"
+                                        :href="
+                                            kecamatanRoutes.pemilih.show.url(
+                                                p.id,
+                                            )
+                                        "
                                         class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
                                         title="Detail"
                                     >

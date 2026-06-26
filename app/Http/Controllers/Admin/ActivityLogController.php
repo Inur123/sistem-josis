@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,18 +26,22 @@ class ActivityLogController extends Controller
         $logs = Activity::with('causer')
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page)
-            ->through(fn ($log) => [
-                'id' => $log->id,
-                'log_name' => $log->log_name,
-                'description' => $log->description,
-                'event' => $log->event,
-                'causer' => $log->causer ? [
-                    'name' => $log->causer->name,
-                    'email' => $log->causer->email,
-                    'role' => $log->causer->role,
-                ] : null,
-                'created_at' => $log->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
-            ]);
+            ->through(function (Activity $log): array {
+                $causer = $log->causer;
+
+                return [
+                    'id' => $log->id,
+                    'log_name' => $log->log_name,
+                    'description' => $log->description,
+                    'event' => $log->event,
+                    'causer' => $causer instanceof User ? [
+                        'name' => $causer->name,
+                        'email' => $causer->email,
+                        'role' => $causer->role,
+                    ] : null,
+                    'created_at' => $log->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
+                ];
+            });
 
         // Jika AJAX fetch dari frontend (bukan Inertia navigation), kembalikan JSON saja.
         // Inertia juga mengirim X-Requested-With, tapi ia selalu mengirim X-Inertia juga.

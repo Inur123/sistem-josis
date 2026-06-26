@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ->get()
             ->map(fn ($item) => [
                 'nama' => $item->nama,
-                'desa' => $item->desa?->nama ?? '-',
+                'desa' => $item->desa->nama ?? '-',
             ])
             ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
             ->values();

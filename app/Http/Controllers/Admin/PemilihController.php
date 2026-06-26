@@ -60,6 +60,7 @@ class PemilihController extends Controller
     /**
      * @param  array<string, mixed>  $scope
      * @param  array<int, string>  $extraColumns
+     * @return array{paginated: LengthAwarePaginator<int, mixed>, summary: array{total: int, l: int, p: int, belum_verifikasi: int, terverifikasi: int, ditolak: int}}
      */
     private function paginate(Request $request, array $scope = [], array $extraColumns = []): array
     {
@@ -93,7 +94,7 @@ class PemilihController extends Controller
             $query->where('nik_hash', hash('sha256', $search));
         }
 
-        $formatRow = function ($p) use ($extraColumns) {
+        $formatRow = function (Pemilih $p) use ($extraColumns): array {
             $row = array_filter([
                 'id' => $p->id,
                 'nik' => $p->nik,
@@ -274,7 +275,7 @@ class PemilihController extends Controller
                 'alamat' => AesGcmEncryption::decrypt($row->alamat),
                 'rt' => AesGcmEncryption::decrypt($row->rt),
                 'rw' => AesGcmEncryption::decrypt($row->rw),
-                'created_at' => $row->created_at ? CarbonImmutable::parse($row->created_at)->locale('id')->translatedFormat('d F Y') : '-',
+                'created_at' => $row->created_at ? $this->formatIndonesianDate((string) $row->created_at) : '-',
                 'kecamatan_nama' => $row->kecamatan_nama,
                 'desa_nama' => $row->desa_nama,
                 'relawan_nama' => $row->relawan_nama ? AesGcmEncryption::decrypt($row->relawan_nama) : '-',
@@ -498,6 +499,14 @@ class PemilihController extends Controller
         return substr($clean, 0, 31);
     }
 
+    private function formatIndonesianDate(string $date): string
+    {
+        $createdAt = CarbonImmutable::parse($date);
+        $createdAt->locale('id');
+
+        return $createdAt->translatedFormat('d F Y');
+    }
+
     /**
      * Detail pemilih untuk Admin.
      */
@@ -518,8 +527,8 @@ class PemilihController extends Controller
                 'foto_ktp' => $pemilih->foto_ktp ? route('pemilih.ktp', $pemilih->id) : null,
                 'status' => $pemilih->status,
                 'alasan_ditolak' => $pemilih->alasan_ditolak,
-                'verified_by_nama' => $pemilih->verifiedBy?->nama,
-                'verified_at' => $pemilih->verified_at?->format('d/m/Y H:i'),
+                'verified_by_nama' => $pemilih->verifiedBy?->name,
+                'verified_at' => $pemilih->verified_at ? CarbonImmutable::parse((string) $pemilih->verified_at)->format('d/m/Y H:i') : null,
             ],
         ]);
     }

@@ -15,6 +15,7 @@ class UserChanged implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public string $userId;
+
     public string $event;
 
     /**

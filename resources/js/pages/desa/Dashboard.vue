@@ -115,9 +115,14 @@ defineOptions({
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.total_pemilih.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-1.5">
+                <div
+                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
+                >
                     <span>Total Pemilih</span>
-                    <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Terverifikasi</span>
+                    <span
+                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset"
+                        >Terverifikasi</span
+                    >
                 </div>
             </div>
             <div
@@ -140,9 +145,14 @@ defineOptions({
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.laki_laki.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-1.5">
+                <div
+                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
+                >
                     <span>Laki-laki</span>
-                    <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Terverifikasi</span>
+                    <span
+                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset"
+                        >Terverifikasi</span
+                    >
                 </div>
             </div>
             <div
@@ -165,9 +175,14 @@ defineOptions({
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.perempuan.toLocaleString('id-ID') }}
                 </div>
-                <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-1.5">
+                <div
+                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
+                >
                     <span>Perempuan</span>
-                    <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Terverifikasi</span>
+                    <span
+                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset"
+                        >Terverifikasi</span
+                    >
                 </div>
             </div>
         </div>

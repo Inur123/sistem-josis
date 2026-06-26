@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\EncryptedAesGcm;
 use Carbon\CarbonImmutable;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,6 +52,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends Authenticatable
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory, HasUlids, Notifiable;
 
     protected $fillable = [
@@ -78,16 +80,25 @@ class User extends Authenticatable
 
     // ─── Relasi ───────────────────────────────────────────────
 
+    /**
+     * @return BelongsTo<Kecamatan, $this>
+     */
     public function kecamatan(): BelongsTo
     {
         return $this->belongsTo(Kecamatan::class);
     }
 
+    /**
+     * @return BelongsTo<Desa, $this>
+     */
     public function desa(): BelongsTo
     {
         return $this->belongsTo(Desa::class);
     }
 
+    /**
+     * @return HasMany<Pemilih, $this>
+     */
     public function pemilihs(): HasMany
     {
         return $this->hasMany(Pemilih::class);

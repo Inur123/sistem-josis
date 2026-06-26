@@ -90,14 +90,14 @@ class AesGcmEncryption
      */
     private static function getKey(): string
     {
-        $rawKey = env('ENCRYPT_KEY');
+        $rawKey = config('app.encrypt_key');
 
-        if (empty($rawKey)) {
+        if (! is_string($rawKey) || $rawKey === '') {
             throw new RuntimeException('ENCRYPT_KEY belum diset di .env. Jalankan: php -r "echo base64_encode(random_bytes(32));"');
         }
 
         // Jika key berbasis base64, decode dulu, lalu derive 32 bytes
-        $decoded = base64_decode($rawKey, strict: false);
+        $decoded = base64_decode($rawKey, strict: true);
         $source = ($decoded !== false && strlen($decoded) >= 16) ? $decoded : $rawKey;
 
         return hash('sha256', $source, true); // Selalu 32 bytes (256-bit)

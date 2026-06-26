@@ -33,7 +33,7 @@ class RelawanController extends Controller
             ->get()
             ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
             ->values()
-            ->map(function ($r) {
+            ->map(function (AnggotaTim $r): array {
                 $counts = DB::table('pemilihs')
                     ->where('relawan_id', $r->id)
                     ->selectRaw("
@@ -60,7 +60,7 @@ class RelawanController extends Controller
                         'terverifikasi' => $counts->terverifikasi_count,
                         'ditolak' => $counts->ditolak_count,
                     ],
-                    'pemilihs' => $r->pemilihs->map(fn ($p) => [
+                    'pemilihs' => $r->pemilihs->map(fn (Pemilih $p): array => [
                         'id' => $p->id,
                         'nik' => $p->nik,
                         'nama' => $p->nama,
@@ -71,7 +71,7 @@ class RelawanController extends Controller
                         'created_at' => $p->created_at?->format('d/m/Y'),
                         'status' => $p->status,
                         'alasan_ditolak' => $p->alasan_ditolak,
-                    ])->values(),
+                    ])->values()->all(),
                 ];
             });
 
@@ -109,7 +109,7 @@ class RelawanController extends Controller
             ->orderBy('created_at', 'desc')
             ->limit(self::PER_PAGE)
             ->get()
-            ->map(fn ($p) => [
+            ->map(fn (Pemilih $p): array => [
                 'id' => $p->id,
                 'nik' => $p->nik,
                 'nama' => $p->nama,
@@ -201,7 +201,7 @@ class RelawanController extends Controller
             ->offset($offset)
             ->limit($perPage)
             ->get()
-            ->map(fn ($p) => [
+            ->map(fn (Pemilih $p): array => [
                 'id' => $p->id,
                 'nik' => $p->nik,
                 'nama' => $p->nama,

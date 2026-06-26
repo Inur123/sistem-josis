@@ -15,10 +15,15 @@ class TeamChanged implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public string $memberId;
+
     public string $event;
+
     public ?string $kecamatanId;
+
     public ?string $desaId;
+
     public ?string $oldKecamatanId;
+
     public ?string $oldDesaId;
 
     /**

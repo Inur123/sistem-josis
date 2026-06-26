@@ -72,9 +72,9 @@ class PemilihSeeder extends Seeder
             $desaId = $relawan->desa_id;
             $kecamatanId = $relawan->kecamatan_id;
             $userDesa = $userDesaMap->get($desaId);
-            $userId = $userDesa?->id ?? null;
+            $userId = $userDesa->id ?? null;
 
-            $desaNama = $relawan->desa?->nama ?? 'Desa';
+            $desaNama = $relawan->desa->nama ?? 'Desa';
 
             for ($i = 1; $i <= self::PEMILIH_PER_RELAWAN; $i++) {
                 $jk = ($i % 2 === 0) ? 'P' : 'L';

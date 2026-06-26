@@ -90,7 +90,7 @@ class TimController extends Controller
         ]);
 
         if ($validated['role'] !== 'korcam' && ! empty($validated['desa_id'])) {
-            $desa = Desa::query()->find($validated['desa_id']);
+            $desa = Desa::query()->whereKey($validated['desa_id'])->first();
             if ($desa) {
                 $validated['kecamatan_id'] = $desa->kecamatan_id;
             }
@@ -130,7 +130,7 @@ class TimController extends Controller
         ]);
 
         if ($validated['role'] !== 'korcam' && ! empty($validated['desa_id'])) {
-            $desa = Desa::query()->find($validated['desa_id']);
+            $desa = Desa::query()->whereKey($validated['desa_id'])->first();
             if ($desa) {
                 $validated['kecamatan_id'] = $desa->kecamatan_id;
             }

@@ -7,6 +7,7 @@ use App\Models\Desa;
 use App\Models\Pemilih;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
@@ -14,7 +15,7 @@ use Inertia\Response;
 
 class PemilihController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response|JsonResponse
     {
         /** @var User $user */
         $user = $request->user();
@@ -56,6 +57,11 @@ class PemilihController extends Controller
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $scope
+     * @param  array<int, string>  $extraColumns
+     * @return array{paginated: LengthAwarePaginator<int, mixed>, summary: array{total: int, l: int, p: int, belum_verifikasi: int, terverifikasi: int, ditolak: int}}
+     */
     private function paginate(Request $request, array $scope = [], array $extraColumns = []): array
     {
         $search = $request->query('search');
@@ -87,7 +93,7 @@ class PemilihController extends Controller
             $query->where('nik_hash', hash('sha256', $search));
         }
 
-        $formatRow = function ($p) use ($extraColumns) {
+        $formatRow = function (Pemilih $p) use ($extraColumns): array {
             $row = array_filter([
                 'id' => $p->id,
                 'nik' => $p->nik,
