@@ -32,7 +32,7 @@
 
         <link rel="icon" href="/images/logo_golkar.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/images/logo_golkar.svg">
-        <link rel="manifest" href="/manifest.json">
+        <link rel="manifest" href="/manifest.json?v=2">
         <meta name="theme-color" content="#111827">
 
         <!-- Open Graph / Facebook / WhatsApp Sharing Meta Tags -->
