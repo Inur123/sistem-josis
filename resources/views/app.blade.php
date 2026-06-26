@@ -36,6 +36,13 @@
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#111827">
 
+        <!-- Open Graph / Facebook / WhatsApp Sharing Meta Tags -->
+        <meta property="og:title" content="Sistem Josis - Magetan">
+        <meta property="og:description" content="Sistem Informasi Monitoring dan Log Aktivitas Josis Kabupaten Magetan.">
+        <meta property="og:image" content="{{ asset('images/pwa-512x512.png') }}">
+        <meta property="og:url" content="{{ url('/') }}">
+        <meta property="og:type" content="website">
+
         <script>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
