@@ -6,8 +6,9 @@ import AuthLayout from '@/layouts/AuthLayout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
 if (typeof window !== 'undefined') {
+    const broadcaster = import.meta.env.VITE_BROADCAST_CONNECTION === 'pusher' ? 'pusher' : 'reverb';
     configureEcho({
-        broadcaster: 'reverb',
+        broadcaster: broadcaster,
     });
 }
 

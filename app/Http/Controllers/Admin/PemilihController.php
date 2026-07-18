@@ -223,11 +223,12 @@ class PemilihController extends Controller
 
         $search = $request->query('search');
 
-        // Load ALL data pemilih dengan single query menggunakan raw DB (hemat memori luar biasa)
+        // Load ONLY verified data pemilih dengan single query menggunakan raw DB (hemat memori luar biasa)
         $query = DB::table('pemilihs')
             ->leftJoin('kecamatans', 'pemilihs.kecamatan_id', '=', 'kecamatans.id')
             ->leftJoin('desas', 'pemilihs.desa_id', '=', 'desas.id')
-            ->leftJoin('anggota_tim', 'pemilihs.relawan_id', '=', 'anggota_tim.id');
+            ->leftJoin('anggota_tim', 'pemilihs.relawan_id', '=', 'anggota_tim.id')
+            ->where('pemilihs.status', 'terverifikasi');
 
         if ($request->query('kecamatan_id')) {
             $query->where('pemilihs.kecamatan_id', $request->query('kecamatan_id'));

@@ -46,6 +46,9 @@ const props = defineProps<{
     relawans: DesaWithMembers[];
     kecamatans: DropdownItem[];
     desas: DropdownItem[];
+    total_korcam: number;
+    total_kordes: number;
+    total_relawan: number;
 }>();
 
 // State
@@ -241,6 +244,52 @@ const submitDelete = () => {
     }
 };
 
+const isExporting = ref(false);
+
+const exportExcel = async () => {
+    isExporting.value = true;
+    try {
+        const params = new URLSearchParams({
+            ...(searchQuery.value ? { search: searchQuery.value } : {}),
+        });
+
+        const res = await fetch(`/admin/tim/export?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (!res.ok) {
+            throw new Error('Gagal mengekspor data');
+        }
+
+        const contentDisposition = res.headers.get('content-disposition');
+        let filename = 'Data_Tim_Josis.xlsx';
+
+        if (contentDisposition) {
+            const matches = /filename="([^"]+)"/.exec(contentDisposition);
+            if (matches && matches[1]) {
+                filename = matches[1];
+            }
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Terjadi kesalahan saat memproses ekspor Excel.');
+    } finally {
+        isExporting.value = false;
+    }
+};
+
 if (typeof window !== 'undefined') {
     useEcho('admin.team', 'TeamChanged', () => {
         router.reload();
@@ -272,13 +321,71 @@ defineOptions({
                     (Kordes), dan relawan pendukung
                 </p>
             </div>
-            <button
-                @click="openAddModal"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-gray-800"
-            >
-                <Plus class="h-4.5 w-4.5" />
-                Tambah Anggota
-            </button>
+            <div class="flex flex-wrap items-center gap-2.5">
+                <button
+                    @click="exportExcel"
+                    class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700"
+                >
+                    <svg
+                        class="h-4.5 w-4.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Export Excel
+                </button>
+                <button
+                    @click="openAddModal"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-gray-800"
+                >
+                    <Plus class="h-4.5 w-4.5" />
+                    Tambah Anggota
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <!-- Total Korcam -->
+            <div class="rounded-xl border border-gray-100 bg-white p-4.5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-500">Total Korcam</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600 font-bold text-xs uppercase">KRC</span>
+                </div>
+                <div class="mt-2.5 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">{{ props.total_korcam.toLocaleString('id-ID') }}</span>
+                    <span class="text-xs text-gray-500">orang</span>
+                </div>
+            </div>
+
+            <!-- Total Kordes -->
+            <div class="rounded-xl border border-gray-100 bg-white p-4.5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-500">Total Kordes</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 font-bold text-xs uppercase">KRD</span>
+                </div>
+                <div class="mt-2.5 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">{{ props.total_kordes.toLocaleString('id-ID') }}</span>
+                    <span class="text-xs text-gray-500">orang</span>
+                </div>
+            </div>
+
+            <!-- Total Relawan -->
+            <div class="rounded-xl border border-gray-100 bg-white p-4.5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-500">Total Relawan</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-green-600 font-bold text-xs uppercase">RLW</span>
+                </div>
+                <div class="mt-2.5 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">{{ props.total_relawan.toLocaleString('id-ID') }}</span>
+                    <span class="text-xs text-gray-500">orang</span>
+                </div>
+            </div>
         </div>
 
         <!-- Tabs & Search -->
@@ -885,6 +992,27 @@ defineOptions({
                     Ya, Hapus
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Export Loading Modal -->
+    <div
+        v-if="isExporting"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-md"
+    >
+        <div
+            class="flex w-full max-w-sm flex-col items-center rounded-2xl bg-white p-8 text-center shadow-xl"
+        >
+            <div class="relative mb-5 h-16 w-16">
+                <div
+                    class="absolute inset-0 animate-spin rounded-full border-4 border-yellow-100 border-t-yellow-500"
+                ></div>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900">Mengekspor Excel...</h3>
+            <p class="mt-2 text-sm text-gray-500">
+                Mohon tunggu sejenak, sistem sedang mendekripsi data sensitif dan
+                menyusun file laporan Anda.
+            </p>
         </div>
     </div>
 </template>

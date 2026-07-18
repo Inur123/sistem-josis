@@ -73,6 +73,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/relawan/{relawan}', [RelawanController::class, 'show'])->name('relawan.show');
         Route::get('/relawan/{relawan}/pemilih/{pemilih}', [RelawanController::class, 'showPemilih'])->name('relawan.pemilih.show');
         Route::get('/relawan/{relawan}/pemilihs', [RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::get('/tim/export', [AdminTimController::class, 'export'])->name('tim.export');
         Route::resource('/tim', AdminTimController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 
