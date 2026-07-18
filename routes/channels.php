@@ -37,3 +37,15 @@ Broadcast::channel('desa.pemilih.{desaId}', function ($user, $desaId) {
 Broadcast::channel('desa.team.{desaId}', function ($user, $desaId) {
     return $user->role === 'desa' && $user->desa_id === $desaId;
 });
+
+Broadcast::channel('desa.tps.{desaId}', function ($user, $desaId) {
+    return $user->role === 'desa' && $user->desa_id === $desaId;
+});
+
+Broadcast::channel('kecamatan.tps.{kecamatanId}', function ($user, $kecamatanId) {
+    return $user->role === 'kecamatan' && $user->kecamatan_id === $kecamatanId;
+});
+
+Broadcast::channel('admin.tps', function ($user) {
+    return $user->role === 'admin';
+});

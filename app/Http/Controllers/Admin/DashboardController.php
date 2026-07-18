@@ -12,11 +12,17 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
     {
+        $totalSuara = DB::table('data_suaras')->sum('total_suara');
+
+        $totalTps = DB::table('tps')->count();
+
         $stats = [
             'total_pemilih' => DB::table('pemilihs')->where('status', 'terverifikasi')->count(),
             'total_kecamatan' => DB::table('kecamatans')->count(),
             'total_desa' => DB::table('desas')->count(),
             'total_akun' => DB::table('users')->count(),
+            'total_suara' => (int) $totalSuara,
+            'total_tps' => $totalTps,
         ];
 
         $perKecamatan = DB::table('kecamatans')

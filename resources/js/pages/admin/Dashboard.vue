@@ -10,6 +10,8 @@ interface Props {
         total_kecamatan: number;
         total_desa: number;
         total_akun: number;
+        total_suara: number;
+        total_tps: number;
     };
     per_kecamatan: Array<{
         id: string;
@@ -55,7 +57,7 @@ defineOptions({
         </div>
 
         <!-- Stat Cards -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <!-- Total Pemilih -->
             <div
                 class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
@@ -188,6 +190,65 @@ defineOptions({
                     {{ props.stats.total_akun }}
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Total Akun</div>
+            </div>
+
+            <!-- Total Suara -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-blue-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.total_suara.toLocaleString('id-ID') }}
+                </div>
+                <div
+                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
+                >
+                    <span>Total Suara TPS</span>
+                    <span
+                        class="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 ring-1 ring-blue-600/10 ring-inset"
+                        >Masuk</span
+                    >
+                </div>
+            </div>
+
+            <!-- Total TPS -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-yellow-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="9" y1="3" x2="9" y2="21" />
+                        <line x1="15" y1="3" x2="15" y2="21" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="3" y1="15" x2="21" y2="15" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.total_tps.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500">Total TPS</div>
             </div>
         </div>
 

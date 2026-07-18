@@ -86,4 +86,15 @@ class Desa extends Model
     {
         return $this->hasMany(AnggotaTim::class);
     }
+
+    /**
+     * Relasi ke TPS.
+     *
+     * @return HasMany<Tps, $this>
+     */
+    public function tps(): HasMany
+    {
+        return $this->hasMany(Tps::class);
+    }
 }
+

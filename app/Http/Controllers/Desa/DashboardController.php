@@ -43,6 +43,15 @@ class DashboardController extends Controller
             ->pluck('nama')
             ->values();
 
+        $totalSuara = DB::table('data_suaras')
+            ->join('tps', 'data_suaras.tps_id', '=', 'tps.id')
+            ->where('tps.desa_id', $desaId)
+            ->sum('data_suaras.total_suara');
+
+        $totalTps = DB::table('tps')
+            ->where('desa_id', $desaId)
+            ->count();
+
         return Inertia::render('desa/Dashboard', [
             'desa' => $desaNama,
             'kecamatan' => $kecamatanNama,
@@ -52,6 +61,8 @@ class DashboardController extends Controller
                 'total_pemilih' => $totalPemilih,
                 'laki_laki' => $lakiLaki,
                 'perempuan' => $perempuan,
+                'total_suara' => (int) $totalSuara,
+                'total_tps' => $totalTps,
             ],
         ]);
     }

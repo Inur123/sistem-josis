@@ -7,6 +7,7 @@ import {
     UserCog,
     Activity,
     UserPlus,
+    MapPin,
 } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -49,8 +50,10 @@ const adminNav: NavItem[] = [
     { title: 'Kelola Akun', href: admin.akun.index.url(), icon: UserCog },
     { title: 'Kelola Tim', href: admin.tim.index.url(), icon: Users },
     { title: 'Data Relawan', href: admin.relawan.index.url(), icon: Users },
+    { title: 'Data TPS', href: admin.tps.index.url(), icon: MapPin },
     { title: 'Log Aktivitas', href: admin.activityLogs.url(), icon: Activity },
 ];
+
 
 const kecamatanNav: NavItem[] = [
     {
@@ -68,6 +71,13 @@ const kecamatanNav: NavItem[] = [
         href: kecamatan.relawan.index.url(),
         icon: Users,
     },
+    {
+        title: 'TPS',
+        icon: MapPin,
+        children: [
+            { title: 'Data TPS & Suara', href: kecamatan.tps.index.url() },
+        ],
+    },
 ];
 
 const desaNav: NavItem[] = [
@@ -79,6 +89,14 @@ const desaNav: NavItem[] = [
     },
     { title: 'Tambah Data', href: desa.pemilih.create.url(), icon: UserPlus },
     { title: 'Data Relawan', href: desa.relawan.index.url(), icon: Users },
+    {
+        title: 'TPS',
+        icon: MapPin,
+        children: [
+            { title: 'Data TPS', href: desa.tps.index.url() },
+            { title: 'Data Suara', href: desa.dataSuara.index.url() },
+        ],
+    },
 ];
 
 const mainNavItems = computed<NavItem[]>(() => {

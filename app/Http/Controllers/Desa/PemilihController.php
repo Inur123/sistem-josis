@@ -101,15 +101,17 @@ class PemilihController extends Controller
             'rt' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'rw' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'relawan_id' => ['required', 'exists:anggota_tim,id'],
-            'foto_ktp' => ['required', 'image', 'max:10240'],
+            'foto_ktp' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
         ], [
             'nama.regex' => "Nama hanya boleh berisi huruf, spasi, titik, koma atas ('), dan tanda hubung (-).",
             'alamat.regex' => 'Alamat hanya boleh berisi huruf, angka, spasi, titik, koma, garis miring (/), tanda pagar (#), dan tanda hubung (-).',
             'rt.regex' => 'RT hanya boleh berisi angka.',
             'rw.regex' => 'RW hanya boleh berisi angka.',
             'foto_ktp.required' => 'Foto KTP wajib diunggah.',
-            'foto_ktp.image' => 'File harus berupa gambar.',
-            'foto_ktp.max' => 'Ukuran file gambar maksimal 10MB.',
+            'foto_ktp.uploaded' => 'File gagal diunggah. Kemungkinan ukuran file terlalu besar (maks 5MB) atau koneksi terputus.',
+            'foto_ktp.image' => 'File harus berupa gambar (JPEG, JPG, atau PNG).',
+            'foto_ktp.mimes' => 'Format file tidak didukung. Gunakan format JPEG, JPG, atau PNG.',
+            'foto_ktp.max' => 'Ukuran file gambar maksimal 5MB.',
         ]);
 
         $nikHash = hash('sha256', $data['nik']);
@@ -235,14 +237,16 @@ class PemilihController extends Controller
             'rt' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'rw' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'relawan_id' => ['required', 'exists:anggota_tim,id'],
-            'foto_ktp' => ['nullable', 'image', 'max:10240'],
+            'foto_ktp' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
         ], [
             'nama.regex' => "Nama hanya boleh berisi huruf, spasi, titik, koma atas ('), dan tanda hubung (-).",
             'alamat.regex' => 'Alamat hanya boleh berisi huruf, angka, spasi, titik, koma, garis miring (/), tanda pagar (#), dan tanda hubung (-).',
             'rt.regex' => 'RT hanya boleh berisi angka.',
             'rw.regex' => 'RW hanya boleh berisi angka.',
-            'foto_ktp.image' => 'File harus berupa gambar.',
-            'foto_ktp.max' => 'Ukuran file gambar maksimal 10MB.',
+            'foto_ktp.uploaded' => 'File gagal diunggah. Kemungkinan ukuran file terlalu besar (maks 5MB) atau koneksi terputus.',
+            'foto_ktp.image' => 'File harus berupa gambar (JPEG, JPG, atau PNG).',
+            'foto_ktp.mimes' => 'Format file tidak didukung. Gunakan format JPEG, JPG, atau PNG.',
+            'foto_ktp.max' => 'Ukuran file gambar maksimal 5MB.',
         ]);
 
         $nikHash = hash('sha256', $data['nik']);

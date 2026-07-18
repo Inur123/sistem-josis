@@ -12,6 +12,8 @@ interface Props {
         total_pemilih: number;
         laki_laki: number;
         perempuan: number;
+        total_suara: number;
+        total_tps: number;
     };
 }
 
@@ -91,7 +93,7 @@ defineOptions({
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div
                 class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
             >
@@ -185,6 +187,65 @@ defineOptions({
                     >
                 </div>
             </div>
+
+            <!-- Total TPS -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-yellow-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="9" y1="3" x2="9" y2="21" />
+                        <line x1="15" y1="3" x2="15" y2="21" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="3" y1="15" x2="21" y2="15" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.total_tps.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500">Total TPS</div>
+            </div>
+
+            <!-- Total Suara -->
+            <div
+                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            >
+                <div
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-blue-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.total_suara.toLocaleString('id-ID') }}
+                </div>
+                <div
+                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
+                >
+                    <span>Total Suara TPS</span>
+                    <span
+                        class="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 ring-1 ring-blue-600/10 ring-inset"
+                        >Masuk</span
+                    >
+                </div>
+            </div>
         </div>
 
         <!-- Quick Actions -->
@@ -252,6 +313,85 @@ defineOptions({
                     </div>
                     <div class="text-xs text-gray-500">
                         Input data pemilih baru
+                    </div>
+                </div>
+                <svg
+                    class="h-4 w-4 text-gray-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </Link>
+
+            <!-- Kelola Data TPS -->
+            <Link
+                :href="desaRoutes.tps.index.url()"
+                class="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+            >
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-blue-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="9" y1="3" x2="9" y2="21" />
+                        <line x1="15" y1="3" x2="15" y2="21" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="3" y1="15" x2="21" y2="15" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-semibold text-gray-900">
+                        Kelola Data TPS
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Lihat, tambah, edit, dan hapus TPS di desa Anda
+                    </div>
+                </div>
+                <svg
+                    class="h-4 w-4 text-gray-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </Link>
+
+            <!-- Input Data Suara & C-Hasil -->
+            <Link
+                :href="desaRoutes.dataSuara.index.url()"
+                class="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+            >
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50"
+                >
+                    <svg
+                        class="h-5 w-5 text-blue-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-semibold text-gray-900">
+                        Input Data Suara & C-Hasil
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Isi perolehan total suara golkar dan unggah foto berkas C-Hasil
                     </div>
                 </div>
                 <svg

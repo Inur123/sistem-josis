@@ -6,11 +6,16 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PemilihController as AdminPemilihController;
 use App\Http\Controllers\Admin\RelawanController;
 use App\Http\Controllers\Admin\TimController as AdminTimController;
+use App\Http\Controllers\Admin\TpsController as AdminTpsController;
 use App\Http\Controllers\Desa\DashboardController as DesaDashboardController;
+use App\Http\Controllers\Desa\DataSuaraController as DesaDataSuaraController;
 use App\Http\Controllers\Desa\PemilihController as DesaPemilihController;
+use App\Http\Controllers\Desa\TpsController as DesaTpsController;
 use App\Http\Controllers\Kecamatan\DashboardController as KecamatanDashboardController;
 use App\Http\Controllers\Kecamatan\PemilihController as KecamatanPemilihController;
+use App\Http\Controllers\Kecamatan\TpsController as KecamatanTpsController;
 use App\Http\Controllers\PemilihKtpController;
+use App\Http\Controllers\TpsHasilController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -75,6 +80,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/relawan/{relawan}/pemilihs', [RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
         Route::get('/tim/export', [AdminTimController::class, 'export'])->name('tim.export');
         Route::resource('/tim', AdminTimController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('/tps', [AdminTpsController::class, 'index'])->name('tps.index');
     });
 
 /*
@@ -94,6 +100,7 @@ Route::middleware(['auth', 'role:kecamatan'])
         Route::get('/relawan/{relawan}', [App\Http\Controllers\Kecamatan\RelawanController::class, 'show'])->name('relawan.show');
         Route::get('/relawan/{relawan}/pemilih/{pemilih}', [App\Http\Controllers\Kecamatan\RelawanController::class, 'showPemilih'])->name('relawan.pemilih.show');
         Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Kecamatan\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::get('/tps', [KecamatanTpsController::class, 'index'])->name('tps.index');
     });
 
 /*
@@ -118,8 +125,13 @@ Route::middleware(['auth', 'role:desa'])
         Route::get('/relawan/{relawan}', [App\Http\Controllers\Desa\RelawanController::class, 'show'])->name('relawan.show');
         Route::get('/relawan/{relawan}/pemilih/{pemilih}', [App\Http\Controllers\Desa\RelawanController::class, 'showPemilih'])->name('relawan.pemilih.show');
         Route::get('/relawan/{relawan}/pemilihs', [App\Http\Controllers\Desa\RelawanController::class, 'pemilihs'])->name('relawan.pemilihs');
+        Route::resource('/tps', DesaTpsController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('/data-suara', [DesaDataSuaraController::class, 'index'])->name('data-suara.index');
+        Route::post('/data-suara', [DesaDataSuaraController::class, 'store'])->name('data-suara.store');
+        Route::post('/data-suara/{tps}/upload', [DesaDataSuaraController::class, 'uploadCHasil'])->name('data-suara.upload');
     });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/pemilih/{pemilih}/ktp', [PemilihKtpController::class, 'show'])->name('pemilih.ktp');
+    Route::get('/tps/{tps}/c-hasil', [TpsHasilController::class, 'show'])->name('tps.c-hasil');
 });

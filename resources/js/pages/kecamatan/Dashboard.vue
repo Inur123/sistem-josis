@@ -16,6 +16,8 @@ interface Props {
         laki_laki: number;
         perempuan: number;
         total_desa: number;
+        total_suara: number;
+        total_tps: number;
     };
     per_desa: Array<{
         id: string;
@@ -49,6 +51,7 @@ defineOptions({
 </script>
 
 <template>
+
     <Head title="Dashboard Kecamatan" />
     <div class="flex flex-col gap-6 p-6">
         <div>
@@ -59,18 +62,10 @@ defineOptions({
                 Pantau data pemilih di wilayah kecamatan Anda
             </p>
             <div class="mt-3 space-y-2 text-sm">
-                <div
-                    class="rounded-lg border border-gray-100 bg-gray-50/50 p-3"
-                >
-                    <div
-                        class="flex flex-col gap-1.5 sm:flex-row sm:items-center"
-                    >
-                        <span
-                            class="inline-flex min-w-[200px] items-center gap-1.5 font-semibold text-gray-700"
-                        >
-                            <span
-                                class="h-1.5 w-1.5 rounded-full bg-blue-500"
-                            ></span>
+                <div class="rounded-lg border border-gray-100 bg-gray-50/50 p-3">
+                    <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center">
+                        <span class="inline-flex min-w-[200px] items-center gap-1.5 font-semibold text-gray-700">
+                            <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
                             Koordinator Kecamatan (Korcam):
                         </span>
                         <span class="text-gray-600">
@@ -81,30 +76,20 @@ defineOptions({
                             }}
                         </span>
                     </div>
-                    <div
-                        class="mt-2 flex flex-col gap-1.5 border-t border-gray-100/80 pt-2 sm:flex-row sm:items-start"
-                    >
+                    <div class="mt-2 flex flex-col gap-1.5 border-t border-gray-100/80 pt-2 sm:flex-row sm:items-start">
                         <span
-                            class="inline-flex min-w-[200px] items-center gap-1.5 font-semibold text-gray-700 sm:pt-0.5"
-                        >
-                            <span
-                                class="h-1.5 w-1.5 rounded-full bg-green-500"
-                            ></span>
+                            class="inline-flex min-w-[200px] items-center gap-1.5 font-semibold text-gray-700 sm:pt-0.5">
+                            <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
                             Koordinator Desa (Kordes):
                         </span>
                         <div class="flex flex-1 flex-wrap gap-1.5">
                             <template v-if="props.kordes.length">
-                                <span
-                                    v-for="k in props.kordes"
-                                    :key="k.nama"
-                                    class="border-gray-150 inline-flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-600 shadow-sm"
-                                >
+                                <span v-for="k in props.kordes" :key="k.nama"
+                                    class="border-gray-150 inline-flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-600 shadow-sm">
                                     <span class="font-medium text-gray-800">{{
                                         k.nama
                                     }}</span>
-                                    <span class="text-[10px] text-gray-400"
-                                        >({{ k.desa }})</span
-                                    >
+                                    <span class="text-[10px] text-gray-400">({{ k.desa }})</span>
                                 </span>
                             </template>
                             <span v-else class="text-gray-600">-</span>
@@ -115,53 +100,29 @@ defineOptions({
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
-            >
-                <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
-                >
-                    <svg
-                        class="h-5 w-5 text-blue-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
-                        <path
-                            d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
-                        />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
                     </svg>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.total_pemilih.toLocaleString('id-ID') }}
                 </div>
-                <div
-                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
-                >
+                <div class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500">
                     <span>Total Pemilih</span>
                     <span
-                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset"
-                        >Terverifikasi</span
-                    >
+                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset">Terverifikasi</span>
                 </div>
             </div>
-            <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
-            >
-                <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50"
-                >
-                    <svg
-                        class="h-5 w-5 text-indigo-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
+                    <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -169,29 +130,16 @@ defineOptions({
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.laki_laki.toLocaleString('id-ID') }}
                 </div>
-                <div
-                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
-                >
+                <div class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500">
                     <span>Laki-laki</span>
                     <span
-                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset"
-                        >Terverifikasi</span
-                    >
+                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset">Terverifikasi</span>
                 </div>
             </div>
-            <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
-            >
-                <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50"
-                >
-                    <svg
-                        class="h-5 w-5 text-pink-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50">
+                    <svg class="h-5 w-5 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -199,32 +147,17 @@ defineOptions({
                 <div class="text-2xl font-bold text-gray-900">
                     {{ props.stats.perempuan.toLocaleString('id-ID') }}
                 </div>
-                <div
-                    class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500"
-                >
+                <div class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500">
                     <span>Perempuan</span>
                     <span
-                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset"
-                        >Terverifikasi</span
-                    >
+                        class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset">Terverifikasi</span>
                 </div>
             </div>
-            <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
-            >
-                <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50"
-                >
-                    <svg
-                        class="h-5 w-5 text-green-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path
-                            d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-                        />
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50">
+                    <svg class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                         <polyline points="9 22 9 12 15 12 15 22" />
                     </svg>
                 </div>
@@ -233,12 +166,47 @@ defineOptions({
                 </div>
                 <div class="mt-0.5 text-xs text-gray-500">Desa / Kelurahan</div>
             </div>
+            <!-- Total TPS -->
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50">
+                    <svg class="h-5 w-5 text-yellow-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="9" y1="3" x2="9" y2="21" />
+                        <line x1="15" y1="3" x2="15" y2="21" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="3" y1="15" x2="21" y2="15" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.total_tps.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 text-xs text-gray-500">Total TPS</div>
+            </div>
+            <!-- Total Suara -->
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {{ props.stats.total_suara.toLocaleString('id-ID') }}
+                </div>
+                <div class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500">
+                    <span>Total Suara TPS</span>
+                    <span
+                        class="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 ring-1 ring-blue-600/10 ring-inset">Masuk</span>
+                </div>
+            </div>
+
+
         </div>
 
         <!-- Tabel per Desa -->
-        <div
-            class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
-        >
+        <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
             <div class="border-b border-gray-100 px-5 py-4">
                 <h3 class="text-sm font-semibold text-gray-900">
                     Rekap Pemilih per Desa/Kelurahan
@@ -248,30 +216,20 @@ defineOptions({
                 <table class="w-full text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
-                        >
+                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase">
                             <th class="px-5 py-3">No</th>
                             <th class="px-5 py-3">Desa / Kelurahan</th>
                             <th class="px-5 py-3 text-right">
                                 Jumlah Pemilih
-                                <span
-                                    class="block text-[9px] font-normal text-green-600"
-                                    >(Terverifikasi)</span
-                                >
+                                <span class="block text-[9px] font-normal text-green-600">(Terverifikasi)</span>
                             </th>
                             <th class="px-5 py-3 text-right">
                                 Laki-laki
-                                <span
-                                    class="block text-[9px] font-normal text-green-600"
-                                    >(Terverifikasi)</span
-                                >
+                                <span class="block text-[9px] font-normal text-green-600">(Terverifikasi)</span>
                             </th>
                             <th class="px-5 py-3 text-right">
                                 Perempuan
-                                <span
-                                    class="block text-[9px] font-normal text-green-600"
-                                    >(Terverifikasi)</span
-                                >
+                                <span class="block text-[9px] font-normal text-green-600">(Terverifikasi)</span>
                             </th>
                             <th class="w-[120px] px-5 py-3 text-center">
                                 Aksi
@@ -279,18 +237,13 @@ defineOptions({
                         </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(item, i) in props.per_desa"
-                            :key="item.nama"
-                            class="border-b border-gray-50 last:border-0 hover:bg-gray-50"
-                        >
+                        <tr v-for="(item, i) in props.per_desa" :key="item.nama"
+                            class="border-b border-gray-50 last:border-0 hover:bg-gray-50">
                             <td class="px-5 py-3 text-gray-400">{{ i + 1 }}</td>
                             <td class="px-5 py-3 font-medium text-gray-900">
                                 {{ item.nama }}
                             </td>
-                            <td
-                                class="px-5 py-3 text-right font-semibold text-gray-900"
-                            >
+                            <td class="px-5 py-3 text-right font-semibold text-gray-900">
                                 {{ item.total.toLocaleString('id-ID') }}
                             </td>
                             <td class="px-5 py-3 text-right text-gray-900">
@@ -300,24 +253,18 @@ defineOptions({
                                 {{ item.p.toLocaleString('id-ID') }}
                             </td>
                             <td class="px-5 py-3 text-center">
-                                <Link
-                                    :href="
-                                        kecamatanRoutes.pemilih.index.url({
-                                            query: { desa_id: item.id },
-                                        })
+                                <Link :href="kecamatanRoutes.pemilih.index.url({
+                                    query: { desa_id: item.id },
+                                })
                                     "
-                                    class="border-gray-250 inline-flex items-center justify-center gap-1 rounded-lg border bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50"
-                                >
+                                    class="border-gray-250 inline-flex items-center justify-center gap-1 rounded-lg border bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50">
                                     <Eye class="h-3.5 w-3.5" />
                                     Detail
                                 </Link>
                             </td>
                         </tr>
                         <tr v-if="!props.per_desa.length">
-                            <td
-                                colspan="6"
-                                class="px-5 py-10 text-center text-gray-400"
-                            >
+                            <td colspan="6" class="px-5 py-10 text-center text-gray-400">
                                 Belum ada data pemilih
                             </td>
                         </tr>

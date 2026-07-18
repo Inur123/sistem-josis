@@ -69,6 +69,17 @@ class DashboardController extends Controller
             ->sortBy('nama', SORT_NATURAL | SORT_FLAG_CASE)
             ->values();
 
+        $totalSuara = DB::table('data_suaras')
+            ->join('tps', 'data_suaras.tps_id', '=', 'tps.id')
+            ->join('desas', 'tps.desa_id', '=', 'desas.id')
+            ->where('desas.kecamatan_id', $kecamatanId)
+            ->sum('data_suaras.total_suara');
+
+        $totalTps = DB::table('tps')
+            ->join('desas', 'tps.desa_id', '=', 'desas.id')
+            ->where('desas.kecamatan_id', $kecamatanId)
+            ->count();
+
         return Inertia::render('kecamatan/Dashboard', [
             'kecamatan' => $kecamatanNama,
             'korcams' => $korcams,
@@ -78,6 +89,8 @@ class DashboardController extends Controller
                 'laki_laki' => $lakiLaki,
                 'perempuan' => $perempuan,
                 'total_desa' => $totalDesa,
+                'total_suara' => (int) $totalSuara,
+                'total_tps' => $totalTps,
             ],
             'per_desa' => $perDesa,
         ]);
