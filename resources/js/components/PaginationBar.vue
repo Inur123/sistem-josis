@@ -63,7 +63,7 @@ const pageItems = computed<PageItem[]>(() => {
 <template>
     <!-- Mobile Pagination (Prev - Page Indicator - Next) -->
     <div
-        class="flex items-center justify-between border-t border-gray-100 px-2 pt-4 sm:hidden"
+        class="flex items-center justify-between border-t border-gray-100 px-2 pt-4 pb-4 sm:hidden"
     >
         <button
             :disabled="currentPage === 1 || loading"
@@ -98,7 +98,7 @@ const pageItems = computed<PageItem[]>(() => {
 
     <!-- Desktop Pagination -->
     <div
-        class="hidden sm:flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4"
+        class="hidden sm:flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4 pb-4"
     >
         <!-- Previous -->
         <button
