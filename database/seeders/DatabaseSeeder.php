@@ -11,16 +11,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Step 2: Data wilayah (kecamatan + desa dari API wilayah.id)
+        // Step 1: Data wilayah (kecamatan + desa)
         $this->call(WilayahSeeder::class);
 
-        // Step 3: Akun user (admin, kecamatan, desa)
+        // Step 2: Akun user (admin, kecamatan, desa)
         $this->call(UserSeeder::class);
 
-        // Step 4: Data tim (korcam, kordes, relawan)
-        $this->call(TimSeeder::class);
-
-        // Step 5: Data pemilih
-        $this->call(PemilihSeeder::class);
+        // Data tim dan pemilih tidak di-seed (isi manual via aplikasi)
+        // $this->call(TimSeeder::class);
+        // $this->call(PemilihSeeder::class);
     }
 }

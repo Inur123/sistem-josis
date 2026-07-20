@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import {
     LayoutDashboard,
     Users,
@@ -8,6 +8,7 @@ import {
     Activity,
     UserPlus,
     MapPin,
+    X,
 } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -18,12 +19,8 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
     useSidebar,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
 import desa from '@/routes/desa';
 import kecamatan from '@/routes/kecamatan';
@@ -33,11 +30,6 @@ const page = usePage();
 const role = computed(() => (page.props.auth as any)?.user?.role ?? '');
 const { isMobile, setOpenMobile } = useSidebar();
 
-function handleLinkClick() {
-    if (isMobile.value) {
-        setOpenMobile(false);
-    }
-}
 
 // Nav items per role
 const adminNav: NavItem[] = [
@@ -115,39 +107,31 @@ const mainNavItems = computed<NavItem[]>(() => {
     return [];
 });
 
-const dashboardHref = computed(() => {
-    if (role.value === 'admin') {
-        return admin.dashboard.url();
-    }
-
-    if (role.value === 'kecamatan') {
-        return kecamatan.dashboard.url();
-    }
-
-    if (role.value === 'desa') {
-        return desa.dashboard.url();
-    }
-
-    return dashboard.url();
-});
 </script>
 
 <template>
     <Sidebar collapsible="icon" variant="sidebar">
-        <SidebarHeader>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboardHref" @click="handleLinkClick">
-                            <AppLogo />
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
+        <SidebarHeader class="relative">
+            <div class="flex h-12 items-center px-2 py-1.5">
+                <AppLogo />
+            </div>
+            <!-- Mobile Close Button (X) -->
+            <button v-if="isMobile" @click="setOpenMobile(false)"
+                class="absolute right-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg hover:bg-black/10 text-gray-800 transition active:scale-95"
+                title="Tutup menu">
+                <X class="h-5 w-5" />
+            </button>
         </SidebarHeader>
 
-        <SidebarContent>
-            <NavMain :items="mainNavItems" />
+        <SidebarContent class="relative">
+            <!-- Watermark Logo -->
+            <div
+                class="absolute bottom-6 left-1/2 -translate-x-1/2 w-48 h-48 opacity-10 pointer-events-none select-none z-0">
+                <img src="/images/logo_golkar.svg" class="w-full h-full object-contain" alt="Watermark" />
+            </div>
+            <div class="relative z-10">
+                <NavMain :items="mainNavItems" />
+            </div>
         </SidebarContent>
 
         <SidebarFooter>

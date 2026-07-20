@@ -63,16 +63,16 @@ const pageItems = computed<PageItem[]>(() => {
 <template>
     <!-- Mobile Pagination (Prev - Page Indicator - Next) -->
     <div
-        class="flex items-center justify-between border-t border-gray-100 px-2 pt-4 pb-4 sm:hidden"
+        class="flex items-center justify-between border-t border-amber-100/40 px-2 pt-4 pb-4 sm:hidden"
     >
         <button
             :disabled="currentPage === 1 || loading"
             @click="emit('go', currentPage - 1)"
-            class="flex items-center gap-1 rounded-xl border border-gray-100 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-all duration-150 active:bg-gray-50"
+            class="flex cursor-pointer items-center gap-1 rounded-xl border border-amber-100 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 transition-all duration-150 active:bg-amber-50"
             :class="
                 currentPage === 1 || loading
                     ? 'cursor-not-allowed opacity-50'
-                    : 'hover:bg-gray-50'
+                    : 'hover:bg-amber-50'
             "
         >
             <ChevronLeft class="h-3.5 w-3.5" /> Prev
@@ -85,11 +85,11 @@ const pageItems = computed<PageItem[]>(() => {
         <button
             :disabled="currentPage === totalPages || loading"
             @click="emit('go', currentPage + 1)"
-            class="flex items-center gap-1 rounded-xl border border-gray-100 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-all duration-150 active:bg-gray-50"
+            class="flex cursor-pointer items-center gap-1 rounded-xl border border-amber-100 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 transition-all duration-150 active:bg-amber-50"
             :class="
                 currentPage === totalPages || loading
                     ? 'cursor-not-allowed opacity-50'
-                    : 'hover:bg-gray-50'
+                    : 'hover:bg-amber-50'
             "
         >
             Next <ChevronRight class="h-3.5 w-3.5" />
@@ -98,17 +98,17 @@ const pageItems = computed<PageItem[]>(() => {
 
     <!-- Desktop Pagination -->
     <div
-        class="hidden sm:flex items-center justify-end gap-1 border-t border-gray-100 px-2 pt-4 pb-4"
+        class="hidden sm:flex items-center justify-end gap-1 border-t border-amber-100/40 px-2 pt-4 pb-4"
     >
         <!-- Previous -->
         <button
             :disabled="currentPage === 1 || loading"
             @click="emit('go', currentPage - 1)"
-            class="flex items-center gap-1 px-2 py-2 text-sm font-medium transition-all duration-150"
+            class="flex cursor-pointer items-center gap-1 px-2 py-2 text-sm font-medium transition-all duration-150"
             :class="
                 currentPage === 1 || loading
                     ? 'cursor-not-allowed text-gray-300'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-amber-800 hover:text-amber-950'
             "
         >
             <ChevronLeft class="h-4 w-4" /> Previous
@@ -130,10 +130,10 @@ const pageItems = computed<PageItem[]>(() => {
                 @click="emit('go', item)"
                 :disabled="loading"
                 :class="[
-                    'flex min-w-[36px] items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150',
+                    'flex min-w-[36px] cursor-pointer items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150',
                     currentPage === item
-                        ? 'border border-gray-100 bg-gray-50 text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                        ? 'border border-amber-200 bg-amber-50 text-amber-800 font-semibold'
+                        : 'text-gray-600 hover:bg-amber-50 hover:text-amber-800',
                     loading ? 'cursor-not-allowed opacity-50' : '',
                 ]"
             >
@@ -145,11 +145,11 @@ const pageItems = computed<PageItem[]>(() => {
         <button
             :disabled="currentPage === totalPages || loading"
             @click="emit('go', currentPage + 1)"
-            class="flex items-center gap-1 px-2 py-2 text-sm font-medium transition-all duration-150"
+            class="flex cursor-pointer items-center gap-1 px-2 py-2 text-sm font-medium transition-all duration-150"
             :class="
                 currentPage === totalPages || loading
                     ? 'cursor-not-allowed text-gray-300'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-amber-800 hover:text-amber-950'
             "
         >
             Next <ChevronRight class="h-4 w-4" />

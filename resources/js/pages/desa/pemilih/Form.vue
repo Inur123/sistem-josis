@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
+import { ArrowLeft } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import desaRoutes from '@/routes/desa';
 
@@ -180,10 +181,19 @@ defineOptions({
 
     <Head :title="isEdit ? 'Edit Pemilih' : 'Tambah Pemilih'" />
     <div class="p-6">
+        <!-- Tombol Kembali di atas -->
+        <div class="mb-4">
+            <Link :href="desaRoutes.pemilih.index.url()"
+                class="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-amber-50 transition cursor-pointer">
+                <ArrowLeft class="h-4 w-4 text-amber-800" />
+                Kembali
+            </Link>
+        </div>
+
         <div class="w-full">
-            <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+            <div class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm">
                 <!-- Card Header -->
-                <div class="flex items-start justify-between border-b border-gray-100 px-6 py-4">
+                <div class="flex items-start justify-between border-b border-amber-100/30 bg-amber-50/20 px-6 py-4">
                     <div>
                         <h2 class="text-base font-semibold text-gray-900">
                             {{
@@ -211,7 +221,7 @@ defineOptions({
                                 'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none',
                                 form.errors.nik
                                     ? 'border-red-400 focus:border-red-500'
-                                    : 'border-gray-200 focus:border-blue-500',
+                                    : 'border-gray-200 focus:border-amber-400',
                             ]" />
                         <p v-if="form.errors.nik" class="text-xs text-red-500">
                             {{ form.errors.nik }}
@@ -225,14 +235,14 @@ defineOptions({
                         </label>
                         <input id="nama" v-model="form.nama" @input="
                             form.nama = form.nama.replace(
-                                /[^a-zA-Z\s\.\'-]/g,
+                                /[^a-zA-Z\s\.'\-]/g,
                                 '',
                             )
                             " type="text" placeholder="Nama sesuai KTP" required :class="[
                                 'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none',
                                 form.errors.nama
                                     ? 'border-red-400 focus:border-red-500'
-                                    : 'border-gray-200 focus:border-blue-500',
+                                    : 'border-gray-200 focus:border-amber-400',
                             ]" />
                         <p v-if="form.errors.nama" class="text-xs text-red-500">
                             {{ form.errors.nama }}
@@ -248,7 +258,7 @@ defineOptions({
                             <label :class="[
                                 'flex flex-1 cursor-pointer items-center gap-2 rounded-lg border-2 px-4 py-2.5 text-sm transition',
                                 form.jenis_kelamin === 'L'
-                                    ? 'border-blue-500 bg-blue-50 font-semibold text-blue-700'
+                                    ? 'border-amber-400 bg-amber-50 font-semibold text-amber-800'
                                     : 'border-gray-200 text-gray-500',
                             ]">
                                 <input type="radio" v-model="form.jenis_kelamin" value="L" class="sr-only" />
@@ -257,7 +267,7 @@ defineOptions({
                             <label :class="[
                                 'flex flex-1 cursor-pointer items-center gap-2 rounded-lg border-2 px-4 py-2.5 text-sm transition',
                                 form.jenis_kelamin === 'P'
-                                    ? 'border-pink-500 bg-pink-50 font-semibold text-pink-700'
+                                    ? 'border-pink-400 bg-pink-50 font-semibold text-pink-700'
                                     : 'border-gray-200 text-gray-500',
                             ]">
                                 <input type="radio" v-model="form.jenis_kelamin" value="P" class="sr-only" />
@@ -280,7 +290,7 @@ defineOptions({
                                 'w-full resize-y rounded-lg border px-3 py-2 text-sm text-gray-900 transition outline-none',
                                 form.errors.alamat
                                     ? 'border-red-400 focus:border-red-500'
-                                    : 'border-gray-200 focus:border-blue-500',
+                                    : 'border-gray-200 focus:border-amber-400',
                             ]" />
                         <p v-if="form.errors.alamat" class="text-xs text-red-500">
                             {{ form.errors.alamat }}
@@ -297,7 +307,7 @@ defineOptions({
                             'w-full rounded-lg border bg-white px-3 py-2 text-sm transition outline-none',
                             form.errors.relawan_id
                                 ? 'border-red-400 focus:border-red-500'
-                                : 'border-gray-200 focus:border-blue-500',
+                                : 'border-gray-200 focus:border-amber-400',
                         ]">
                             <option value="" disabled>Pilih Relawan</option>
                             <option v-for="relawan in props.relawans" :key="relawan.id" :value="relawan.id">
@@ -319,7 +329,7 @@ defineOptions({
                                 'w-full rounded-lg border bg-white px-3 py-2 text-sm transition outline-none',
                                 form.errors.rt
                                     ? 'border-red-400 focus:border-red-500'
-                                    : 'border-gray-200 focus:border-blue-500',
+                                    : 'border-gray-200 focus:border-amber-400',
                             ]">
                                 <option value="" disabled>Pilih RT</option>
                                 <option v-for="opt in rtRwOptions" :key="opt" :value="opt">
@@ -338,7 +348,7 @@ defineOptions({
                                 'w-full rounded-lg border bg-white px-3 py-2 text-sm transition outline-none',
                                 form.errors.rw
                                     ? 'border-red-400 focus:border-red-500'
-                                    : 'border-gray-200 focus:border-blue-500',
+                                    : 'border-gray-200 focus:border-amber-400',
                             ]">
                                 <option value="" disabled>Pilih RW</option>
                                 <option v-for="opt in rtRwOptions" :key="opt" :value="opt">
@@ -360,13 +370,13 @@ defineOptions({
                         <div class="flex items-center gap-4">
                             <!-- Image preview -->
                             <div v-if="imagePreview"
-                                class="border-gray-250 relative flex h-20 w-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-gray-50">
+                                class="relative flex h-20 w-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-amber-200 bg-gray-50">
                                 <img :src="imagePreview" alt="KTP Preview" class="h-full w-full object-cover" />
                             </div>
 
                             <!-- Custom File Upload Button -->
                             <label
-                                class="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-50/50 p-4 text-center transition hover:border-blue-400 hover:bg-blue-50/10">
+                                class="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-50/50 p-4 text-center transition hover:border-amber-400 hover:bg-amber-50/20">
                                 <span class="text-sm font-medium text-gray-600">Klik untuk upload foto KTP</span>
                                 <span class="mt-1 text-xs text-gray-400">Format: JPG, PNG, WebP (Max 5MB)</span>
                                 <input id="foto_ktp" type="file" accept="image/*" class="sr-only"
@@ -384,10 +394,11 @@ defineOptions({
                     <!-- Actions -->
                     <div class="flex w-full items-center gap-3 pt-2">
                         <Link :href="desaRoutes.pemilih.index.url()"
-                            class="flex-1 rounded-lg bg-gray-100 py-2.5 text-center text-sm font-semibold text-gray-600 transition hover:bg-gray-200">
-                            Batal</Link>
+                            class="flex-1 rounded-lg border border-gray-200 bg-white py-2.5 text-center text-sm font-semibold text-gray-600 transition hover:bg-gray-50 cursor-pointer">
+                            Batal
+                        </Link>
                         <button type="submit" :disabled="form.processing"
-                            class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gray-900 py-2.5 text-sm font-semibold text-white transition hover:bg-black disabled:opacity-60">
+                            class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-amber-400 py-2.5 text-sm font-semibold text-gray-900 transition disabled:opacity-60 cursor-pointer">
                             <svg v-if="form.processing" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2">
                                 <path d="M21 12a9 9 0 11-6.219-8.56" />

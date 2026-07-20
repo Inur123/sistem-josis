@@ -7,10 +7,14 @@ import type { User } from '@/types';
 type Props = {
     user: User;
     showEmail?: boolean;
+    showName?: boolean;
+    responsiveMode?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
     showEmail: false,
+    showName: true,
+    responsiveMode: true,
 });
 
 useInitials();
@@ -35,7 +39,7 @@ const showAvatar = computed(
         </AvatarFallback>
     </Avatar>
 
-    <div class="grid flex-1 text-left text-sm leading-tight">
+    <div v-if="showName" :class="[responsiveMode ? 'hidden md:grid' : 'grid', 'flex-1 text-left text-sm leading-tight']">
         <span class="truncate font-medium">{{ user.name }}</span>
         <span v-if="showEmail" class="truncate text-xs text-muted-foreground">{{
             user.email

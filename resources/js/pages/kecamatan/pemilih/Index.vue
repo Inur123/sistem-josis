@@ -237,13 +237,13 @@ defineOptions({
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             <!-- Total Pemilih -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-blue-600"
+                        class="h-4.5 w-4.5 text-amber-850 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -268,13 +268,13 @@ defineOptions({
 
             <!-- Laki-laki -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-sky-600"
+                        class="h-4.5 w-4.5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -296,13 +296,13 @@ defineOptions({
 
             <!-- Perempuan -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-pink-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-pink-600"
+                        class="h-4.5 w-4.5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -324,13 +324,13 @@ defineOptions({
 
             <!-- Belum Verifikasi -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
                     class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-amber-600"
+                        class="h-4.5 w-4.5 text-amber-650 text-amber-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -356,7 +356,7 @@ defineOptions({
 
             <!-- Terverifikasi -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
                     class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-green-50"
@@ -388,7 +388,7 @@ defineOptions({
 
             <!-- Ditolak -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
                     class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-red-50"
@@ -418,7 +418,7 @@ defineOptions({
 
         <!-- Filter & Search Controls -->
         <div
-            class="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm md:flex-row md:items-center"
+            class="flex flex-col gap-4 rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm md:flex-row md:items-center"
         >
             <form @submit="handleSearch" class="w-full md:flex-1">
                 <div class="relative">
@@ -432,7 +432,7 @@ defineOptions({
                         "
                         type="text"
                         placeholder="Cari Nama / NIK..."
-                        class="w-full rounded-lg border border-gray-200 py-2 pr-4 pl-9 text-sm focus:border-blue-500 focus:outline-none"
+                        class="w-full rounded-lg border border-gray-200 py-2 pr-4 pl-9 text-sm focus:border-amber-400 focus:outline-none"
                     />
                     <svg
                         class="absolute top-2.5 left-3 h-4 w-4 text-gray-400"
@@ -453,7 +453,7 @@ defineOptions({
                 <!-- Desa Select -->
                 <select
                     v-model="selectedDesa"
-                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none sm:flex-1 md:w-56"
+                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none sm:flex-1 md:w-56"
                 >
                     <option value="">Semua Desa/Kelurahan</option>
                     <option
@@ -468,7 +468,7 @@ defineOptions({
                 <!-- Status Select -->
                 <select
                     v-model="selectedStatus"
-                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none sm:flex-1 md:w-48"
+                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none sm:flex-1 md:w-48"
                 >
                     <option value="">Semua Status</option>
                     <option value="belum_verifikasi">Belum Verifikasi</option>
@@ -480,7 +480,7 @@ defineOptions({
                 <button
                     v-if="searchVal || selectedDesa || selectedStatus"
                     @click="clearFilters"
-                    class="w-full rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 sm:w-auto"
+                    class="w-full rounded-lg bg-amber-400 px-3 py-2 text-sm font-semibold text-gray-900 sm:w-auto whitespace-nowrap cursor-pointer"
                 >
                     Reset
                 </button>
@@ -489,7 +489,7 @@ defineOptions({
 
         <!-- Table -->
         <div
-            class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+            class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
         >
             <div class="relative overflow-x-auto">
                 <!-- Loading Overlay -->
@@ -497,13 +497,13 @@ defineOptions({
                     v-if="loading"
                     class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70"
                 >
-                    <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
+                    <Loader2 class="h-6 w-6 animate-spin text-amber-600" />
                 </div>
 
                 <table class="w-full text-xs lg:text-sm">
                     <thead>
                         <tr
-                            class="text-xxs border-b border-gray-100 bg-gray-50 text-left font-semibold tracking-wide text-gray-500 uppercase lg:text-xs"
+                            class="text-xxs border-b border-amber-100/30 bg-amber-50/30 text-left font-semibold tracking-wide text-amber-800 uppercase lg:text-xs"
                         >
                             <th class="px-2 py-3 text-center">No</th>
                             <th class="px-2 py-3">NIK</th>
@@ -518,11 +518,11 @@ defineOptions({
                             <th class="px-2 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-amber-50/40">
                         <tr
                             v-for="(p, i) in currentData"
                             :key="p.id"
-                            class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                            class="cursor-pointer transition-colors hover:bg-amber-50/20"
                             @click="
                                 router.visit(
                                     kecamatanRoutes.pemilih.show.url(p.id),
@@ -596,7 +596,7 @@ defineOptions({
                                     />
                                 </div>
                             </td>
-                            <td class="px-2 py-3 text-center">
+                            <td class="px-2 py-3 text-center" @click.stop>
                                 <div class="flex items-center justify-center">
                                     <Link
                                         :href="
@@ -604,7 +604,7 @@ defineOptions({
                                                 p.id,
                                             )
                                         "
-                                        class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                        class="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-amber-200 bg-white text-amber-800 shadow-sm transition hover:bg-amber-50"
                                         title="Detail"
                                     >
                                         <Eye class="h-3.5 w-3.5" />

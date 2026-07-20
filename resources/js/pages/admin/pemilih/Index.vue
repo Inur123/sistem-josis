@@ -308,7 +308,7 @@ defineOptions({
             </div>
             <button
                 @click="exportExcel"
-                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-amber-400"
             >
                 <svg
                     class="h-4 w-4"
@@ -329,13 +329,13 @@ defineOptions({
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             <!-- Total Pemilih -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-blue-600"
+                        class="h-4.5 w-4.5 text-amber-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -360,13 +360,13 @@ defineOptions({
 
             <!-- Laki-laki -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-sky-600"
+                        class="h-4.5 w-4.5 text-amber-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -388,13 +388,13 @@ defineOptions({
 
             <!-- Perempuan -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-pink-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-pink-600"
+                        class="h-4.5 w-4.5 text-amber-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -416,7 +416,7 @@ defineOptions({
 
             <!-- Belum Verifikasi -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
                     class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
@@ -448,13 +448,13 @@ defineOptions({
 
             <!-- Terverifikasi -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-green-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-green-600"
+                        class="h-4.5 w-4.5 text-amber-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -480,13 +480,13 @@ defineOptions({
 
             <!-- Ditolak -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm"
             >
                 <div
-                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-red-50"
+                    class="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
                 >
                     <svg
-                        class="h-4.5 w-4.5 text-red-600"
+                        class="h-4.5 w-4.5 text-amber-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -602,7 +602,7 @@ defineOptions({
 
         <!-- Table -->
         <div
-            class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+            class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
         >
             <div class="relative overflow-x-auto">
                 <!-- Loading Overlay -->
@@ -610,13 +610,13 @@ defineOptions({
                     v-if="loading"
                     class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70"
                 >
-                    <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
+                    <Loader2 class="h-6 w-6 animate-spin text-amber-600" />
                 </div>
 
                 <table class="w-full text-xs lg:text-sm">
                     <thead>
                         <tr
-                            class="text-xxs border-b border-gray-100 bg-gray-50 text-left font-semibold tracking-wide text-gray-500 uppercase lg:text-xs"
+                            class="text-xxs border-b border-amber-100/30 bg-amber-50/30 text-left font-semibold tracking-wide text-amber-800 uppercase lg:text-xs"
                         >
                             <th class="px-2 py-3 text-center">No</th>
                             <th class="px-2 py-3">NIK</th>
@@ -632,11 +632,11 @@ defineOptions({
                             <th class="px-2 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-amber-50/40">
                         <tr
                             v-for="(p, i) in currentData"
                             :key="p.id"
-                            class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                            class="cursor-pointer transition-colors hover:bg-amber-50/20"
                             @click="
                                 router.visit(adminRoutes.pemilih.show.url(p.id))
                             "
@@ -663,13 +663,13 @@ defineOptions({
                                         'inline-flex h-4.5 w-4.5 items-center justify-center rounded-full text-[10px] font-bold',
                                         p.jenis_kelamin === 'L'
                                             ? 'bg-blue-100 text-blue-700'
-                                            : 'bg-pink-100 text-pink-700',
+                                             : 'bg-pink-100 text-pink-700',
                                     ]"
                                     >{{ p.jenis_kelamin }}</span
                                 >
                             </td>
                             <td class="px-2 py-3 text-gray-600">
-                                Kec. {{ p.kecamatan }}
+                                Kecamatan {{ p.kecamatan }}
                             </td>
                             <td class="px-2 py-3 text-gray-600">
                                 {{ p.desa }}
@@ -712,13 +712,13 @@ defineOptions({
                                     />
                                 </div>
                             </td>
-                            <td class="px-2 py-3 text-center">
+                            <td class="px-2 py-3 text-center" @click.stop>
                                 <div class="flex items-center justify-center">
                                     <Link
                                         :href="
                                             adminRoutes.pemilih.show.url(p.id)
                                         "
-                                        class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                        class="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-amber-200 bg-white text-amber-800 shadow-sm transition hover:bg-amber-50"
                                         title="Detail"
                                     >
                                         <Eye class="h-3.5 w-3.5" />

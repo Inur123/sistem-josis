@@ -56,8 +56,19 @@ class ActivityLogController extends Controller
             ]);
         }
 
+        // Hitung statistik log berdasarkan aksi/event
+        $stats = [
+            'total' => Activity::count(),
+            'created' => Activity::where('event', 'created')->count(),
+            'updated' => Activity::where('event', 'updated')->count(),
+            'deleted' => Activity::where('event', 'deleted')->count(),
+            'login' => Activity::where('event', 'login')->count(),
+            'logout' => Activity::where('event', 'logout')->count(),
+        ];
+
         return Inertia::render('admin/activity-log/Index', [
             'logs' => $logs,
+            'stats' => $stats,
         ]);
     }
 }

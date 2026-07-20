@@ -51,17 +51,29 @@ if (typeof window !== 'undefined') {
 const selectedKecamatan = ref(props.filters.kecamatan_id || '');
 const selectedDesa = ref(props.filters.desa_id || '');
 
-// Filter desas by selected kecamatan
-const filteredDesas = ref<DropdownItem[]>([]);
-watch(selectedKecamatan, (newVal) => {
-    selectedDesa.value = '';
+// Sync filters with props when props change (back navigation or manual reload)
+watch(
+    () => props.filters,
+    (newFilters) => {
+        selectedKecamatan.value = newFilters.kecamatan_id || '';
+        selectedDesa.value = newFilters.desa_id || '';
+    },
+    { deep: true }
+);
 
-    if (newVal) {
-        filteredDesas.value = props.desas.filter((desa) => desa.kecamatan_id === newVal);
-    } else {
-        filteredDesas.value = [];
+// Filter desas by selected kecamatan
+const filteredDesas = computed(() => {
+    if (!selectedKecamatan.value) {
+        return [];
     }
-}, { immediate: true });
+
+    return props.desas.filter((desa) => desa.kecamatan_id === selectedKecamatan.value);
+});
+
+function handleKecamatanChange() {
+    selectedDesa.value = '';
+    handleFilterChange();
+}
 
 function handleFilterChange() {
     router.get(
@@ -127,14 +139,14 @@ defineOptions({
         </div>
 
         <!-- Filter Dropdown Card -->
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div class="rounded-2xl border border-amber-100/50 bg-white p-5 shadow-sm">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
                 <!-- Dropdown Kecamatan -->
                 <div class="flex-1">
                     <label
                         class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Kecamatan</label>
-                    <select v-model="selectedKecamatan" @change="handleFilterChange"
-                        class="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                    <select v-model="selectedKecamatan" @change="handleKecamatanChange"
+                        class="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100">
                         <option value="">-- Pilih Kecamatan --</option>
                         <option v-for="k in kecamatans" :key="k.id" :value="k.id">
                             {{ k.nama }}
@@ -146,7 +158,7 @@ defineOptions({
                 <div class="flex-1">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Desa</label>
                     <select v-model="selectedDesa" @change="handleFilterChange" :disabled="!selectedKecamatan"
-                        class="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50 disabled:text-gray-400">
+                        class="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100 disabled:bg-gray-50 disabled:text-gray-400">
                         <option value="">-- Pilih Desa --</option>
                         <option v-for="d in filteredDesas" :key="d.id" :value="d.id">
                             {{ d.nama }}
@@ -156,7 +168,7 @@ defineOptions({
 
                 <!-- Reset Button -->
                 <button v-if="selectedKecamatan || selectedDesa" @click="clearFilters"
-                    class="rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 transition sm:w-auto h-[42px] flex items-center justify-center self-end">
+                    class="rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-gray-900 transition cursor-pointer sm:w-auto h-[42px] flex items-center justify-center self-end whitespace-nowrap">
                     Reset
                 </button>
             </div>
@@ -164,8 +176,8 @@ defineOptions({
 
         <!-- Konten Hasil Query -->
         <div v-if="!filters.kecamatan_id"
-            class="rounded-2xl border border-gray-100 bg-white shadow-sm py-20 text-center flex flex-col items-center justify-center">
-            <Search class="h-12 w-12 text-gray-200 mb-4" />
+            class="rounded-2xl border border-amber-100/50 bg-white shadow-sm py-20 text-center flex flex-col items-center justify-center">
+            <Search class="h-12 w-12 text-amber-600 mb-4" />
             <h3 class="text-sm font-semibold text-gray-600">Pilih Filter Terlebih Dahulu</h3>
             <p class="text-xs text-gray-400 mt-1 max-w-sm">
                 Silakan pilih kecamatan pada dropdown di atas untuk menampilkan seluruh TPS dan data suara yang
@@ -177,10 +189,10 @@ defineOptions({
             <!-- Stat Card -->
             <div class="lg:col-span-1">
                 <div
-                    class="rounded-2xl border border-blue-200 bg-linear-to-br from-blue-400 to-blue-500 p-6 shadow-md text-white">
+                    class="rounded-2xl border border-amber-200 bg-linear-to-br from-yellow-400 to-amber-400 p-6 shadow-md text-gray-900">
                     <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-semibold uppercase tracking-wide opacity-90">Total TPS</span>
-                        <div class="rounded-xl bg-white/20 p-2">
+                        <span class="text-sm font-semibold uppercase tracking-wide opacity-80">Total TPS</span>
+                        <div class="rounded-xl bg-gray-900/10 p-2">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                                 <circle cx="12" cy="10" r="3" />
@@ -194,10 +206,11 @@ defineOptions({
 
             <!-- Tabel Data -->
             <div class="lg:col-span-3">
-                <div class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-                    <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-                        <h3 class="text-sm font-semibold text-gray-700">Daftar TPS &amp; Perolehan Suara</h3>
-                        <span class="text-xs text-gray-400">{{ tpsList.length }} TPS</span>
+                <div class="rounded-2xl border border-amber-100/50 bg-white shadow-sm overflow-hidden">
+                    <div
+                        class="px-5 py-4 border-b border-amber-100/30 bg-amber-50/30 text-amber-800 flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-amber-800">Daftar TPS &amp; Perolehan Suara</h3>
+                        <span class="text-xs text-amber-600">{{ tpsList.length }} TPS</span>
                     </div>
 
                     <!-- Empty state -->
@@ -213,7 +226,7 @@ defineOptions({
                     <div v-else class="overflow-x-auto">
                         <table class="w-full min-w-[700px] text-sm">
                             <thead>
-                                <tr class="border-b border-gray-100 bg-gray-50/40 text-gray-400 font-semibold">
+                                <tr class="border-b border-amber-100/30 bg-amber-50/30 text-amber-800 font-semibold">
                                     <th class="px-5 py-3 text-left text-xs uppercase tracking-wide">#</th>
                                     <th class="px-5 py-3 text-left text-xs uppercase tracking-wide">Nama TPS</th>
                                     <th class="px-5 py-3 text-left text-xs uppercase tracking-wide">Kecamatan</th>
@@ -223,9 +236,9 @@ defineOptions({
                                     <th class="px-5 py-3 text-center text-xs uppercase tracking-wide">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-amber-50/40">
                                 <tr v-for="(tps, idx) in pagedTps" :key="tps.id"
-                                    class="border-b border-gray-50 transition hover:bg-blue-50/20">
+                                    class="border-b border-amber-50/40 transition hover:bg-amber-50/20">
                                     <td class="px-5 py-4 text-gray-400 font-mono text-xs">{{ (currentPage - 1) *
                                         PAGE_SIZE + idx + 1 }}</td>
                                     <td class="px-5 py-4 font-semibold text-gray-800 whitespace-nowrap">{{ tps.nama }}
@@ -239,7 +252,7 @@ defineOptions({
                                         <!-- Thumbnail Preview jika file ada -->
                                         <a v-if="tps.has_c_hasil && tps.c_hasil_url" :href="tps.c_hasil_url"
                                             target="_blank"
-                                            class="relative h-9 w-9 block overflow-hidden rounded-lg border border-gray-200 bg-gray-50 group">
+                                            class="relative h-9 w-9 block overflow-hidden rounded-lg border border-amber-200 bg-gray-50 group">
                                             <img :src="tps.c_hasil_url"
                                                 class="h-full w-full object-cover transition duration-150 group-hover:scale-105"
                                                 alt="C-Hasil Thumbnail" />

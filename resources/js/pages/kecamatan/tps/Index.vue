@@ -107,23 +107,23 @@ defineOptions({
             <!-- Stat Card -->
             <div class="lg:col-span-1">
                 <div
-                    class="rounded-2xl border border-blue-200 bg-linear-to-br from-blue-400 to-blue-500 p-6 shadow-md text-white">
+                    class="rounded-2xl border border-amber-200 bg-linear-to-br from-yellow-400 to-amber-400 p-6 shadow-md text-gray-900">
                     <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-semibold uppercase tracking-wide opacity-90">Total TPS</span>
-                        <div class="rounded-xl bg-white/20 p-2">
-                            <MapPin class="h-5 w-5" />
+                        <span class="text-sm font-semibold uppercase tracking-wide text-gray-800">Total TPS</span>
+                        <div class="rounded-xl bg-white/40 p-2">
+                            <MapPin class="h-5 w-5 text-gray-900" />
                         </div>
                     </div>
                     <p class="text-5xl font-black">{{ totalTps }}</p>
-                    <p class="text-sm mt-2 opacity-80">TPS terdaftar di Kecamatan {{ kecamatan }}</p>
+                    <p class="text-xs mt-2 text-gray-850">TPS terdaftar di Kecamatan {{ kecamatan }}</p>
                 </div>
 
                 <!-- Filter Card -->
-                <div class="mt-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div class="mt-4 rounded-2xl border border-amber-100/50 bg-white p-4 shadow-sm">
                     <h3 class="text-sm font-semibold text-gray-700 mb-3">Filter Desa</h3>
                     <div class="flex flex-col gap-2">
                         <select v-model="selectedDesa" @change="handleFilterChange"
-                            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100/50">
                             <option value="">Semua Desa</option>
                             <option v-for="desa in desas" :key="desa.id" :value="desa.id">
                                 {{ desa.nama }}
@@ -135,10 +135,10 @@ defineOptions({
 
             <!-- Tabel Data -->
             <div class="lg:col-span-3">
-                <div class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-                    <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-                        <h3 class="text-sm font-semibold text-gray-700">Daftar TPS &amp; Perolehan Suara</h3>
-                        <span class="text-xs text-gray-400">{{ tpsList.length }} TPS</span>
+                <div class="rounded-2xl border border-amber-100/50 bg-white shadow-sm overflow-hidden">
+                    <div class="px-5 py-4 border-b border-amber-100/30 bg-amber-50/10 flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-gray-800">Daftar TPS &amp; Perolehan Suara</h3>
+                        <span class="text-xs text-amber-800 font-medium">{{ tpsList.length }} TPS</span>
                     </div>
 
                     <!-- Empty state -->
@@ -153,7 +153,7 @@ defineOptions({
                     <div v-else class="overflow-x-auto">
                         <table class="w-full min-w-[600px] text-sm">
                             <thead>
-                                <tr class="border-b border-gray-100 bg-gray-50/40 text-gray-400 font-semibold">
+                                <tr class="border-b border-amber-100/30 bg-amber-50/30 text-amber-800 font-semibold">
                                     <th class="px-5 py-3 text-left text-xs uppercase tracking-wide">#</th>
                                     <th class="px-5 py-3 text-left text-xs uppercase tracking-wide">Nama TPS</th>
                                     <th class="px-5 py-3 text-left text-xs uppercase tracking-wide">Desa</th>
@@ -162,9 +162,9 @@ defineOptions({
                                     <th class="px-5 py-3 text-center text-xs uppercase tracking-wide">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-amber-50/40">
                                 <tr v-for="(tps, idx) in pagedTps" :key="tps.id"
-                                    class="border-b border-gray-50 transition hover:bg-blue-50/20">
+                                    class="border-b border-amber-50/20 transition hover:bg-amber-50/20">
                                     <td class="px-5 py-4 text-gray-400 font-mono text-xs">{{ (currentPage - 1) *
                                         PAGE_SIZE + idx + 1 }}</td>
                                     <td class="px-5 py-4 font-semibold text-gray-800 whitespace-nowrap">{{ tps.nama }}
@@ -177,7 +177,7 @@ defineOptions({
                                         <!-- Thumbnail Preview jika file ada -->
                                         <a v-if="tps.has_c_hasil && tps.c_hasil_url" :href="tps.c_hasil_url"
                                             target="_blank"
-                                            class="relative h-9 w-9 block overflow-hidden rounded-lg border border-gray-200 bg-gray-50 group">
+                                            class="relative h-9 w-9 block overflow-hidden rounded-lg border border-amber-200 bg-gray-50 group">
                                             <img :src="tps.c_hasil_url"
                                                 class="h-full w-full object-cover transition duration-150 group-hover:scale-105"
                                                 alt="C-Hasil Thumbnail" />

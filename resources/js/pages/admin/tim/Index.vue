@@ -248,6 +248,7 @@ const isExporting = ref(false);
 
 const exportExcel = async () => {
     isExporting.value = true;
+
     try {
         const params = new URLSearchParams({
             ...(searchQuery.value ? { search: searchQuery.value } : {}),
@@ -268,6 +269,7 @@ const exportExcel = async () => {
 
         if (contentDisposition) {
             const matches = /filename="([^"]+)"/.exec(contentDisposition);
+
             if (matches && matches[1]) {
                 filename = matches[1];
             }
@@ -321,13 +323,13 @@ defineOptions({
                     (Kordes), dan relawan pendukung
                 </p>
             </div>
-            <div class="flex flex-wrap items-center gap-2.5">
+            <div class="grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center">
                 <button
                     @click="exportExcel"
-                    class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700"
+                    class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-amber-400 whitespace-nowrap"
                 >
                     <svg
-                        class="h-4.5 w-4.5"
+                        class="h-4.5 w-4.5 shrink-0"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -341,9 +343,9 @@ defineOptions({
                 </button>
                 <button
                     @click="openAddModal"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-gray-800"
+                    class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-900 transition-all hover:bg-amber-400 whitespace-nowrap"
                 >
-                    <Plus class="h-4.5 w-4.5" />
+                    <Plus class="h-4.5 w-4.5 shrink-0" />
                     Tambah Anggota
                 </button>
             </div>
@@ -352,10 +354,10 @@ defineOptions({
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <!-- Total Korcam -->
-            <div class="rounded-xl border border-gray-100 bg-white p-4.5 shadow-sm">
+            <div class="rounded-xl border border-amber-100/50 bg-white p-4.5 shadow-sm">
                 <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-gray-500">Total Korcam</span>
-                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600 font-bold text-xs uppercase">KRC</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 font-bold text-xs uppercase">KRC</span>
                 </div>
                 <div class="mt-2.5 flex items-baseline gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ props.total_korcam.toLocaleString('id-ID') }}</span>
@@ -364,10 +366,10 @@ defineOptions({
             </div>
 
             <!-- Total Kordes -->
-            <div class="rounded-xl border border-gray-100 bg-white p-4.5 shadow-sm">
+            <div class="rounded-xl border border-amber-100/50 bg-white p-4.5 shadow-sm">
                 <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-gray-500">Total Kordes</span>
-                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 font-bold text-xs uppercase">KRD</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 font-bold text-xs uppercase">KRD</span>
                 </div>
                 <div class="mt-2.5 flex items-baseline gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ props.total_kordes.toLocaleString('id-ID') }}</span>
@@ -376,10 +378,10 @@ defineOptions({
             </div>
 
             <!-- Total Relawan -->
-            <div class="rounded-xl border border-gray-100 bg-white p-4.5 shadow-sm">
+            <div class="rounded-xl border border-amber-100/50 bg-white p-4.5 shadow-sm">
                 <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-gray-500">Total Relawan</span>
-                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-green-600 font-bold text-xs uppercase">RLW</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 font-bold text-xs uppercase">RLW</span>
                 </div>
                 <div class="mt-2.5 flex items-baseline gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ props.total_relawan.toLocaleString('id-ID') }}</span>
@@ -390,17 +392,17 @@ defineOptions({
 
         <!-- Tabs & Search -->
         <div
-            class="flex flex-col items-stretch justify-between gap-4 rounded-xl border border-gray-100 bg-white p-3 shadow-sm sm:flex-row sm:items-center"
+            class="flex flex-col items-stretch justify-between gap-4 rounded-xl border border-amber-100/50 bg-white p-3 shadow-sm sm:flex-row sm:items-center"
         >
             <div
-                class="flex rounded-lg border-b border-gray-100 bg-gray-50 p-0.5 sm:border-b-0"
+                class="flex rounded-lg border-b border-amber-100/20 bg-amber-50/10 p-0.5 sm:border-b-0"
             >
                 <button
                     @click="activeTab = 'korcam'"
                     :class="[
                         'rounded-md px-4 py-2 text-sm font-medium transition-all',
                         activeTab === 'korcam'
-                            ? 'bg-white font-semibold text-gray-900 shadow-xs'
+                            ? 'border border-amber-200 bg-amber-100 font-semibold text-amber-800 shadow-xs'
                             : 'text-gray-500 hover:text-gray-900',
                     ]"
                 >
@@ -411,7 +413,7 @@ defineOptions({
                     :class="[
                         'rounded-md px-4 py-2 text-sm font-medium transition-all',
                         activeTab === 'kordes'
-                            ? 'bg-white font-semibold text-gray-900 shadow-xs'
+                            ? 'border border-amber-200 bg-amber-100 font-semibold text-amber-800 shadow-xs'
                             : 'text-gray-500 hover:text-gray-900',
                     ]"
                 >
@@ -422,7 +424,7 @@ defineOptions({
                     :class="[
                         'rounded-md px-4 py-2 text-sm font-medium transition-all',
                         activeTab === 'relawan'
-                            ? 'bg-white font-semibold text-gray-900 shadow-xs'
+                            ? 'border border-amber-200 bg-amber-100 font-semibold text-amber-800 shadow-xs'
                             : 'text-gray-500 hover:text-gray-900',
                     ]"
                 >
@@ -433,27 +435,27 @@ defineOptions({
             <!-- Search -->
             <div class="relative max-w-md flex-1">
                 <Search
-                    class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+                    class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-amber-600"
                 />
                 <input
                     v-model="searchQuery"
                     type="text"
                     placeholder="Cari wilayah atau nama anggota..."
-                    class="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 pr-4 pl-10 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                    class="w-full rounded-xl border border-amber-200 bg-amber-50/10 py-2.5 pr-4 pl-10 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                 />
             </div>
         </div>
 
         <!-- Table View -->
         <div
-            class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+            class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
         >
             <div class="overflow-x-auto">
                 <!-- 1. TAB KORCAM TABLE -->
                 <table v-if="activeTab === 'korcam'" class="w-full text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
+                            class="border-b border-amber-100/30 bg-amber-50/30 text-left text-xs font-semibold text-amber-800 uppercase"
                         >
                             <th class="w-[60px] px-5 py-3">No</th>
                             <th class="w-[220px] px-5 py-3">Kecamatan</th>
@@ -466,7 +468,7 @@ defineOptions({
                         <tr
                             v-for="(kec, i) in filteredKorcamsTable"
                             :key="kec.id"
-                            class="border-b border-gray-50 align-top last:border-0 hover:bg-gray-50/50"
+                            class="border-b border-amber-50/40 align-top last:border-0 hover:bg-amber-50/20"
                         >
                             <td class="px-5 py-4 text-gray-400">{{ i + 1 }}</td>
                             <td
@@ -522,7 +524,7 @@ defineOptions({
                                         <div class="flex items-center gap-2.5">
                                             <button
                                                 @click="openEditModal(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
+                                                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-amber-200 text-amber-800 transition-all hover:bg-amber-50"
                                             >
                                                 <Edit class="h-4 w-4" />
                                             </button>
@@ -530,7 +532,7 @@ defineOptions({
                                                 @click="
                                                     confirmDeleteMember(member)
                                                 "
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+                                                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-red-200 text-red-700 transition-all hover:bg-red-50"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </button>
@@ -559,7 +561,7 @@ defineOptions({
                 <table v-if="activeTab === 'kordes'" class="w-full text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
+                            class="border-b border-amber-100/30 bg-amber-50/30 text-left text-xs font-semibold text-amber-800 uppercase"
                         >
                             <th class="w-[60px] px-5 py-3">No</th>
                             <th class="w-[180px] px-5 py-3">Kecamatan</th>
@@ -573,7 +575,7 @@ defineOptions({
                         <tr
                             v-for="(desa, i) in filteredKordesTable"
                             :key="desa.id"
-                            class="border-b border-gray-50 align-top last:border-0 hover:bg-gray-50/50"
+                            class="border-b border-amber-50/40 align-top last:border-0 hover:bg-amber-50/20"
                         >
                             <td class="px-5 py-4 text-gray-400">{{ i + 1 }}</td>
                             <td
@@ -634,7 +636,7 @@ defineOptions({
                                         <div class="flex items-center gap-2.5">
                                             <button
                                                 @click="openEditModal(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
+                                                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-amber-200 text-amber-800 transition-all hover:bg-amber-50"
                                             >
                                                 <Edit class="h-4 w-4" />
                                             </button>
@@ -642,7 +644,7 @@ defineOptions({
                                                 @click="
                                                     confirmDeleteMember(member)
                                                 "
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+                                                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-red-200 text-red-700 transition-all hover:bg-red-50"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </button>
@@ -671,7 +673,7 @@ defineOptions({
                 <table v-if="activeTab === 'relawan'" class="w-full text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase"
+                            class="border-b border-amber-100/30 bg-amber-50/30 text-left text-xs font-semibold text-amber-800 uppercase"
                         >
                             <th class="w-[60px] px-5 py-3">No</th>
                             <th class="w-[180px] px-5 py-3">Kecamatan</th>
@@ -683,7 +685,7 @@ defineOptions({
                         <tr
                             v-for="(desa, i) in filteredRelawansTable"
                             :key="desa.id"
-                            class="border-b border-gray-50 align-top last:border-0 hover:bg-gray-50/50"
+                            class="border-b border-amber-50/40 align-top last:border-0 hover:bg-amber-50/20"
                         >
                             <td class="px-5 py-4 text-gray-400">{{ i + 1 }}</td>
                             <td
@@ -744,7 +746,7 @@ defineOptions({
                                         <div class="flex items-center gap-2.5">
                                             <button
                                                 @click="openEditModal(member)"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
+                                                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-amber-200 text-amber-800 transition-all hover:bg-amber-50"
                                             >
                                                 <Edit class="h-4 w-4" />
                                             </button>
@@ -752,7 +754,7 @@ defineOptions({
                                                 @click="
                                                     confirmDeleteMember(member)
                                                 "
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+                                                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-red-200 text-red-700 transition-all hover:bg-red-50"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </button>
@@ -783,13 +785,13 @@ defineOptions({
     <!-- Add / Edit Modal -->
     <div
         v-if="isModalOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
     >
         <div
-            class="w-full max-w-lg animate-in overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl duration-200 zoom-in-95 fade-in"
+            class="w-full max-w-lg animate-in overflow-hidden rounded-2xl border border-amber-100/50 bg-white shadow-xl duration-200 zoom-in-95 fade-in"
         >
             <div
-                class="flex items-center justify-between border-b border-gray-100 px-6 py-4"
+                class="flex items-center justify-between border-b border-amber-100/30 px-6 py-4"
             >
                 <h3 class="text-lg font-bold text-gray-900">
                     {{ isEditing ? 'Edit Anggota Tim' : 'Tambah Anggota Tim' }}
@@ -812,7 +814,7 @@ defineOptions({
                     <select
                         v-model="form.role"
                         @change="handleRoleChange"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                         required
                     >
                         <option value="korcam">
@@ -833,7 +835,7 @@ defineOptions({
                     >
                     <select
                         v-model="form.kecamatan_id"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                         required
                     >
                         <option :value="null" disabled>Pilih Kecamatan</option>
@@ -855,7 +857,7 @@ defineOptions({
                     >
                     <select
                         v-model="form.desa_id"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                         required
                         :disabled="!form.kecamatan_id"
                     >
@@ -886,7 +888,7 @@ defineOptions({
                         v-model="form.nama"
                         type="text"
                         placeholder="Masukkan nama lengkap"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                         required
                     />
                 </div>
@@ -902,7 +904,7 @@ defineOptions({
                         type="text"
                         placeholder="Masukkan 16 digit NIK"
                         maxlength="16"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                     />
                 </div>
 
@@ -916,7 +918,7 @@ defineOptions({
                         v-model="form.no_hp"
                         type="text"
                         placeholder="Contoh: 08123456789"
-                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                     />
                 </div>
 
@@ -930,13 +932,13 @@ defineOptions({
                         v-model="form.alamat"
                         rows="2"
                         placeholder="Alamat domisili"
-                        class="w-full resize-none rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:bg-white"
+                        class="w-full resize-none rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm outline-hidden focus:border-amber-400 focus:bg-white"
                     ></textarea>
                 </div>
 
                 <!-- Submit buttons -->
                 <div
-                    class="flex justify-end gap-3 border-t border-gray-100 pt-4"
+                    class="flex justify-end gap-3 border-t border-amber-100/30 pt-4"
                 >
                     <button
                         type="button"
@@ -948,7 +950,7 @@ defineOptions({
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+                        class="rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-amber-400 disabled:opacity-50"
                     >
                         {{ isEditing ? 'Simpan Perubahan' : 'Tambah Anggota' }}
                     </button>
@@ -960,10 +962,10 @@ defineOptions({
     <!-- Delete Confirmation Modal -->
     <div
         v-if="confirmDelete"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
     >
         <div
-            class="w-full max-w-md animate-in overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-xl duration-200 zoom-in-95 fade-in"
+            class="w-full max-w-md animate-in overflow-hidden rounded-2xl border border-amber-100/50 bg-white p-6 shadow-xl duration-200 zoom-in-95 fade-in"
         >
             <div
                 class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600"

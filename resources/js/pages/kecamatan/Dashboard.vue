@@ -70,10 +70,10 @@ defineOptions({
                 Pantau data pemilih di wilayah kecamatan Anda
             </p>
             <div class="mt-3 space-y-2 text-sm">
-                <div class="rounded-lg border border-gray-100 bg-gray-50/50 p-3">
+                <div class="rounded-lg border border-amber-100/50 bg-amber-50/10 p-3">
                     <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center">
                         <span class="inline-flex min-w-[200px] items-center gap-1.5 font-semibold text-gray-700">
-                            <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                            <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
                             Koordinator Kecamatan (Korcam):
                         </span>
                         <span class="text-gray-600">
@@ -84,7 +84,7 @@ defineOptions({
                             }}
                         </span>
                     </div>
-                    <div class="mt-2 flex flex-col gap-1.5 border-t border-gray-100/80 pt-2 sm:flex-row sm:items-start">
+                    <div class="mt-2 flex flex-col gap-1.5 border-t border-amber-100/30 pt-2 sm:flex-row sm:items-start">
                         <span
                             class="inline-flex min-w-[200px] items-center gap-1.5 font-semibold text-gray-700 sm:pt-0.5">
                             <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
@@ -93,7 +93,7 @@ defineOptions({
                         <div class="flex flex-1 flex-wrap gap-1.5">
                             <template v-if="props.kordes.length">
                                 <span v-for="k in props.kordes" :key="k.nama"
-                                    class="border-gray-150 inline-flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-600 shadow-sm">
+                                    class="border-amber-100 inline-flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-xs text-gray-600 shadow-xs">
                                     <span class="font-medium text-gray-800">{{
                                         k.nama
                                     }}</span>
@@ -109,9 +109,9 @@ defineOptions({
 
         <!-- Stats -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            <div class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                    <svg class="h-5 w-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
@@ -127,9 +127,9 @@ defineOptions({
                         class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset">Terverifikasi</span>
                 </div>
             </div>
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
-                    <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            <div class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                    <svg class="h-5 w-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
@@ -144,9 +144,9 @@ defineOptions({
                         class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset">Terverifikasi</span>
                 </div>
             </div>
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50">
-                    <svg class="h-5 w-5 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            <div class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                    <svg class="h-5 w-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
@@ -161,9 +161,9 @@ defineOptions({
                         class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-green-600/10 ring-inset">Terverifikasi</span>
                 </div>
             </div>
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50">
-                    <svg class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            <div class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                    <svg class="h-5 w-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                         <polyline points="9 22 9 12 15 12 15 22" />
@@ -175,9 +175,9 @@ defineOptions({
                 <div class="mt-0.5 text-xs text-gray-500">Desa / Kelurahan</div>
             </div>
             <!-- Total TPS -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50">
-                    <svg class="h-5 w-5 text-yellow-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            <div class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                    <svg class="h-5 w-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                         <line x1="9" y1="3" x2="9" y2="21" />
@@ -192,9 +192,9 @@ defineOptions({
                 <div class="mt-0.5 text-xs text-gray-500">Total TPS</div>
             </div>
             <!-- Total Suara -->
-            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-                    <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            <div class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm">
+                <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                    <svg class="h-5 w-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                         <circle cx="12" cy="10" r="3" />
@@ -206,7 +206,7 @@ defineOptions({
                 <div class="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500">
                     <span>Total Suara TPS</span>
                     <span
-                        class="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 ring-1 ring-blue-600/10 ring-inset">Masuk</span>
+                        class="inline-flex items-center rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 ring-1 ring-amber-600/10 ring-inset">Masuk</span>
                 </div>
             </div>
 
@@ -214,8 +214,8 @@ defineOptions({
         </div>
 
         <!-- Tabel per Desa -->
-        <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-            <div class="border-b border-gray-100 px-5 py-4">
+        <div class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm">
+            <div class="border-b border-amber-100/30 px-5 py-4">
                 <h3 class="text-sm font-semibold text-gray-900">
                     Rekap Pemilih per Desa/Kelurahan
                 </h3>
@@ -224,7 +224,7 @@ defineOptions({
                 <table class="w-full text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase">
+                            class="border-b border-amber-100/30 bg-amber-50/30 text-left text-xs font-semibold text-amber-800 uppercase">
                             <th class="px-5 py-3">No</th>
                             <th class="px-5 py-3">Desa / Kelurahan</th>
                             <th class="px-5 py-3 text-right">
@@ -246,7 +246,7 @@ defineOptions({
                     </thead>
                     <tbody>
                         <tr v-for="(item, i) in props.per_desa" :key="item.nama"
-                            class="border-b border-gray-50 last:border-0 hover:bg-gray-50">
+                            class="border-b border-amber-50/40 last:border-0 hover:bg-amber-50/20">
                             <td class="px-5 py-3 text-gray-400">{{ i + 1 }}</td>
                             <td class="px-5 py-3 font-medium text-gray-900">
                                 {{ item.nama }}
@@ -265,7 +265,7 @@ defineOptions({
                                     query: { desa_id: item.id },
                                 })
                                     "
-                                    class="border-gray-250 inline-flex items-center justify-center gap-1 rounded-lg border bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50">
+                                    class="border-amber-200 inline-flex items-center justify-center gap-1 rounded-lg border bg-white px-2.5 py-1 text-xs font-semibold text-amber-800 shadow-sm transition-all hover:bg-amber-50 cursor-pointer">
                                     <Eye class="h-3.5 w-3.5" />
                                     Detail
                                 </Link>

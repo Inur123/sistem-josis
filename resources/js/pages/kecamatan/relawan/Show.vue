@@ -173,7 +173,7 @@ defineOptions({
             <div class="flex items-center justify-between">
                 <Link
                     :href="kecamatanRoutes.relawan.index.url()"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 shadow-sm transition hover:bg-amber-50 cursor-pointer"
                 >
                     <ArrowLeft class="h-4 w-4" />
                     Kembali
@@ -182,7 +182,7 @@ defineOptions({
 
             <!-- Profile and Stats Card -->
             <div
-                class="overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-sm"
+                class="overflow-hidden rounded-xl border border-amber-100/50 bg-white p-6 shadow-sm"
             >
                 <div
                     class="flex flex-col justify-between gap-6 md:flex-row md:items-start"
@@ -194,7 +194,7 @@ defineOptions({
                                 {{ props.relawan.nama }}
                             </h2>
                             <span
-                                class="inline-flex items-center rounded border border-green-100 bg-green-50 px-2 py-0.5 text-xs text-green-700"
+                                class="inline-flex items-center rounded border border-amber-100 bg-amber-50/10 px-2 py-0.5 text-xs text-amber-800"
                             >
                                 Desa {{ props.relawan.desa }}
                             </span>
@@ -221,7 +221,7 @@ defineOptions({
 
                     <!-- Row Aligned Stats Grid -->
                     <div
-                        class="min-w-[280px] rounded-xl border border-gray-100/50 bg-gray-50/50 p-4"
+                        class="min-w-[280px] rounded-xl border border-amber-100/30 bg-amber-50/5 p-4"
                     >
                         <div
                             class="grid grid-cols-1 sm:grid-cols-[125px_1fr] items-start sm:items-center gap-y-2 text-xs"
@@ -291,9 +291,9 @@ defineOptions({
 
             <!-- Table Card -->
             <div
-                class="border-gray-150 overflow-hidden rounded-xl border bg-white shadow-sm"
+                class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
             >
-                <div class="border-b border-gray-100 px-6 py-4">
+                <div class="border-b border-amber-100/30 px-6 py-4">
                     <h3 class="text-base font-semibold text-gray-900">
                         Daftar Pemilih Didampingi
                     </h3>
@@ -308,11 +308,11 @@ defineOptions({
                         v-if="isLoading"
                         class="absolute inset-0 z-10 flex items-center justify-center bg-white/70"
                     >
-                        <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
+                        <Loader2 class="h-6 w-6 animate-spin text-amber-600" />
                     </div>
 
                     <table class="w-full text-left text-sm text-gray-500">
-                        <thead class="bg-gray-50 font-semibold text-gray-700">
+                        <thead class="border-b border-amber-100/30 bg-amber-50/30 font-semibold text-amber-800">
                             <tr>
                                 <th class="w-[60px] px-4 py-3 text-center">
                                     No
@@ -335,11 +335,11 @@ defineOptions({
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-amber-50/40">
                             <tr
                                 v-for="(p, pi) in getPemilihPage()"
                                 :key="p.id"
-                                class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                                class="cursor-pointer transition-colors hover:bg-amber-50/20"
                                 @click="
                                     router.visit(
                                         kecamatanRoutes.relawan.pemilih.show.url(
@@ -416,7 +416,7 @@ defineOptions({
                                         />
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-4 py-3 text-center" @click.stop>
                                     <div
                                         class="flex items-center justify-center"
                                     >
@@ -430,7 +430,7 @@ defineOptions({
                                                     },
                                                 )
                                             "
-                                            class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                            class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-amber-200 bg-white text-amber-800 shadow-sm transition hover:bg-amber-50 cursor-pointer"
                                             title="Detail"
                                         >
                                             <Eye class="h-3.5 w-3.5" />

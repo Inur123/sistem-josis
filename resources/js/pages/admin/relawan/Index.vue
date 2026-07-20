@@ -231,7 +231,7 @@ defineOptions({
                 <!-- Kecamatan Select -->
                 <select
                     v-model="selectedKecamatan"
-                    class="border-gray-250 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none sm:flex-1 md:w-48"
+                    class="border-gray-250 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none sm:flex-1 md:w-48"
                 >
                     <option value="">Semua Kecamatan</option>
                     <option
@@ -247,7 +247,7 @@ defineOptions({
                 <select
                     v-model="selectedDesa"
                     :disabled="!selectedKecamatan"
-                    class="border-gray-250 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400 sm:flex-1 md:w-48"
+                    class="border-gray-250 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400 sm:flex-1 md:w-48"
                 >
                     <option value="">Semua Desa/Kelurahan</option>
                     <option
@@ -263,7 +263,7 @@ defineOptions({
                 <button
                     v-if="selectedKecamatan || selectedDesa"
                     @click="clearFilters"
-                    class="w-full rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 sm:w-auto"
+                    class="w-full rounded-lg bg-amber-400 px-3 py-2 text-sm font-semibold text-gray-900 sm:w-auto whitespace-nowrap cursor-pointer"
                 >
                     Reset
                 </button>
@@ -276,11 +276,11 @@ defineOptions({
                 <div
                     v-for="r in props.relawans"
                     :key="r.id"
-                    class="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-6 shadow-sm"
+                    class="flex flex-col gap-4 rounded-xl border border-amber-100/50 bg-white p-6 shadow-sm"
                 >
                     <!-- Volunteer Info Header -->
                     <div
-                        class="flex flex-col justify-between gap-4 border-b border-gray-100 pb-4 sm:flex-row sm:items-center"
+                        class="flex flex-col justify-between gap-4 border-b border-amber-100/30 pb-4 sm:flex-row sm:items-center"
                     >
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
@@ -288,18 +288,18 @@ defineOptions({
                                     class="flex items-center gap-2 text-base font-semibold text-gray-900"
                                 >
                                     <span
-                                        class="inline-flex h-2 w-2 rounded-full bg-blue-600"
+                                        class="inline-flex h-2 w-2 rounded-full bg-amber-500"
                                     ></span>
                                     Relawan:
                                     <Link
                                         :href="`/admin/relawan/${r.id}`"
-                                        class="transition-colors hover:text-blue-600 hover:underline"
+                                        class="transition-colors hover:text-amber-600 hover:underline"
                                     >
                                         {{ r.nama }}
                                     </Link>
                                 </h3>
                                 <span
-                                    class="inline-flex items-center rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
+                                    class="inline-flex items-center rounded border border-amber-100 bg-amber-50 px-2 py-0.5 text-xs text-amber-800"
                                 >
                                     Kec. {{ r.kecamatan }}
                                 </span>
@@ -310,7 +310,7 @@ defineOptions({
                                 </span>
                                 <Link
                                     :href="`/admin/relawan/${r.id}`"
-                                    class="inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-200"
+                                    class="inline-flex cursor-pointer items-center gap-1 rounded border border-amber-200 bg-white px-2 py-0.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-50"
                                 >
                                     <Eye class="h-3 w-3" />
                                     Detail Relawan
@@ -400,14 +400,14 @@ defineOptions({
                             class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70"
                         >
                             <Loader2
-                                class="h-6 w-6 animate-spin text-blue-600"
+                                class="h-6 w-6 animate-spin text-amber-600"
                             />
                         </div>
 
                         <table class="w-full text-xs lg:text-sm">
                             <thead>
                                 <tr
-                                    class="text-xxs border-b border-gray-100 bg-gray-50 text-left font-semibold tracking-wide text-gray-500 uppercase lg:text-xs"
+                                    class="text-xxs border-b border-amber-100/30 bg-amber-50/30 text-left font-semibold tracking-wide text-amber-800 uppercase lg:text-xs"
                                 >
                                     <th class="w-[50px] px-2 py-3 text-center">
                                         No
@@ -436,11 +436,11 @@ defineOptions({
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody class="divide-y divide-amber-50/40">
                                 <tr
                                     v-for="(p, pi) in getPemilihPage(r)"
                                     :key="p.id"
-                                    class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                                    class="cursor-pointer transition-colors hover:bg-amber-50/20"
                                     @click="
                                         router.visit(
                                             `/admin/relawan/${r.id}/pemilih/${p.id}?from=index` +
@@ -529,7 +529,7 @@ defineOptions({
                                             />
                                         </div>
                                     </td>
-                                    <td class="px-2 py-3 text-center">
+                                    <td class="px-2 py-3 text-center" @click.stop>
                                         <div
                                             class="flex items-center justify-center"
                                         >
@@ -543,7 +543,7 @@ defineOptions({
                                                         ? `&desa_id=${selectedDesa}`
                                                         : '')
                                                 "
-                                                class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                                class="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-amber-200 bg-white text-amber-800 shadow-sm transition hover:bg-amber-50"
                                                 title="Detail"
                                             >
                                                 <Eye class="h-3.5 w-3.5" />
@@ -581,17 +581,17 @@ defineOptions({
 
                 <div
                     v-if="!props.relawans.length"
-                    class="rounded-xl border border-gray-100 bg-white p-12 text-center text-sm text-gray-400 shadow-sm"
+                    class="rounded-xl border border-amber-100/50 bg-white p-12 text-center text-sm text-gray-400 shadow-sm"
                 >
                     Belum ada data relawan di wilayah ini.
                 </div>
             </template>
             <template v-else>
                 <div
-                    class="rounded-xl border border-gray-100 bg-white p-16 text-center shadow-sm"
+                    class="rounded-xl border border-amber-100/50 bg-white p-16 text-center shadow-sm"
                 >
                     <div
-                        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600"
+                        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600"
                     >
                         <svg
                             class="h-6 w-6"

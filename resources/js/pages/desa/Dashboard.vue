@@ -84,7 +84,7 @@ defineOptions({
             </div>
             <Link
                 :href="desaRoutes.pemilih.create.url()"
-                class="flex w-full items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:bg-black sm:w-auto"
+                class="flex w-full items-center justify-center gap-1.5 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold whitespace-nowrap text-gray-900 transition-colors cursor-pointer sm:w-auto"
             >
                 <svg
                     class="h-4 w-4"
@@ -103,13 +103,13 @@ defineOptions({
         <!-- Stats -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-blue-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -136,13 +136,13 @@ defineOptions({
                 </div>
             </div>
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50"
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-indigo-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -166,13 +166,13 @@ defineOptions({
                 </div>
             </div>
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50"
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-pink-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -198,13 +198,13 @@ defineOptions({
 
             <!-- Total TPS -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50"
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-yellow-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -225,13 +225,13 @@ defineOptions({
 
             <!-- Total Suara -->
             <div
-                class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-5 shadow-sm"
             >
                 <div
-                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50"
+                    class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-blue-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -249,7 +249,7 @@ defineOptions({
                 >
                     <span>Total Suara TPS</span>
                     <span
-                        class="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 ring-1 ring-blue-600/10 ring-inset"
+                        class="inline-flex items-center rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 ring-1 ring-amber-600/10 ring-inset"
                         >Masuk</span
                     >
                 </div>
@@ -260,13 +260,13 @@ defineOptions({
         <div class="flex flex-col gap-3">
             <Link
                 :href="desaRoutes.pemilih.index.url()"
-                class="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+                class="flex items-center gap-4 rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm transition-all hover:border-amber-200 hover:shadow-md cursor-pointer"
             >
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-blue-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -299,13 +299,13 @@ defineOptions({
 
             <Link
                 :href="desaRoutes.pemilih.create.url()"
-                class="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-green-200 hover:shadow-md"
+                class="flex items-center gap-4 rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm transition-all hover:border-amber-200 hover:shadow-md cursor-pointer"
             >
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-green-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -337,13 +337,13 @@ defineOptions({
             <!-- Kelola Data TPS -->
             <Link
                 :href="desaRoutes.tps.index.url()"
-                class="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+                class="flex items-center gap-4 rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm transition-all hover:border-amber-200 hover:shadow-md cursor-pointer"
             >
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-blue-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -378,13 +378,13 @@ defineOptions({
             <!-- Input Data Suara & C-Hasil -->
             <Link
                 :href="desaRoutes.dataSuara.index.url()"
-                class="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+                class="flex items-center gap-4 rounded-xl border border-amber-100/50 bg-white p-4 shadow-sm transition-all hover:border-amber-200 hover:shadow-md cursor-pointer"
             >
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50"
                 >
                     <svg
-                        class="h-5 w-5 text-blue-600"
+                        class="h-5 w-5 text-amber-800"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"

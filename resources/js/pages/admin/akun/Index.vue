@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
-import { Loader2 } from '@lucide/vue';
+import { Loader2, X } from '@lucide/vue';
 import { ref, computed, watch } from 'vue';
 import adminRoutes from '@/routes/admin';
 
@@ -187,11 +187,11 @@ defineOptions({
                     Total {{ props.users.length }} akun terdaftar dalam platform.
                 </p>
             </div>
-            <div>
+            <div class="w-full sm:w-auto">
                 <button @click="exportExcel" :disabled="isExporting"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-xs transition-all hover:bg-gray-50 disabled:opacity-50">
+                    class="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm disabled:opacity-50 whitespace-nowrap">
                     <Loader2 v-if="isExporting" class="h-4.5 w-4.5 animate-spin text-gray-500" />
-                    <svg v-else class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <svg v-else class="h-4.5 w-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="7 10 12 15 17 10" />
@@ -208,7 +208,7 @@ defineOptions({
                 <table class="w-full text-sm">
                     <thead>
                         <tr
-                            class="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                            class="border-b border-amber-100/30 bg-amber-50/30 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase">
                             <th class="px-4 py-3">Nama</th>
                             <th class="px-4 py-3">Email</th>
                             <th class="px-4 py-3">Role</th>
@@ -217,7 +217,7 @@ defineOptions({
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
-                        <tr v-for="user in props.users" :key="user.id" class="hover:bg-gray-50">
+                        <tr v-for="user in props.users" :key="user.id" class="hover:bg-amber-50/20">
                             <td class="px-4 py-3 font-medium text-gray-900">
                                 {{ user.name }}
                             </td>
@@ -245,11 +245,11 @@ defineOptions({
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-center gap-2">
                                     <button @click="openEditModal(user)"
-                                        class="cursor-pointer rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200">
+                                        class="cursor-pointer rounded-lg border border-amber-250 bg-white px-2.5 py-1 text-xs font-semibold text-amber-800 shadow-sm transition hover:bg-amber-50">
                                         Edit
                                     </button>
                                     <button @click="openDeleteModal(user.id)"
-                                        class="cursor-pointer rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100">
+                                        class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 shadow-sm transition hover:bg-red-100">
                                         Hapus
                                     </button>
                                 </div>
@@ -261,18 +261,27 @@ defineOptions({
         </div>
 
         <!-- Edit Modal -->
-        <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
-                <h3 class="mb-4 text-lg font-bold text-gray-900">
-                    Edit Akun Pengguna
-                </h3>
+        <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div class="w-full max-w-md rounded-xl border border-amber-100/50 bg-white shadow-xl animate-in duration-200 zoom-in-95 fade-in">
+                <div class="flex items-center justify-between border-b border-amber-100/30 px-6 py-4">
+                    <h3 class="text-lg font-bold text-gray-900">
+                        Edit Akun Pengguna
+                    </h3>
+                    <button
+                        type="button"
+                        @click="closeModal"
+                        class="rounded-lg p-1 text-gray-400 transition-all hover:bg-gray-50 hover:text-gray-600"
+                    >
+                        <X class="h-5 w-5" />
+                    </button>
+                </div>
 
-                <form @submit.prevent="submitForm" class="flex flex-col gap-4">
+                <form @submit.prevent="submitForm" class="flex flex-col gap-4 p-6">
                     <!-- Nama -->
                     <div class="flex flex-col gap-1">
                         <label class="text-xs font-semibold text-gray-700">Nama</label>
                         <input v-model="form.name" type="text" required
-                            class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+                            class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-amber-400 focus:outline-none" />
                         <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                     </div>
 
@@ -280,7 +289,7 @@ defineOptions({
                     <div class="flex flex-col gap-1">
                         <label class="text-xs font-semibold text-gray-700">Email</label>
                         <input v-model="form.email" type="email" required
-                            class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+                            class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-amber-400 focus:outline-none" />
                         <span v-if="form.errors.email" class="text-xs text-red-500">{{ form.errors.email }}</span>
                     </div>
 
@@ -291,7 +300,7 @@ defineOptions({
                             <span class="font-normal text-gray-400">(kosongkan jika tidak diubah)</span>
                         </label>
                         <input v-model="form.password" type="password"
-                            class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+                            class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-amber-400 focus:outline-none" />
                         <span v-if="form.errors.password" class="text-xs text-red-500">{{ form.errors.password }}</span>
                     </div>
 
@@ -299,7 +308,7 @@ defineOptions({
                     <div class="flex flex-col gap-1">
                         <label class="text-xs font-semibold text-gray-700">Role</label>
                         <select v-model="form.role"
-                            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none">
                             <option value="admin">Admin</option>
                             <option value="kecamatan">Kecamatan</option>
                             <option value="desa">Desa / Kelurahan</option>
@@ -311,7 +320,7 @@ defineOptions({
                     <div v-if="form.role !== 'admin'" class="flex flex-col gap-1">
                         <label class="text-xs font-semibold text-gray-700">Kecamatan</label>
                         <select v-model="form.kecamatan_id" required
-                            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none">
                             <option value="">Pilih Kecamatan</option>
                             <option v-for="kec in props.kecamatans" :key="kec.id" :value="kec.id">
                                 Kec. {{ kec.nama }}
@@ -325,7 +334,7 @@ defineOptions({
                     <div v-if="form.role === 'desa'" class="flex flex-col gap-1">
                         <label class="text-xs font-semibold text-gray-700">Desa / Kelurahan</label>
                         <select v-model="form.desa_id" required :disabled="!form.kecamatan_id"
-                            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400">
+                            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-amber-400 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="">Pilih Desa / Kelurahan</option>
                             <option v-for="desa in formDesas" :key="desa.id" :value="desa.id">
                                 {{ desa.nama }}
@@ -337,11 +346,11 @@ defineOptions({
                     <!-- Buttons -->
                     <div class="mt-4 flex items-center justify-end gap-3">
                         <button type="button" @click="closeModal"
-                            class="cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200">
+                            class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                             Batal
                         </button>
                         <button type="submit" :disabled="form.processing"
-                            class="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+                            class="cursor-pointer rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm disabled:opacity-50">
                             Simpan
                         </button>
                     </div>
@@ -351,9 +360,9 @@ defineOptions({
 
         <!-- Delete Confirmation Modal -->
         <div v-if="confirmDeleteId"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
             <div
-                class="w-full max-w-md animate-in overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-xl duration-200 zoom-in-95 fade-in">
+                class="w-full max-w-md animate-in overflow-hidden rounded-xl border border-amber-100/50 bg-white p-6 shadow-xl duration-200 zoom-in-95 fade-in">
                 <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"

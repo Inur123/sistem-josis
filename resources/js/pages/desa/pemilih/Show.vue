@@ -106,7 +106,7 @@ defineOptions({
             <div class="mb-5 flex items-center justify-between">
                 <Link
                     :href="backUrl"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 shadow-sm transition hover:bg-amber-50 cursor-pointer"
                 >
                     <ArrowLeft class="h-4 w-4" />
                     Kembali
@@ -114,7 +114,7 @@ defineOptions({
 
                 <Link
                     :href="desaRoutes.pemilih.edit.url(props.pemilih.id)"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-black"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-amber-500 cursor-pointer"
                 >
                     <Pencil class="h-4 w-4" />
                     Edit Data
@@ -123,11 +123,11 @@ defineOptions({
 
             <!-- Detail Card -->
             <div
-                class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+                class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
             >
                 <!-- Card Header -->
                 <div
-                    class="flex flex-col gap-4 border-b border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+                    class="flex flex-col gap-4 border-b border-amber-100/30 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                     <div>
                         <h2 class="text-base font-semibold text-gray-900">
@@ -150,7 +150,7 @@ defineOptions({
                             Terverifikasi
                         </span>
                         <span
-                            v-else-if="props.pemilih.status === 'ditolak'"
+                            v-if="props.pemilih.status === 'ditolak'"
                             class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-600/20 ring-inset"
                         >
                             <span class="h-1.5 w-1.5 rounded-full bg-red-600" />
@@ -300,7 +300,7 @@ defineOptions({
                                 type="text"
                                 readonly
                                 :value="props.pemilih.created_at"
-                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-500 shadow-sm outline-none"
+                                class="w-full cursor-default rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-505 text-gray-500 shadow-sm outline-none"
                             />
                         </div>
                     </div>
@@ -313,7 +313,7 @@ defineOptions({
 
                         <div
                             v-if="props.pemilih.foto_ktp"
-                            class="overflow-hidden rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm"
+                            class="overflow-hidden rounded-lg border border-amber-100/50 bg-white p-1.5 shadow-sm"
                         >
                             <img
                                 :src="props.pemilih.foto_ktp"
@@ -323,7 +323,7 @@ defineOptions({
                         </div>
                         <div
                             v-else
-                            class="flex min-h-[250px] flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50/50 p-6 text-gray-400 shadow-sm"
+                            class="flex min-h-[250px] flex-col items-center justify-center rounded-lg border border-amber-100/50 bg-gray-50/50 p-6 text-gray-400 shadow-sm"
                         >
                             <svg
                                 class="mb-3 h-12 w-12 text-gray-300"

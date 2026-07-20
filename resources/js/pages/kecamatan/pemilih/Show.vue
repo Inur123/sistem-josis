@@ -117,7 +117,7 @@ defineOptions({
             <div class="mb-5 flex items-center justify-between">
                 <Link
                     :href="backUrl"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 shadow-sm transition hover:bg-amber-50 cursor-pointer"
                 >
                     <ArrowLeft class="h-4 w-4" />
                     Kembali
@@ -126,11 +126,11 @@ defineOptions({
 
             <!-- Detail Card -->
             <div
-                class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+                class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
             >
                 <!-- Card Header -->
                 <div
-                    class="flex flex-col gap-4 border-b border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+                    class="flex flex-col gap-4 border-b border-amber-100/30 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                     <div>
                         <h2 class="text-base font-semibold text-gray-900">
@@ -312,7 +312,7 @@ defineOptions({
 
                         <div
                             v-if="props.pemilih.foto_ktp"
-                            class="overflow-hidden rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm"
+                            class="overflow-hidden rounded-lg border border-amber-100/50 bg-white p-1.5 shadow-sm"
                         >
                             <img
                                 :src="props.pemilih.foto_ktp"
@@ -322,7 +322,7 @@ defineOptions({
                         </div>
                         <div
                             v-else
-                            class="flex min-h-[250px] flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50/50 p-6 text-gray-400 shadow-sm"
+                            class="flex min-h-[250px] flex-col items-center justify-center rounded-lg border border-amber-100/50 bg-gray-50/50 p-6 text-gray-400 shadow-sm"
                         >
                             <svg
                                 class="mb-3 h-12 w-12 text-gray-300"

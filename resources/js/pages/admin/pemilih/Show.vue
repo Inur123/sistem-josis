@@ -153,7 +153,7 @@ defineOptions({
             <div class="mb-5 flex items-center justify-between">
                 <Link
                     :href="backUrl"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                    class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 shadow-sm transition hover:bg-amber-50"
                 >
                     <ArrowLeft class="h-4 w-4" />
                     Kembali
@@ -167,7 +167,7 @@ defineOptions({
                     <button
                         @click="showRejectModal = true"
                         :disabled="isVerifying"
-                        class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-100 disabled:opacity-50"
+                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-100 disabled:opacity-50"
                     >
                         <XCircle class="h-4 w-4" />
                         Tolak
@@ -175,7 +175,7 @@ defineOptions({
                     <button
                         @click="verifyVoter('terverifikasi')"
                         :disabled="isVerifying"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50"
+                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-green-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50"
                     >
                         <Loader2
                             v-if="isVerifying"
@@ -189,11 +189,11 @@ defineOptions({
 
             <!-- Detail Card -->
             <div
-                class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+                class="overflow-hidden rounded-xl border border-amber-100/50 bg-white shadow-sm"
             >
                 <!-- Card Header -->
                 <div
-                    class="flex flex-col gap-4 border-b border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+                    class="flex flex-col gap-4 border-b border-amber-100/30 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                     <div>
                         <h2 class="text-base font-semibold text-gray-900">

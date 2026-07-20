@@ -34,7 +34,7 @@ withDefaults(defineProps<Props>(), {
             </div>
             
             <!-- Fixed Footer -->
-            <footer class="flex flex-col gap-1 py-3 md:py-0 md:h-12 shrink-0 md:flex-row items-center justify-between border-t border-sidebar-border/70 px-6 bg-white text-[10px] md:text-xs text-gray-500 relative z-10 text-center md:text-left">
+            <footer class="flex flex-col gap-1 py-3 md:py-0 md:h-12 shrink-0 md:flex-row items-center justify-between border-t border-sidebar-border/70 px-6 bg-white text-[10px] md:text-xs text-gray-500 relative z-0 text-center md:text-left">
                 <span>&copy; {{ new Date().getFullYear() }} Sistem Josis. All rights reserved.</span>
                 <span>Kab. Magetan, Jawa Timur</span>
             </footer>

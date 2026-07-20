@@ -163,11 +163,11 @@ defineOptions({
             <div
                 v-for="r in props.relawans"
                 :key="r.id"
-                class="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-6 shadow-sm"
+                class="flex flex-col gap-4 rounded-xl border border-amber-100/50 bg-white p-6 shadow-sm"
             >
                 <!-- Volunteer Info Header -->
                 <div
-                    class="flex flex-col justify-between gap-4 border-b border-gray-100 pb-4 sm:flex-row sm:items-center"
+                    class="flex flex-col justify-between gap-4 border-b border-amber-100/30 pb-4 sm:flex-row sm:items-center"
                 >
                     <div>
                         <div class="flex flex-wrap items-center gap-2">
@@ -175,19 +175,19 @@ defineOptions({
                                 class="flex items-center gap-2 text-base font-semibold text-gray-900"
                             >
                                 <span
-                                    class="inline-flex h-2 w-2 rounded-full bg-blue-600"
+                                    class="inline-flex h-2 w-2 rounded-full bg-amber-400"
                                 ></span>
                                 Relawan:
                                 <Link
                                     :href="`/desa/relawan/${r.id}`"
-                                    class="transition-colors hover:text-blue-600 hover:underline"
+                                    class="transition-colors hover:text-amber-800 hover:underline"
                                 >
                                     {{ r.nama }}
                                 </Link>
                             </h3>
                             <Link
                                 :href="`/desa/relawan/${r.id}`"
-                                class="inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-200"
+                                class="inline-flex items-center gap-1 rounded border border-amber-200 bg-white px-2 py-0.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-50 cursor-pointer"
                             >
                                 <Eye class="h-3 w-3" />
                                 Detail Relawan
@@ -268,13 +268,13 @@ defineOptions({
                         v-if="loadingMap[r.id]"
                         class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70"
                     >
-                        <Loader2 class="h-6 w-6 animate-spin text-blue-600" />
+                        <Loader2 class="h-6 w-6 animate-spin text-amber-600" />
                     </div>
 
                     <table class="w-full text-xs lg:text-sm">
                         <thead>
                             <tr
-                                class="text-xxs border-b border-gray-100 bg-gray-50 text-left font-semibold tracking-wide text-gray-500 uppercase lg:text-xs"
+                                class="text-xxs border-b border-amber-100/30 bg-amber-50/30 text-left font-semibold tracking-wide text-amber-800 uppercase lg:text-xs"
                             >
                                 <th class="w-[50px] px-2 py-3 text-center">
                                     No
@@ -297,11 +297,11 @@ defineOptions({
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-50">
+                        <tbody class="divide-y divide-amber-50/40">
                             <tr
                                 v-for="(p, pi) in getPemilihPage(r)"
                                 :key="p.id"
-                                class="cursor-pointer transition-colors hover:bg-gray-50/80"
+                                class="cursor-pointer transition-colors hover:bg-amber-50/20"
                                 @click="
                                     router.visit(
                                         desaRoutes.relawan.pemilih.show.url(
@@ -381,7 +381,7 @@ defineOptions({
                                         />
                                     </div>
                                 </td>
-                                <td class="px-2 py-3 text-center">
+                                <td class="px-2 py-3 text-center" @click.stop>
                                     <div
                                         class="flex items-center justify-center"
                                     >
@@ -399,7 +399,7 @@ defineOptions({
                                                     },
                                                 )
                                             "
-                                            class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+                                            class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-amber-200 bg-white text-amber-850 shadow-sm transition hover:bg-amber-50 cursor-pointer"
                                             title="Detail"
                                         >
                                             <Eye class="h-3.5 w-3.5" />
@@ -411,7 +411,7 @@ defineOptions({
                                 v-if="
                                     !getPemilihPage(r).length &&
                                     !loadingMap[r.id]
-                                "
+                                  "
                             >
                                 <td
                                     colspan="9"
@@ -437,7 +437,7 @@ defineOptions({
 
             <div
                 v-if="!props.relawans.length"
-                class="rounded-xl border border-gray-100 bg-white p-12 text-center text-sm text-gray-400 shadow-sm"
+                class="rounded-xl border border-amber-100/50 bg-white p-12 text-center text-sm text-gray-400 shadow-sm"
             >
                 Belum ada data relawan.
             </div>

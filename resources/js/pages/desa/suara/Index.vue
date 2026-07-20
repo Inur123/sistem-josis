@@ -235,9 +235,9 @@ defineOptions({
         </div>
 
         <!-- Tabel TPS & Input Suara -->
-        <div class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50">
-                <h3 class="text-sm font-semibold text-gray-700">Daftar Suara per TPS</h3>
+        <div class="rounded-2xl border border-amber-100/50 bg-white shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-amber-100/30 bg-amber-50/10">
+                <h3 class="text-sm font-semibold text-gray-800">Daftar Suara per TPS</h3>
             </div>
 
             <!-- Empty state -->
@@ -251,7 +251,7 @@ defineOptions({
             <div v-else class="overflow-x-auto">
                 <table class="w-full min-w-[640px] text-sm">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50/40 text-gray-400 font-semibold">
+                        <tr class="border-b border-amber-100/30 bg-amber-50/30 text-amber-800 font-semibold">
                             <th class="px-5 py-3.5 text-left text-xs uppercase tracking-wide">#</th>
                             <th class="px-5 py-3.5 text-left text-xs uppercase tracking-wide">Nama TPS</th>
                             <th class="px-5 py-3.5 text-left text-xs uppercase tracking-wide w-48">Total Suara</th>
@@ -260,9 +260,9 @@ defineOptions({
                             <th class="px-5 py-3.5 text-center text-xs uppercase tracking-wide w-36">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-amber-50/40">
                         <tr v-for="(tps, idx) in pagedTps" :key="tps.id"
-                            class="border-b border-gray-50 transition hover:bg-blue-50/20">
+                            class="border-b border-amber-50/20 transition hover:bg-amber-50/20">
                             <td class="px-5 py-4 text-gray-400 font-mono text-xs">{{ (currentPage - 1) * PAGE_SIZE + idx
                                 + 1 }}</td>
                             <td class="px-5 py-4 font-semibold text-gray-800 whitespace-nowrap">{{ tps.nama }}</td>
@@ -271,10 +271,10 @@ defineOptions({
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-2">
                                     <input v-model.number="suaraInputs[tps.id]" type="number" min="0" placeholder="0"
-                                        class="w-24 rounded-xl border border-gray-200 px-3 py-1.5 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 no-spinners"
+                                        class="w-24 rounded-xl border border-gray-200 px-3 py-1.5 text-sm focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100/50 no-spinners"
                                         @wheel="($event.target as HTMLInputElement).blur()" />
                                     <button @click="handleSaveSuara(tps.id)" :disabled="isSaving[tps.id]"
-                                        class="rounded-xl bg-blue-600 hover:bg-blue-700 p-2 text-white transition disabled:opacity-50"
+                                        class="rounded-xl bg-amber-400 hover:bg-amber-500 p-2 text-gray-900 transition disabled:opacity-50 cursor-pointer"
                                         title="Simpan Suara">
                                         <Save class="h-4 w-4" />
                                     </button>
@@ -292,15 +292,15 @@ defineOptions({
 
                                         <!-- Tombol upload -->
                                         <button @click="triggerUpload(tps.id)" :disabled="isUploading[tps.id]"
-                                            class="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 transition disabled:opacity-50">
-                                            <Upload class="h-3.5 w-3.5 text-gray-400" />
+                                            class="flex items-center gap-1.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 transition disabled:opacity-50 cursor-pointer">
+                                            <Upload class="h-3.5 w-3.5 text-amber-800/60" />
                                             {{ isUploading[tps.id] ? 'Mengunggah...' : 'Upload Foto' }}
                                         </button>
 
                                         <!-- Thumbnail Preview jika file ada -->
                                         <a v-if="tps.has_c_hasil && tps.c_hasil_url" :href="tps.c_hasil_url"
                                             target="_blank"
-                                            class="relative h-9 w-9 block overflow-hidden rounded-lg border border-gray-200 bg-gray-50 group">
+                                            class="relative h-9 w-9 block overflow-hidden rounded-lg border border-amber-200 bg-gray-50 group">
                                             <img :src="tps.c_hasil_url"
                                                 class="h-full w-full object-cover transition duration-150 group-hover:scale-105"
                                                 alt="C-Hasil Thumbnail" />
