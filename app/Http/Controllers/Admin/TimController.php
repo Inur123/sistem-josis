@@ -70,7 +70,7 @@ class TimController extends Controller
         $desaDropdownQuery = Desa::query();
         $desas = $desaDropdownQuery->orderBy('nama')->get(['id', 'nama', 'kecamatan_id']);
 
-        return Inertia::render('admin/Tim', [
+        return Inertia::render('admin/tim/Index', [
             'korcams' => $korcams,
             'kordes' => $kordes,
             'relawans' => $relawans,

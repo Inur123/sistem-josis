@@ -71,6 +71,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/pemilih/{pemilih}', [AdminPemilihController::class, 'show'])->name('pemilih.show');
         Route::post('/pemilih/{pemilih}/verify', [AdminPemilihController::class, 'verify'])->name('pemilih.verify');
         Route::get('/akun', [AdminAkunController::class, 'index'])->name('akun.index');
+        Route::get('/akun/export', [AdminAkunController::class, 'export'])->name('akun.export');
         Route::put('/akun/{user}', [AdminAkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/{user}', [AdminAkunController::class, 'destroy'])->name('akun.destroy');
         Route::get('/activity-logs', AdminActivityLogController::class)->name('activity-logs');

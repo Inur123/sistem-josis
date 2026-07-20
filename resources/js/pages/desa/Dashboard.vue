@@ -30,6 +30,14 @@ if (typeof window !== 'undefined' && user) {
     useEcho(`desa.team.${user.desa_id}`, 'TeamChanged', () => {
         router.reload();
     });
+
+    useEcho(`desa.tps.${user.desa_id}`, 'TpsChanged', () => {
+        router.reload();
+    });
+
+    useEcho(`desa.tps.${user.desa_id}`, 'DataSuaraChanged', () => {
+        router.reload();
+    });
 }
 
 defineOptions({

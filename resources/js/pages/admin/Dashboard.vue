@@ -36,6 +36,14 @@ if (typeof window !== 'undefined') {
     useEcho('admin.accounts', 'UserChanged', () => {
         router.reload();
     });
+
+    useEcho('admin.tps', 'TpsChanged', () => {
+        router.reload();
+    });
+
+    useEcho('admin.tps', 'DataSuaraChanged', () => {
+        router.reload();
+    });
 }
 
 defineOptions({

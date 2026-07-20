@@ -70,12 +70,12 @@ class TpsController extends Controller
         return back()->with('success', 'TPS berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Tps $tps): RedirectResponse
+    public function update(Request $request, Tps $tp): RedirectResponse
     {
         /** @var User $user */
         $user = $request->user();
 
-        abort_if($tps->desa_id !== $user->desa_id, 403, 'Akses ditolak.');
+        abort_if($tp->desa_id !== $user->desa_id, 403, 'Akses ditolak.');
 
         $data = $request->validate([
             'nama' => [
@@ -84,46 +84,46 @@ class TpsController extends Controller
                 'max:100',
                 \Illuminate\Validation\Rule::unique('tps', 'nama')
                     ->where('desa_id', $user->desa_id)
-                    ->ignore($tps->id),
+                    ->ignore($tp->id),
             ],
         ], [
             'nama.required' => 'Nama TPS wajib diisi.',
             'nama.unique'   => 'Nama TPS sudah terdaftar di desa ini.',
         ]);
 
-        $oldNama = $tps->nama;
-        $tps->update(['nama' => $data['nama']]);
+        $oldNama = $tp->nama;
+        $tp->update(['nama' => $data['nama']]);
 
         activity()
-            ->performedOn($tps)
+            ->performedOn($tp)
             ->event('updated')
-            ->log("Mengubah nama TPS: {$oldNama} -> {$tps->nama} (Desa {$user->desa?->nama})");
+            ->log("Mengubah nama TPS: {$oldNama} -> {$tp->nama} (Desa {$user->desa?->nama})");
 
-        $tps->load('desa');
-        broadcast(new TpsChanged($tps, 'updated'))->toOthers();
+        $tp->load('desa');
+        broadcast(new TpsChanged($tp, 'updated'))->toOthers();
 
         return back()->with('success', 'TPS berhasil diperbarui.');
     }
 
-    public function destroy(Request $request, Tps $tps): RedirectResponse
+    public function destroy(Request $request, Tps $tp): RedirectResponse
     {
         /** @var User $user */
         $user = $request->user();
 
-        abort_if($tps->desa_id !== $user->desa_id, 403, 'Akses ditolak.');
+        abort_if($tp->desa_id !== $user->desa_id, 403, 'Akses ditolak.');
 
         // Load desa before delete for broadcast channel
-        $tps->load('desa');
-        $tpsData = clone $tps;
-        $tpsNama = $tps->nama;
+        $tp->load('desa');
+        $tpsData = clone $tp;
+        $tpsNama = $tp->nama;
         $desaNama = $user->desa?->nama;
 
         // Delete C-Hasil file if exists
-        if ($tps->dataSuara && $tps->dataSuara->c_hasil_path) {
-            \Illuminate\Support\Facades\Storage::delete('private/' . $tps->dataSuara->c_hasil_path);
+        if ($tp->dataSuara && $tp->dataSuara->c_hasil_path) {
+            \Illuminate\Support\Facades\Storage::delete('private/' . $tp->dataSuara->c_hasil_path);
         }
 
-        Tps::destroy($tps->id); // DataSuara cascade deleted by DB
+        Tps::destroy($tp->id); // DataSuara cascade deleted by DB
 
         activity()
             ->event('deleted')

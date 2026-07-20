@@ -41,6 +41,14 @@ if (typeof window !== 'undefined' && user) {
     useEcho(`kecamatan.team.${user.kecamatan_id}`, 'TeamChanged', () => {
         router.reload();
     });
+
+    useEcho(`kecamatan.tps.${user.kecamatan_id}`, 'TpsChanged', () => {
+        router.reload();
+    });
+
+    useEcho(`kecamatan.tps.${user.kecamatan_id}`, 'DataSuaraChanged', () => {
+        router.reload();
+    });
 }
 
 defineOptions({

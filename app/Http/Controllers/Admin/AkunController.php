@@ -31,7 +31,7 @@ class AkunController extends Controller
             'desa' => $u->desa?->nama,
         ]);
 
-        return Inertia::render('admin/Akun', [
+        return Inertia::render('admin/akun/Index', [
             'users' => $users,
             'kecamatans' => Kecamatan::orderBy('nama', 'asc')->select('id', 'nama')->get(),
             'desas' => Desa::orderBy('nama', 'asc')->select('id', 'nama', 'kecamatan_id')->get(),
@@ -94,5 +94,72 @@ class AkunController extends Controller
         UserChanged::dispatch($user, 'deleted');
 
         return back()->with('success', 'Akun berhasil dihapus.');
+    }
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        set_time_limit(180);
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'export_akun');
+        if ($tempFile === false) {
+            abort(500, 'Gagal membuat file temporary');
+        }
+
+        $writer = new \OpenSpout\Writer\XLSX\Writer();
+        $writer->openToFile($tempFile);
+
+        // --- STYLING ---
+        $headerStyle = (new \OpenSpout\Common\Entity\Style\Style())
+            ->withFontBold(true)
+            ->withBackgroundColor('FFFCD116'); // Golkar Yellow
+
+        $titleStyle = (new \OpenSpout\Common\Entity\Style\Style())
+            ->withFontBold(true)
+            ->withFontSize(14);
+
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setName('DAFTAR AKUN');
+        $sheet->setColumnWidth(6, 1);
+        $sheet->setColumnWidth(30, 2); // Nama Operator
+        $sheet->setColumnWidth(40, 3); // Email
+        $sheet->setColumnWidth(25, 4); // Password
+        $sheet->setColumnWidth(15, 5); // Role
+        $sheet->setColumnWidth(20, 6); // Kecamatan
+        $sheet->setColumnWidth(20, 7); // Desa
+
+        $writer->addRow(\OpenSpout\Common\Entity\Row::fromValuesWithStyle(['DAFTAR AKUN PENGGUNA SISTEM JOSIS'], $titleStyle));
+        $writer->addRow(\OpenSpout\Common\Entity\Row::fromValues([]));
+
+        $headers = ['NO', 'NAMA OPERATOR', 'EMAIL', 'PASSWORD', 'ROLE', 'KECAMATAN', 'DESA'];
+        $writer->addRow(\OpenSpout\Common\Entity\Row::fromValuesWithStyle($headers, $headerStyle));
+
+        $users = User::with(['kecamatan', 'desa'])->get();
+        $no = 1;
+
+        foreach ($users as $u) {
+            // Tentukan password default berdasarkan role
+            $password = match ($u->role) {
+                'admin' => 'Admin@Josis2026!',
+                'kecamatan' => 'Kecamatan@2026!',
+                'desa' => 'Desa@2026!',
+                default => '-',
+            };
+
+            $rowValues = [
+                $no++,
+                $u->name,
+                $u->email,
+                $password,
+                strtoupper($u->role),
+                $u->kecamatan?->nama ?? '-',
+                $u->desa?->nama ?? '-',
+            ];
+
+            $writer->addRow(\OpenSpout\Common\Entity\Row::fromValues($rowValues));
+        }
+
+        $writer->close();
+
+        return response()->download($tempFile, 'Daftar_Akun_Josis.xlsx')->deleteFileAfterSend(true);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kecamatan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Desa;
 use App\Models\Tps;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,11 +16,24 @@ class TpsController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
+        $desaId = $request->query('desa_id');
 
-        $tpsList = Tps::whereHas('desa', fn($q) => $q->where('kecamatan_id', $user->kecamatan_id))
+        // Fetch desas for filter dropdown
+        $desas = Desa::query()
+            ->where('kecamatan_id', $user->kecamatan_id)
+            ->orderBy('nama', 'asc')
+            ->get(['id', 'nama']);
+
+        $query = Tps::query()
+            ->whereHas('desa', fn($q) => $q->where('kecamatan_id', $user->kecamatan_id))
             ->with(['desa', 'dataSuara'])
-            ->orderBy('nama')
-            ->get()
+            ->orderBy('nama');
+
+        if ($desaId) {
+            $query->where('desa_id', $desaId);
+        }
+
+        $tpsList = $query->get()
             ->map(fn(Tps $tps): array => [
                 'id'          => $tps->id,
                 'nama'        => $tps->nama,
@@ -37,6 +51,10 @@ class TpsController extends Controller
             'tpsList'    => $tpsList,
             'totalTps'   => $tpsList->count(),
             'kecamatan'  => $user->kecamatan?->nama,
+            'desas'      => $desas,
+            'filters'    => [
+                'desa_id' => $desaId,
+            ],
         ]);
     }
 }

@@ -18,22 +18,44 @@ interface TpsRow {
 }
 
 
+interface DropdownItem {
+    id: string;
+    nama: string;
+}
+
 const props = defineProps<{
     tpsList: TpsRow[];
     totalTps: number;
     kecamatan: string;
+    desas: DropdownItem[];
+    filters: {
+        desa_id: string | null;
+    };
 }>();
 
 const page = usePage();
 const user = page.props.auth.user as any;
 
+const selectedDesa = ref(props.filters.desa_id || '');
+
+function handleFilterChange() {
+    router.get(
+        kecamatanRoutes.tps.index.url(),
+        { desa_id: selectedDesa.value || null },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        }
+    );
+}
+
 // Realtime
 if (typeof window !== 'undefined' && user) {
     useEcho(`kecamatan.tps.${user.kecamatan_id}`, 'TpsChanged', () => {
-        router.reload();
+        router.reload({ only: ['tpsList', 'totalTps'] });
     });
     useEcho(`kecamatan.tps.${user.kecamatan_id}`, 'DataSuaraChanged', () => {
-        router.reload();
+        router.reload({ only: ['tpsList'] });
     });
 }
 
@@ -94,6 +116,20 @@ defineOptions({
                     </div>
                     <p class="text-5xl font-black">{{ totalTps }}</p>
                     <p class="text-sm mt-2 opacity-80">TPS terdaftar di Kecamatan {{ kecamatan }}</p>
+                </div>
+
+                <!-- Filter Card -->
+                <div class="mt-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Filter Desa</h3>
+                    <div class="flex flex-col gap-2">
+                        <select v-model="selectedDesa" @change="handleFilterChange"
+                            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                            <option value="">Semua Desa</option>
+                            <option v-for="desa in desas" :key="desa.id" :value="desa.id">
+                                {{ desa.nama }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
             </div>
 

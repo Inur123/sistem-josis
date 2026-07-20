@@ -24,7 +24,7 @@ class ActivityLogController extends Controller
         $perPage = self::PER_PAGE;
 
         $logs = Activity::with('causer')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate($perPage, ['*'], 'page', $page)
             ->through(function (Activity $log): array {
                 $causer = $log->causer;
@@ -56,7 +56,7 @@ class ActivityLogController extends Controller
             ]);
         }
 
-        return Inertia::render('admin/ActivityLog', [
+        return Inertia::render('admin/activity-log/Index', [
             'logs' => $logs,
         ]);
     }
