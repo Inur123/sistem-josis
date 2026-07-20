@@ -6,10 +6,31 @@ import AuthLayout from '@/layouts/AuthLayout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
 if (typeof window !== 'undefined') {
-    const broadcaster = import.meta.env.VITE_BROADCAST_CONNECTION === 'pusher' ? 'pusher' : 'reverb';
-    configureEcho({
-        broadcaster: broadcaster,
+    // Prevent Echo crashes if connection is blocked or misconfigured
+    const mockChannel = () => ({
+        listen: () => mockChannel(),
+        listenToAll: () => mockChannel(),
+        notification: () => mockChannel(),
+        whisper: () => mockChannel(),
     });
+    (window as any).Echo = (window as any).Echo || {
+        channel: mockChannel,
+        private: mockChannel,
+        join: mockChannel,
+        leave: () => {},
+        leaveChannel: () => {},
+        connector: { options: {} }
+    };
+
+    const broadcaster = import.meta.env.VITE_BROADCAST_CONNECTION === 'pusher' ? 'pusher' : 'reverb';
+
+    try {
+        configureEcho({
+            broadcaster: broadcaster,
+        });
+    } catch (e) {
+        console.warn('Laravel Echo configuration failed, using fallback mock Echo.', e);
+    }
 }
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
